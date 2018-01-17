@@ -11,10 +11,11 @@ abstract class PasswordAbstractMeter implements PasswordMeterInterface
      * @param string $string La chaîne de caractères
      * @return integer
      */
-    public static function entropyBits($string) {
+    public static function entropyBits($string)
+    {
         $length = mb_strlen($string);
         $symbols = static::symbols($string);
-        return (int)round($length*log($symbols,2));
+        return (int)round($length*log($symbols, 2));
     }
 
     /**
@@ -23,7 +24,7 @@ abstract class PasswordAbstractMeter implements PasswordMeterInterface
      *
      * @return array
      */
-    public abstract static function thresholds();
+    abstract public static function thresholds();
 
     /**
      * Retourne la "force" d'un mot de passe.
@@ -38,12 +39,13 @@ abstract class PasswordAbstractMeter implements PasswordMeterInterface
      * @param string $string Le mot de passe
      * @return integer
      */
-    public static function strength($string) {
+    public static function strength($string)
+    {
         $entropyBits = static::entropyBits($string);
         $thresholds = static::thresholds();
 
-        foreach($thresholds as $threshold => $strength) {
-            if($entropyBits >= $threshold) {
+        foreach ($thresholds as $threshold => $strength) {
+            if ($entropyBits >= $threshold) {
                 return $strength;
             }
         }

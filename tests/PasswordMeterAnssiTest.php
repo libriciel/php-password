@@ -63,7 +63,8 @@ class BasicsTest extends TestCase
      * Test de la méthode PasswordMeterAnssi::entropyBits() avec des caractères
      * binaires.
      */
-    public function testEntropyBitsBinary() {
+    public function testEntropyBitsBinary()
+    {
         // 4 caractères
         $this->assertEquals(4, PasswordMeterAnssi::entropyBits('0110'));
         // 6 caractères
@@ -88,7 +89,8 @@ class BasicsTest extends TestCase
      * Test de la méthode PasswordMeterAnssi::entropyBits() avec des caractères
      * décimaux.
      */
-    public function testEntropyBitsDecimal() {
+    public function testEntropyBitsDecimal()
+    {
         // 4 caractères
         $this->assertEquals(13, PasswordMeterAnssi::entropyBits('0123'));
         // 6 caractères
@@ -101,7 +103,8 @@ class BasicsTest extends TestCase
      * Test de la méthode PasswordMeterAnssi::entropyBits() avec des caractères
      * hexadécimaux.
      */
-    public function testEntropyBitsHexadecimal() {
+    public function testEntropyBitsHexadecimal()
+    {
         // Majuscules
         $this->assertEquals(16, PasswordMeterAnssi::entropyBits('012F'));
         $this->assertEquals(32, PasswordMeterAnssi::entropyBits('012F012F'));
@@ -117,7 +120,8 @@ class BasicsTest extends TestCase
      * Test de la méthode PasswordMeterAnssi::entropyBits() avec des caractères
      * alphabétiques.
      */
-    public function testEntropyBitsAlphabetical() {
+    public function testEntropyBitsAlphabetical()
+    {
         // Majuscules
         $this->assertEquals(19, PasswordMeterAnssi::entropyBits('ABCZ'));
         $this->assertEquals(38, PasswordMeterAnssi::entropyBits('ABCZABCZ'));
@@ -135,7 +139,8 @@ class BasicsTest extends TestCase
      * Test de la méthode PasswordMeterAnssi::entropyBits() avec des caractères
      * alphanumériques.
      */
-    public function testEntropyBitsAlphanumeric() {
+    public function testEntropyBitsAlphanumeric()
+    {
         // Majuscules
         $this->assertEquals(21, PasswordMeterAnssi::entropyBits('01AZ'));
         $this->assertEquals(41, PasswordMeterAnssi::entropyBits('01AZ01AF'));
@@ -145,11 +150,12 @@ class BasicsTest extends TestCase
      * Test de la méthode PasswordMeterAnssi::strength() avec des mots de passe
      * de force "très faible".
      */
-    public function testStrengthReallyWeak() {
+    public function testStrengthReallyWeak()
+    {
         // 9 caractères latin, majuscules et minuscules => 51 entropyBits
         $this->assertEquals(
             PasswordMeterAnssi::STRENGTH_REALLY_WEAK,
-            PasswordMeterAnssi::strength(str_repeat('Abz',3))
+            PasswordMeterAnssi::strength(str_repeat('Abz', 3))
         );
     }
 
@@ -157,11 +163,12 @@ class BasicsTest extends TestCase
      * Test de la méthode PasswordMeterAnssi::strength() avec des mots de passe
      * de force "faible".
      */
-    public function testStrengthWeak() {
+    public function testStrengthWeak()
+    {
         // 16 caractères latin majuscules => 75 entropyBits
         $this->assertEquals(
             PasswordMeterAnssi::STRENGTH_WEAK,
-            PasswordMeterAnssi::strength(str_repeat('ABCZ',4))
+            PasswordMeterAnssi::strength(str_repeat('ABCZ', 4))
         );
     }
 
@@ -169,7 +176,8 @@ class BasicsTest extends TestCase
      * Test de la méthode PasswordMeterAnssi::strength() avec des mots de passe
      * de force "moyenne".
      */
-    public function testStrengthMedium() {
+    public function testStrengthMedium()
+    {
         // 14 caractères latin, majuscules et minuscules => 80 entropyBits
         $this->assertEquals(
             PasswordMeterAnssi::STRENGTH_MEDIUM,
@@ -187,11 +195,12 @@ class BasicsTest extends TestCase
      * Test de la méthode PasswordMeterAnssi::strength() avec des mots de passe
      * de force "forte".
      */
-    public function testStrengthStrong() {
+    public function testStrengthStrong()
+    {
         // 30 caractères numériques => 100 entropyBits
         $this->assertEquals(
             PasswordMeterAnssi::STRENGTH_STRONG,
-            PasswordMeterAnssi::strength(str_repeat('0123456789',3))
+            PasswordMeterAnssi::strength(str_repeat('0123456789', 3))
         );
 
         // 20 caractères latin, majuscules et minuscules => 114 entropyBits
@@ -205,11 +214,12 @@ class BasicsTest extends TestCase
      * Test de la méthode PasswordMeterAnssi::strength() avec des mots de passe
      * de force "très forte".
      */
-    public function testStrengthVeryStrong() {
+    public function testStrengthVeryStrong()
+    {
         // 20 caractères des 70 possibles => 130 entropyBits
         $this->assertEquals(
             PasswordMeterAnssi::STRENGTH_VERY_STRONG,
-            PasswordMeterAnssi::strength(str_repeat('aZ3?&',4))
+            PasswordMeterAnssi::strength(str_repeat('aZ3?&', 4))
         );
     }
 }

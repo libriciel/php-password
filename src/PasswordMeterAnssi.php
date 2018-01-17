@@ -8,7 +8,8 @@ class PasswordMeterAnssi extends PasswordAbstractMeter
     /**
      * {@inheritDoc}
      */
-    public static function symbols($string) {
+    public static function symbols($string)
+    {
         $symbols = 0;
         $alphabetic = false !== mb_eregi('[g-z]', $string);
         $hexadecimal = false !== mb_eregi('[a-f]', $string);
@@ -26,31 +27,31 @@ class PasswordMeterAnssi extends PasswordAbstractMeter
             // 2
             'binary' => false !== mb_ereg('[0-1]', $string),
             'lower' => $alphabetic || $hexadecimal ? mb_ereg('[a-z]', $string) : null,
-            'upper' => $alphabetic || $hexadecimal ? mb_ereg('[A-Z]', $string) : null            
+            'upper' => $alphabetic || $hexadecimal ? mb_ereg('[A-Z]', $string) : null
         ];
 
-        if(0 < $result['extra2']) {
+        if (0 < $result['extra2']) {
             $symbols += 20;
         }
-        if(0 < $result['extra1']) {
+        if (0 < $result['extra1']) {
             $symbols += 8;
         }
-        if(0 < $result['alphabetic']) {
+        if (0 < $result['alphabetic']) {
             $symbols += 26;
-            if(0 < $result['lower'] && 0 < $result['upper']) {
+            if (0 < $result['lower'] && 0 < $result['upper']) {
                 $symbols += 26;
             }
-            if(0 < $result['numeric'] || 0 < $result['binary']) {
+            if (0 < $result['numeric'] || 0 < $result['binary']) {
                 $symbols += 10;
             }
-        } elseif(0 < $result['hexadecimal']) {
+        } elseif (0 < $result['hexadecimal']) {
             $symbols += 16;
-            if(0 < $result['lower'] && 0 < $result['upper']) {
+            if (0 < $result['lower'] && 0 < $result['upper']) {
                 $symbols += 6;
             }
-        } elseif(0 < $result['numeric']) {
+        } elseif (0 < $result['numeric']) {
             $symbols += 10;
-        } elseif(0 < $result['binary']) {
+        } elseif (0 < $result['binary']) {
             $symbols += 2;
         }
 
@@ -61,7 +62,8 @@ class PasswordMeterAnssi extends PasswordAbstractMeter
     /**
      * {@inheritDoc}
      */
-    public static function thresholds() {
+    public static function thresholds()
+    {
         $result = [
             128 => static::STRENGTH_VERY_STRONG,
             100 => static::STRENGTH_STRONG,

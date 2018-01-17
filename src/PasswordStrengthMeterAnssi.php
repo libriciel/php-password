@@ -1,9 +1,9 @@
 <?php
 namespace Libriciel\Utility\Password;
 
-use Libriciel\Utility\Password\PasswordAbstractMeter;
+use Libriciel\Utility\Password\PasswordAbstractStrengthMeter;
 
-class PasswordMeterAnssi extends PasswordAbstractMeter
+class PasswordStrengthMeterAnssi extends PasswordAbstractStrengthMeter
 {
     /**
      * {@inheritDoc}

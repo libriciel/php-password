@@ -1,9 +1,9 @@
 <?php
 namespace Libriciel\Utility\Password;
 
-use Libriciel\Utility\Password\PasswordMeterInterface;
+use Libriciel\Utility\Password\PasswordStrengthMeterInterface;
 
-abstract class PasswordAbstractMeter implements PasswordMeterInterface
+abstract class PasswordAbstractStrengthMeter implements PasswordStrengthMeterInterface
 {
     /**
      * Retourne le nombre de bits d'entropie pour une chaîne de caractères.

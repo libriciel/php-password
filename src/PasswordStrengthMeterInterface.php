@@ -1,7 +1,7 @@
 <?php
 namespace Libriciel\Utility\Password;
 
-interface PasswordMeterInterface
+interface PasswordStrengthMeterInterface
 {
     /**
      * La constante utilisée pour une force de mot de passe "très forte".

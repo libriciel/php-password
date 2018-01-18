@@ -4,29 +4,97 @@
 
 	<target name="build" depends="clean,lint,phpunit"/>
 	<target name="quality" depends="clean,lint,phpunit,phpmd,phpcs,phploc,phpcpd,phpdoc,phpcb,pdepend"/>
+    <target name="lint" depends="sh-lint,xml-lint,php-lint,po-lint,js-lint,css-lint"/>
 
-	<!-- Nettoyage des répertoires de travail -->
-	<target name="clear">
-		<delete dir="${dir.out}" />
-	</target>
-
-	<!-- Nettoyage et création des répertoires de travail -->
-	<target name="clean" depends="clear">
+	<!-- Suppression et création d'environnement de travail -->
+	<target name="clean">
+        <delete dir="${dir.out}" />
 		<mkdir dir="${dir.out}" />
 	</target>
+    
+	<!-- Vérification de la syntaxe des fichiers SHELL -->
+	<target name="sh-lint">
+		<apply executable="bash" dir="${basedir}" failonerror="on" logerror="on">
+			<arg line="-n"/>
+			<fileset
+				dir="${basedir}"
+				includes="${sh.includes}"
+				excludes="${sh.excludes}"
+            />
+		</apply>
+	</target>
+    
+	<!-- Vérification de la syntaxe des fichiers XML -->
+	<target name="xml-lint">
+		<apply executable="xmllint" dir="${basedir}" failonerror="on" logerror="on">
+			<arg line="--noout"/>
+			<fileset
+				dir="${basedir}"
+				includes="${xml.includes}"
+				excludes="${xml.excludes}"
+            />
+		</apply>
+	</target>
 
-	<!-- Vérification de la syntaxe des fichiers .php et .ctp -->
+	<!-- Vérification de la syntaxe des fichiers PHP -->
 	<target name="php-lint">
 		<apply executable="php" dir="${basedir}" failonerror="on" logerror="on">
 			<arg line="-l"/>
 			<fileset
 				dir="${basedir}"
-				includes="**/*.php"
-				excludes="${excludes}" />
+				includes="${php.includes}"
+				excludes="${php.excludes}"
+            />
 		</apply>
 	</target>
-    
-    <target name="lint" depends="php-lint"/>
+
+	<!-- Vérification de la syntaxe des fichiers PO -->
+	<target name="po-lint">
+		<apply executable="msgfmt" dir="${basedir}" failonerror="on" logerror="on">
+			<arg line="-v"/>
+			<arg line="-C"/>
+			<arg line="-o /dev/null"/>
+			<fileset
+				dir="${basedir}"
+				includes="${po.includes}"
+				excludes="${po.excludes}"
+            />
+		</apply>
+	</target>
+
+	<!-- Vérification de la syntaxe des fichiers JS -->
+	<!--
+		@url http://ariya.ofilabs.com/2012/10/javascript-validator-with-esprima.html
+		sudo aptitude install nodejs nodejs-legacy npm
+		sudo npm install -g esprima
+	-->
+	<target name="js-lint">
+		<apply executable="esvalidate" dir="${basedir}" failonerror="on" logerror="on">
+			<fileset
+				dir="${basedir}"
+				includes="${js.includes}"
+				excludes="${js.excludes}"
+            />
+		</apply>
+	</target>
+
+	<!-- Vérification de la syntaxe des fichiers CSS -->
+    <!--
+		@url https://github.com/stubbornella/csslint/wiki/Command-line-interface
+		sudo aptitude install nodejs nodejs-legacy npm
+		sudo npm install -g csslint
+    -->
+	<target name="css-lint">
+		<apply executable="csslint" dir="${basedir}" failonerror="on" logerror="on">
+			<arg line="--format=compact"/>
+			<arg line="--warnings=display-property-grouping,duplicate-properties,empty-rules,known-properties"/>
+			<fileset
+				dir="${basedir}"
+				includes="${css.includes}"
+				excludes="${css.excludes}"
+            />
+		</apply>
+	</target>
     
 	<!-- Tests unitaires -->
 	<target name="phpunit" depends="clean,lint">

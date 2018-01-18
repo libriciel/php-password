@@ -45,7 +45,7 @@ rm -rf out/* \
     --coverage-html=out/coverage \
     --coverage-clover=out/phpunit-coverage.xml \
     tests \
-&& vendor/bin/phpmd \
+; vendor/bin/phpmd \
     src \
     xml \
     cleancode,codesize,controversial,design,naming,unusedcode \
@@ -61,21 +61,21 @@ rm -rf out/* \
     --log-xml=out/phploc.xml \
     src \
     tests \
-&& vendor/bin/phpcpd \
+; vendor/bin/phpcpd \
     --log-pmd=out/phpcpd.xml \
     src \
     tests \
-&& vendor/bin/phpdoc \
+; vendor/bin/phpdoc \
     -t out/phpdoc \
     -d src \
     -d tests \
-&& vendor/bin/phpcb \
+; vendor/bin/phpcb \
     -o out/phpcb \
     -s src \
     -s tests \
     --log out \
-&& mkdir -p out/pdepend \
-&& vendor/bin/pdepend \
+; mkdir -p out/pdepend \
+; vendor/bin/pdepend \
     --coverage-report=out/phpunit-coverage.xml \
     --dependency-xml=out/pdepend/dependency.xml \
     --jdepend-chart=out/pdepend/jdepend-chart.svg \

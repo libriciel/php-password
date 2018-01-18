@@ -34,9 +34,16 @@ Librairie PHP permettant de calculer la force et l'entropie d'un mot de passe et
 ##### Qualité du code
 
 ```bash
+sudo apt-get install php-xdebug
+```
+
+```bash
 rm -rf out/* \
 && vendor/bin/phpunit \
     --log-junit=out/phpunit.xml \
+    --whitelist=src \
+    --coverage-html=out/coverage \
+    --coverage-clover=out/phpunit-coverage.xml \
     tests \
 && vendor/bin/phpmd \
     src \
@@ -69,19 +76,13 @@ rm -rf out/* \
     --log out \
 && mkdir -p out/pdepend \
 && vendor/bin/pdepend \
+    --coverage-report=out/phpunit-coverage.xml \
     --dependency-xml=out/pdepend/dependency.xml \
     --jdepend-chart=out/pdepend/jdepend-chart.svg \
     --jdepend-xml=out/pdepend/jdepend.xml \
     --overview-pyramid=out/pdepend/overview-pyramid.svg \
     --summary-xml=out/pdepend/summary.xml \
     src
-```
-
-#### @todo
-
-```bash
-&& vendor/bin/pdepend \
-    --coverage-report=...
 ```
 
 #### as@lae

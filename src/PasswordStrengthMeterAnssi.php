@@ -6,13 +6,20 @@ use Libriciel\Utility\Password\PasswordAbstractStrengthMeter;
 class PasswordStrengthMeterAnssi extends PasswordAbstractStrengthMeter
 {
     /**
-     * {@inheritDoc}
+     * Retourne un array contenant un indicateur de présence des classes de
+     * caractères présentes dans la chaîne.
+     *
+     * Les noms des classes sont: binary, numeric, lower, upper, mixed_cases,
+     * hexadecimal, alphabetic, extra1 et extra2.
+     *
+     * @param string $string
+     * @return array
      */
-    public static function symbols($string)
+    protected static function classes($string)
     {
-        $symbols = 0;
         $alphabetic = false !== mb_eregi('[g-z]', $string);
         $hexadecimal = false !== mb_eregi('[a-f]', $string);
+
         $result = [
             // 20
             'extra2' => false !== mb_ereg('[&\[\|\]@\^µ§:/;\.,<>°²³\'"]', $string),
@@ -26,38 +33,56 @@ class PasswordStrengthMeterAnssi extends PasswordAbstractStrengthMeter
             'numeric' => false !== mb_ereg('[2-9]', $string),
             // 2
             'binary' => false !== mb_ereg('[0-1]', $string),
-            'lower' => $alphabetic || $hexadecimal ? mb_ereg('[a-z]', $string) : null,
-            'upper' => $alphabetic || $hexadecimal ? mb_ereg('[A-Z]', $string) : null
+            'lower' => $alphabetic || $hexadecimal
+                ? false !== mb_ereg('[a-z]', $string)
+                : false,
+            'upper' => $alphabetic || $hexadecimal
+                ? false !== mb_ereg('[A-Z]', $string)
+                : false
         ];
+        
+        $result['mixed_cases'] = true === $result['lower']
+            && true === $result['upper'];
 
-        if (0 < $result['extra2']) {
-            $symbols += 20;
-        }
-        if (0 < $result['extra1']) {
-            $symbols += 8;
-        }
-        if (0 < $result['alphabetic']) {
-            $symbols += 26;
-            if (0 < $result['lower'] && 0 < $result['upper']) {
-                $symbols += 26;
-            }
-            if (0 < $result['numeric'] || 0 < $result['binary']) {
-                $symbols += 10;
-            }
-        } elseif (0 < $result['hexadecimal']) {
-            $symbols += 16;
-            if (0 < $result['lower'] && 0 < $result['upper']) {
-                $symbols += 6;
-            }
-        } elseif (0 < $result['numeric']) {
-            $symbols += 10;
-        } elseif (0 < $result['binary']) {
-            $symbols += 2;
-        }
-
-        return $symbols;
+        return $result;
     }
-    
+
+    /**
+     * {@inheritDoc}
+     */
+    public static function symbols($string)
+    {
+        $result = 0;
+        $classes = static::classes($string);
+
+        if (true === $classes['extra2']) {
+            $result += 20;
+        }
+        if (true === $classes['extra1']) {
+            $result += 8;
+        }
+
+        if (true === $classes['alphabetic']) {
+            $result += 26;
+            if (true === $classes['mixed_cases']) {
+                $result += 26;
+            }
+            if (true === $classes['numeric'] || true === $classes['binary']) {
+                $result += 10;
+            }
+        } elseif (true === $classes['hexadecimal']) {
+            $result += 16;
+            if (true === $classes['mixed_cases']) {
+                $result += 6;
+            }
+        } elseif (true === $classes['numeric']) {
+            $result += 10;
+        } elseif (true === $classes['binary']) {
+            $result += 2;
+        }
+
+        return $result;
+    }
 
     /**
      * {@inheritDoc}

@@ -147,6 +147,22 @@ class BasicsTest extends TestCase
     }
 
     /**
+     * Test de la méthode PasswordStrengthMeterAnssi::entropyBits() avec des
+     * exemples concrêts.
+     */
+    public function testEntropyBitsExemples()
+    {
+        // @see {@url https://www.ssi.gouv.fr/guide/mot-de-passe/}
+        $this->assertEquals(67, PasswordStrengthMeterAnssi::entropyBits('ght8CD%E7am'));
+        $this->assertEquals(60, PasswordStrengthMeterAnssi::entropyBits('1tvmQ2tl’A'));
+        $this->assertEquals(64, PasswordStrengthMeterAnssi::entropyBits('1tvmQ2tl\'A'));
+
+        // @see {@url https://www.explainxkcd.com/wiki/index.php/936:_Password_Strength}
+        $this->assertEquals(70, PasswordStrengthMeterAnssi::entropyBits('Tr0ub4dor&3'));
+        $this->assertEquals(118, PasswordStrengthMeterAnssi::entropyBits('correcthorsebatterystaple'));
+    }
+
+    /**
      * Test de la méthode PasswordStrengthMeterAnssi::strength() avec des mots de passe
      * de force "très faible".
      */

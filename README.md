@@ -4,14 +4,26 @@ Librairie PHP permettant de calculer la force et l'entropie d'un mot de passe et
 
 ## Documentation
 
+- xkcd
+    - https://www.explainxkcd.com/wiki/index.php/936:_Password_Strength
+    - https://www.explainxkcd.com/wiki/index.php/792:_Password_Reuse
+- https://www.kaspersky.com/blog/password-check/
+- zxcvbn
+    - https://www.theguardian.com/technology/2016/aug/19/password-strength-meters-security
+    - https://blogs.dropbox.com/tech/2012/04/zxcvbn-realistic-password-strength-estimation/
+    - https://fr.wiktionary.org/wiki/Wiktionnaire:Listes_de_fr%C3%A9quence#Fran%C3%A7ais
+    - https://github.com/bjeavons/zxcvbn-php
+    - https://www.usenix.org/conference/usenixsecurity16/technical-sessions/presentation/wheeler
+
 ### Liens
 
 - https://en.wikipedia.org/wiki/Password_strength#Entropy_as_a_measure_of_password_strength
 - https://www.ssi.gouv.fr/guide/mot-de-passe/
+- https://www.ssi.gouv.fr/uploads/IMG/pdf/NP_MDP_NoteTech.pdf
 - https://www.ssi.gouv.fr/administration/precautions-elementaires/calculer-la-force-dun-mot-de-passe/
 - http://rumkin.com/tools/password/passchk.php
 - https://www.e-services.uha.fr/mdp/
-- https://xkcd.com/936/
+- https://madiba.encs.concordia.ca/~x_decarn/papers/password-meters-ndss2014.pdf
 
 ### Code PHP
 

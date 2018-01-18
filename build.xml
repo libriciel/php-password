@@ -2,14 +2,20 @@
 <project default="build">
     <property file="build.properties" />
 
+    <!-- Vérification de la syntaxe des fichiers, passage des tests unitaires -->
 	<target name="build" depends="clean,lint,phpunit"/>
-	<target name="quality" depends="clean,lint,phpunit,phpmd,phpcs,phploc,phpcpd,phpdoc,phpcb,pdepend"/>
+
+    <!-- Un build et des analyses statiques de code, avec écriture de rapports -->
+	<target name="quality" depends="clean,lint,phpunit-coverage,phpmd,phpcs,phploc,phpcpd,phpdoc,phpcb,pdepend"/>
+
+    <!-- Vérification de la syntaxe des fichiers -->
     <target name="lint" depends="sh-lint,xml-lint,php-lint,po-lint,js-lint,css-lint"/>
 
-	<!-- Suppression et création d'environnement de travail -->
+	<!-- Suppression et création de l'environnement de travail -->
 	<target name="clean">
         <delete dir="${dir.out}" />
 		<mkdir dir="${dir.out}" />
+		<mkdir dir="${dir.out}/images" />
 	</target>
     
 	<!-- Vérification de la syntaxe des fichiers SHELL -->
@@ -99,6 +105,13 @@
 	<!-- Tests unitaires -->
 	<target name="phpunit" depends="clean,lint">
 		<exec executable="${phpunit}" dir="${basedir}" failonerror="true">
+			<arg line="tests" />
+		</exec>
+	</target>
+    
+	<!-- Tests unitaires avec rapports et couverture de code -->
+	<target name="phpunit-coverage" depends="clean,lint">
+		<exec executable="${phpunit}" dir="${basedir}" failonerror="true">
 			<arg line="--log-junit=${dir.logs}/phpunit.xml
                 --whitelist=src
                 --coverage-html=${dir.out}/coverage
@@ -185,9 +198,9 @@
 			failonerror="false">
 			<arg line="--coverage-report=${dir.logs}/phpunit-coverage.xml
                        --dependency-xml=${dir.logs}/pdepend-dependency.xml
-                       --jdepend-chart=${dir.logs}/pdepend-jdepend-chart.svg
+                       --jdepend-chart=${dir.out}/images/pdepend-jdepend-chart.svg
                        --jdepend-xml=${dir.logs}/pdepend-jdepend.xml
-                       --overview-pyramid=${dir.logs}/pdepend-overview-pyramid.svg
+                       --overview-pyramid=${dir.out}/images/pdepend-overview-pyramid.svg
                        --summary-xml=${dir.logs}/pdepend-summary.xml
                        ${basedir}/src" />
 		</exec>

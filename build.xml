@@ -103,7 +103,7 @@
 	</target>
     
 	<!-- Tests unitaires -->
-	<target name="phpunit" depends="clean,lint">
+	<target name="phpunit" depends="lint">
 		<exec executable="${phpunit}" dir="${basedir}" failonerror="true">
 			<arg line="tests" />
 		</exec>

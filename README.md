@@ -34,7 +34,9 @@ Librairie PHP permettant de calculer la force et l'entropie d'un mot de passe et
 ##### Qualité du code
 
 ```bash
-sudo apt-get install php-xdebug
+sudo apt-get install \
+    ant \
+    php-xdebug
 ```
 
 ```bash

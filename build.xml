@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project default="build">
+    <property file="build.properties" />
+
+	<target name="build" depends="clean,lint,phpunit"/>
+	<target name="quality" depends="clean,lint,phpunit,phpmd,phpcs,phploc,phpcpd,phpdoc,phpcb,pdepend"/>
+
+	<!-- Nettoyage des répertoires de travail -->
+	<target name="clear">
+		<delete dir="${dir.out}" />
+	</target>
+
+	<!-- Nettoyage et création des répertoires de travail -->
+	<target name="clean" depends="clear">
+		<mkdir dir="${dir.out}" />
+	</target>
+
+	<!-- Vérification de la syntaxe des fichiers .php et .ctp -->
+	<target name="php-lint">
+		<apply executable="php" dir="${basedir}" failonerror="on" logerror="on">
+			<arg line="-l"/>
+			<fileset
+				dir="${basedir}"
+				includes="**/*.php"
+				excludes="${excludes}" />
+		</apply>
+	</target>
+    
+    <target name="lint" depends="php-lint"/>
+    
+	<!-- Tests unitaires -->
+	<target name="phpunit" depends="clean,lint">
+		<exec executable="${phpunit}" dir="${basedir}" failonerror="true">
+			<arg line="--log-junit=${dir.logs}/phpunit.xml
+                --whitelist=src
+                --coverage-html=${dir.out}/coverage
+                --coverage-clover=${dir.logs}/phpunit-coverage.xml
+                tests" />
+		</exec>
+	</target>
+
+	<!-- Mess detector -->
+	<target name="phpmd" depends="clean,lint">
+		<exec executable="${phpmd}"
+			dir="${basedir}"
+			failonerror="false">
+			<arg line="src
+                xml
+                cleancode,codesize,controversial,design,naming,unusedcode
+                --reportfile ${dir.logs}/phpmd.xml"/>
+		</exec>
+	</target>
+
+	<!-- Checkstyle -->
+	<target name="phpcs" depends="clean,lint">
+		<exec executable="${phpcs}"
+			  dir="${basedir}"
+			  output="${dir.logs}/phpcs.xml"
+			  error="/dev/null"
+			  failonerror="false">
+			<arg line="--report=checkstyle
+                       --standard=PSR2
+                       src
+                       tests" />
+		</exec>
+	</target>
+
+	<!-- Mesures du code -->
+	<target name="phploc" depends="clean,lint">
+		<exec executable="${phploc}" dir="${basedir}">
+			<arg line="--count-tests
+                       --log-csv=${dir.logs}/phploc.csv
+                       --log-xml=${dir.logs}/phploc.xml
+                       ${basedir}/src
+                       ${basedir}/tests" />
+		</exec>
+	</target>
+    
+	<!-- Détecteur de copier/coller -->
+	<target name="phpcpd" depends="clean,lint">
+		<exec executable="${phpcpd}"
+			dir="${basedir}"
+			failonerror="false">
+			<arg line="--log-pmd=${dir.logs}/phpcpd.xml
+                       ${basedir}/src
+                       ${basedir}/tests" />
+		</exec>
+	</target>
+    
+	<!-- Documentation API -->
+	<target name="phpdoc" depends="clean,lint">
+		<exec executable="${phpdoc}"
+			dir="${basedir}"
+			failonerror="false">
+			<arg line="-t ${dir.out}/phpdoc
+                       -d ${basedir}/src
+                       -d ${basedir}/tests" />
+		</exec>
+	</target>
+    
+	<!-- Navigateur de code -->
+	<target name="phpcb" depends="clean,lint">
+		<exec executable="${phpcb}"
+			dir="${basedir}"
+			failonerror="false">
+			<arg line="-o ${dir.out}/phpcb
+                       -s ${basedir}/src
+                       -s ${basedir}/tests
+                       --log ${dir.logs}" />
+		</exec>
+	</target>
+    
+	<!-- Dépendances -->
+	<target name="pdepend" depends="clean,lint">
+		<exec executable="${pdepend}"
+			dir="${basedir}"
+			failonerror="false">
+			<arg line="--coverage-report=${dir.logs}/phpunit-coverage.xml
+                       --dependency-xml=${dir.logs}/pdepend-dependency.xml
+                       --jdepend-chart=${dir.logs}/pdepend-jdepend-chart.svg
+                       --jdepend-xml=${dir.logs}/pdepend-jdepend.xml
+                       --overview-pyramid=${dir.logs}/pdepend-overview-pyramid.svg
+                       --summary-xml=${dir.logs}/pdepend-summary.xml
+                       ${basedir}/src" />
+		</exec>
+	</target>
+
+</project>

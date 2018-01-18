@@ -52,28 +52,24 @@ class PasswordStrengthMeterAnssi extends PasswordAbstractStrengthMeter
      */
     public static function symbols($string)
     {
-        $result = 0;
         $classes = static::classes($string);
+        $result = 0;
 
         if (true === $classes['extra2']) {
             $result += 20;
         }
+
         if (true === $classes['extra1']) {
             $result += 8;
         }
-
-        if (true === $classes['alphabetic']) {
-            $result += 26;
-            if (true === $classes['mixed_cases']) {
-                $result += 26;
-            }
+        
+        if (true === $classes['alphabetic'] || true === $classes['hexadecimal']) {
+            $result += (
+                (true === $classes['alphabetic'] ? 26 : 6)
+                * (true === $classes['mixed_cases'] ? 2 : 1)
+            );
             if (true === $classes['numeric'] || true === $classes['binary']) {
                 $result += 10;
-            }
-        } elseif (true === $classes['hexadecimal']) {
-            $result += 16;
-            if (true === $classes['mixed_cases']) {
-                $result += 6;
             }
         } elseif (true === $classes['numeric']) {
             $result += 10;

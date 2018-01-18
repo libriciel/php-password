@@ -17,7 +17,7 @@ class BasicsTest extends TestCase
             100 => PasswordStrengthMeterAnssi::STRENGTH_STRONG,
             80 => PasswordStrengthMeterAnssi::STRENGTH_MEDIUM,
             64 => PasswordStrengthMeterAnssi::STRENGTH_WEAK,
-            0 => PasswordStrengthMeterAnssi::STRENGTH_REALLY_WEAK,
+            0 => PasswordStrengthMeterAnssi::STRENGTH_VERY_WEAK,
         ];
         $this->assertEquals($expected, $actual);
     }
@@ -170,7 +170,7 @@ class BasicsTest extends TestCase
     {
         // 9 caractères latin, majuscules et minuscules => 51 entropyBits
         $this->assertEquals(
-            PasswordStrengthMeterAnssi::STRENGTH_REALLY_WEAK,
+            PasswordStrengthMeterAnssi::STRENGTH_VERY_WEAK,
             PasswordStrengthMeterAnssi::strength(str_repeat('Abz', 3))
         );
     }

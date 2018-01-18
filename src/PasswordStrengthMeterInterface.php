@@ -26,7 +26,7 @@ interface PasswordStrengthMeterInterface
     /**
      * La constante utilisée pour une force de mot de passe "très faible".
      */
-    const STRENGTH_REALLY_WEAK = 1;
+    const STRENGTH_VERY_WEAK = 1;
     
     /**
      * Retourne le nombre estimé de symboles à tester pour la chaîne de
@@ -41,7 +41,7 @@ interface PasswordStrengthMeterInterface
      * Retourne la force d'un mot de passe.
      *
      * Il s'agit d'un chiffre entre 1 (très faible) et 5 (très fort) qui
-     * correspond au constantes de classe STRENGTH_REALLY_WEAK (1), STRENGTH_WEAK (2),
+     * correspond au constantes de classe STRENGTH_VERY_WEAK (1), STRENGTH_WEAK (2),
      * STRENGTH_MEDIUM (3), STRENGTH_STRONG (4) et STRENGTH_VERY_STRONG (5).
      *
      * @param string $string Le mot de passe

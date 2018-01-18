@@ -1,8 +1,19 @@
 <?php
+/**
+ * Code source de la classe Libriciel\Utility\Password\PasswordStrengthMeterAnssi
+ *
+ * @license CeCiLL V2
+ */
 namespace Libriciel\Utility\Password;
 
 use Libriciel\Utility\Password\PasswordAbstractStrengthMeter;
 
+/**
+ * Cette classe calcule la force et l'entropie d'un mot de passe comme définis
+ * sur le site de l'ANSSI.
+ * 
+ * @see {@url https://www.ssi.gouv.fr/administration/precautions-elementaires/calculer-la-force-dun-mot-de-passe/}
+ */
 class PasswordStrengthMeterAnssi extends PasswordAbstractStrengthMeter
 {
     /**

@@ -1,8 +1,17 @@
 <?php
+/**
+ * Code source de la classe Libriciel\Utility\Password\PasswordAbstractStrengthMeter
+ *
+ * @license CeCiLL V2
+ */
 namespace Libriciel\Utility\Password;
 
 use Libriciel\Utility\Password\PasswordStrengthMeterInterface;
 
+/**
+ * Classe abstraite permettant de calculer les symboles, les bits d'entropie et
+ * la force d'un mot de passe.
+ */
 abstract class PasswordAbstractStrengthMeter implements PasswordStrengthMeterInterface
 {
     /**

@@ -1,6 +1,14 @@
 <?php
+/**
+ * Code source de l'interface Libriciel\Utility\PasswordPasswordStrengthMeterInterface
+ *
+ * @license CeCiLL V2
+ */
 namespace Libriciel\Utility\Password;
 
+/**
+ * Une interface pour les classes qui retournent la force d'un mot de passe.
+ */
 interface PasswordStrengthMeterInterface
 {
     /**

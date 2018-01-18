@@ -1,10 +1,18 @@
 <?php
+/**
+ * Code source de la classe LibricielTest\Utility\Password\PasswordStrengthMeterAnssiTest
+ *
+ * @license CeCiLL V2
+ */
 namespace LibricielTest\Utility\Password;
 
 use PHPUnit\Framework\TestCase;
 use Libriciel\Utility\Password\PasswordStrengthMeterAnssi;
 
-class BasicsTest extends TestCase
+/**
+ * Tests unitaires de la classe Libriciel\Utility\Password\PasswordStrengthMeterAnssi
+ */
+class PasswordStrengthMeterAnssiTest extends TestCase
 {
     /**
      * Test de la méthode PasswordStrengthMeterAnssi::thresholds().

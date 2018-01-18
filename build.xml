@@ -3,7 +3,7 @@
     <property file="build.properties" />
 
     <!-- Vérification de la syntaxe des fichiers, passage des tests unitaires -->
-	<target name="build" depends="clean,lint,phpunit"/>
+	<target name="build" depends="lint,phpunit"/>
 
     <!-- Un build et des analyses statiques de code, avec écriture de rapports -->
 	<target name="quality" depends="clean,lint,phpunit-coverage,phpmd,phpcs,phploc,phpcpd,phpdoc,phpcb,pdepend"/>

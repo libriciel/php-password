@@ -166,7 +166,7 @@ class BasicsTest extends TestCase
      * Test de la méthode PasswordStrengthMeterAnssi::strength() avec des mots de passe
      * de force "très faible".
      */
-    public function testStrengthReallyWeak()
+    public function testStrengthVeryWeak()
     {
         // 9 caractères latin, majuscules et minuscules => 51 entropyBits
         $this->assertEquals(

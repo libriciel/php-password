@@ -29,18 +29,19 @@ class PasswordStrengthMeterAnssi extends PasswordAbstractStrengthMeter
         $lower = false !== mb_ereg('[a-z]', $string);
         $upper = false !== mb_ereg('[A-Z]', $string);
 
-        $letters = true === $lower || true === $upper;
-        $mixedLetters = true === $lower && true === $upper;
-        $numbers = false !== mb_ereg('[0-9]', $string);
+        $hexadecimal = false !== mb_ereg('^[0-9a-fA-F]+$', $string)
+            && false !== mb_ereg('[0-9]', $string)
+            && (
+                true === $lower
+                || true === $upper
+            );
 
-        $onlyHexadecimal = false !== mb_ereg('^[0-9a-fA-F]+$', $string);
+        $result = 0;
 
         if (false !== mb_ereg('^[01]+$', $string)) {
             $result = 2;
-        } elseif (true === $onlyHexadecimal && true === $numbers && true === $mixedLetters) {
-            $result = 22;
-        } elseif (true === $onlyHexadecimal && true === $numbers && true === $letters) {
-            $result = 16;
+        } elseif (true === $hexadecimal) {
+            $result = (true === $lower && true === $upper) ? 22 : 16;
         } else {
             $patterns = [
                 '[0-9]' => 10,
@@ -52,7 +53,6 @@ class PasswordStrengthMeterAnssi extends PasswordAbstractStrengthMeter
                 '[ÀÂÄÆÇÈÉÊËÎÏÔŒÙÛÜ]' => 16
             ];
 
-            $result = 0;
             foreach ($patterns as $pattern => $entropy) {
                 if (false !== mb_ereg($pattern, $string)) {
                     $result += $entropy;

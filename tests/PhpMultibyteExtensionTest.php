@@ -61,4 +61,21 @@ class UtilityMultibyteTest extends TestCase
 
         $this->assertEquals([$string], mb_str_split($string, 66));
     }
+
+    /**
+     * Test de la fonction randomize_string.
+     */
+    public function testRandomizeString()
+    {
+        $string = 'Un été comme un autre.';
+        $random = randomize_string($string);
+
+        $this->assertNotEquals($string, $random);
+
+        $array = mb_str_split($string);
+        sort($array);
+        $random_array = mb_str_split($random);
+        sort($random_array);
+        $this->assertEquals($array, $random_array);
+    }
 }

@@ -36,34 +36,3 @@ if (false === function_exists('mb_str_split')) {
         return $result;
     }
 }
-
-if (false === function_exists('randomize_string')) {
-    /**
-     * Mélange les caractères d'une chaîne de caractères multibyte grâce à des
-     * fonctions cryptographiquement sécurisées.
-     *
-     * @see {@url http://php.net/manual/fr/function.str-shuffle.php}
-     * @see {@url http://php.net/manual/fr/function.random-int.php}
-     *
-     * @param string $string La chaîne d'entrée
-     * @param string $encoding Le paramètre encoding est l'encodage des caractères.
-     *  S'il est omis, l'encodage de caractres interne sera utilisé.
-     * @return array
-     */
-    function randomize_string($string, $encoding = null)
-    {
-        $encoding = null === $encoding ? mb_internal_encoding() : $encoding;
-        $length = mb_strlen($string, $encoding);
-        $result = '';
-
-        while($length > 0) {
-            $position = random_int(0, $length-1);
-            $result .= mb_substr($string, $position, 1, $encoding);
-            $string = mb_substr($string, 0, $position, $encoding)
-                . mb_substr($string, $position+1, $length-$position, $encoding);
-            $length--;
-        }
-        
-        return $result;
-    }
-}

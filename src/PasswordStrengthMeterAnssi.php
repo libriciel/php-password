@@ -1,9 +1,11 @@
 <?php
+
 /**
  * Code source de la classe Libriciel\Utility\Password\PasswordStrengthMeterAnssi
  *
  * @license CeCiLL V2
  */
+
 namespace Libriciel\Utility\Password;
 
 use Libriciel\Utility\Password\PasswordAbstractStrengthMeter;
@@ -11,81 +13,50 @@ use Libriciel\Utility\Password\PasswordAbstractStrengthMeter;
 /**
  * Cette classe calcule la force et l'entropie d'un mot de passe comme définis
  * sur le site de l'ANSSI.
- * 
+ *
  * @see {@url https://www.ssi.gouv.fr/administration/precautions-elementaires/calculer-la-force-dun-mot-de-passe/}
  */
 class PasswordStrengthMeterAnssi extends PasswordAbstractStrengthMeter
 {
-    /**
-     * Retourne un array contenant un indicateur de présence des classes de
-     * caractères présentes dans la chaîne.
-     *
-     * Les noms des classes sont: binary, numeric, lower, upper, mixed_cases,
-     * hexadecimal, alphabetic, extra1 et extra2.
-     *
-     * @param string $string
-     * @return array
-     */
-    protected static function classes($string)
-    {
-        $alphabetic = false !== mb_eregi('[g-z]', $string);
-        $hexadecimal = false !== mb_eregi('[a-f]', $string);
-
-        $result = [
-            // 20
-            'extra2' => false !== mb_ereg('[&\[\|\]@\^µ§:/;\.,<>°²³\'"]', $string),
-            // 8
-            'extra1' => false !== mb_ereg('[€!#$*%\? ]', $string),
-            // 40 (52 - 12)
-            'alphabetic' => $alphabetic,
-            // 12 ((16 - 8 - 2) + 6)
-            'hexadecimal' => $hexadecimal,
-            // 8 (10 - 2)
-            'numeric' => false !== mb_ereg('[2-9]', $string),
-            // 2
-            'binary' => false !== mb_ereg('[0-1]', $string),
-            'lower' => $alphabetic || $hexadecimal
-                ? false !== mb_ereg('[a-z]', $string)
-                : false,
-            'upper' => $alphabetic || $hexadecimal
-                ? false !== mb_ereg('[A-Z]', $string)
-                : false
-        ];
-        
-        $result['mixed_cases'] = true === $result['lower']
-            && true === $result['upper'];
-
-        return $result;
-    }
 
     /**
      * {@inheritDoc}
+     * @param string $string La chaîne de caractères
+     * @return int
      */
     public static function symbols($string)
     {
-        $classes = static::classes($string);
-        $result = 0;
+        $lower = false !== mb_ereg('[a-z]', $string);
+        $upper = false !== mb_ereg('[A-Z]', $string);
 
-        if (true === $classes['extra2']) {
-            $result += 20;
-        }
+        $letters = true === $lower || true === $upper;
+        $mixed = true === $lower && true === $upper;
+        $numbers = false !== mb_ereg('[0-9]', $string);
 
-        if (true === $classes['extra1']) {
-            $result += 8;
-        }
-        
-        if (true === $classes['alphabetic'] || true === $classes['hexadecimal']) {
-            $result += (
-                (true === $classes['alphabetic'] ? 26 : 6)
-                * (true === $classes['mixed_cases'] ? 2 : 1)
-            );
-            if (true === $classes['numeric'] || true === $classes['binary']) {
+        $onlyHexadecimal = false !== mb_ereg('^[0-9a-fA-F]+$', $string);
+
+        if (false !== mb_ereg('^[01]+$', $string)) {
+            $result = 2;
+        } elseif (true === $onlyHexadecimal && true === $numbers && true === $mixed) {
+            $result = 22;
+        } elseif (true === $onlyHexadecimal && true === $numbers && true === $letters) {
+            $result = 16;
+        } else {
+            $result = 0;
+
+            if (true === $numbers) {
                 $result += 10;
             }
-        } elseif (true === $classes['numeric']) {
-            $result += 10;
-        } elseif (true === $classes['binary']) {
-            $result += 2;
+
+            $result += ((true === $lower ? 26 : 0) + (true === $upper ? 26 : 0));
+
+            if (false !== mb_ereg('[€\\!#\\$\\*%\\? ]', $string)) {
+                $result += 8;
+            }
+
+            if (false !== mb_ereg('[&\\[\\|\\]@\\^µ§\\:/;\\.,\\<\\>°²³\'"]', $string)) {
+                $result += 20;
+            }
         }
 
         return $result;
@@ -93,6 +64,8 @@ class PasswordStrengthMeterAnssi extends PasswordAbstractStrengthMeter
 
     /**
      * {@inheritDoc}
+     * @param string $string Le mot de passe
+     * @return integer
      */
     public static function thresholds()
     {

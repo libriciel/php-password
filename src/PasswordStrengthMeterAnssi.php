@@ -16,7 +16,7 @@ use Libriciel\Utility\Password\PasswordStrengthMeterInterface;
  *
  * @see {@url https://www.ssi.gouv.fr/administration/precautions-elementaires/calculer-la-force-dun-mot-de-passe/}
  */
-class PasswordStrengthMeterAnssi implements PasswordStrengthMeterInterface
+abstract class PasswordStrengthMeterAnssi implements PasswordStrengthMeterInterface
 {
 
     /**

@@ -127,7 +127,7 @@
 			failonerror="false">
 			<arg line="src
                 xml
-                cleancode,codesize,controversial,design,naming,unusedcode
+                ${ruleset.phpmd}
                 --reportfile ${dir.logs}/phpmd.xml"/>
 		</exec>
 	</target>

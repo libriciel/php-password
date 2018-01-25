@@ -20,28 +20,38 @@ class PasswordStrengthMeterAnssi implements PasswordStrengthMeterInterface
 {
 
     /**
-     * {@inheritDoc}
-     * @param string $string La chaîne de caractères
+     * Retourne le nombre de symboles possibles à tester pour trouver une chaîne
+     * de caractères du même type que le mot de passe.
+     *
+     * Par exemple, "chien" reverra 24, "Chien" renverra 52, "chien6" renverra 36.
+     *
+     * Les classes de caractères sont les suivantes:
+     *  - 0 et 1
+     *  - 0 à 9
+     *  - 0 à 9, a à f ou A à F
+     *  - a à z
+     *  - A à Z
+     *  - caractères spéciaux
+     *      - €!#$*% ?: 8
+     *      - &[|]@^µ§\:/;.,<>°²³'": 20
+     *      - àâäæçèéêëîïôœùûü: 16
+     *      - ÀÂÄÆÇÈÉÊËÎÏÔŒÙÛÜ: 16
+     *
+     * @param string $string Le mot de passe
      * @return int
      */
     public static function symbols($string)
     {
-        $lower = false !== mb_ereg('[a-z]', $string);
-        $upper = false !== mb_ereg('[A-Z]', $string);
-
         $hexadecimal = false !== mb_ereg('^[0-9a-fA-F]+$', $string)
-            && false !== mb_ereg('[0-9]', $string)
-            && (
-                true === $lower
-                || true === $upper
-            );
+            && false !== mb_eregi('([0-9].*[a-f]|[a-f].*[0-9])', $string);
 
         $result = 0;
 
         if (false !== mb_ereg('^[01]+$', $string)) {
             $result = 2;
         } elseif (true === $hexadecimal) {
-            $result = (true === $lower && true === $upper) ? 22 : 16;
+            $result = false !== mb_ereg('([A-F].*[a-f]|[a-f].*[A-F])', $string)
+                ? 22 : 16;
         } else {
             $patterns = [
                 '[0-9]' => 10,
@@ -53,9 +63,9 @@ class PasswordStrengthMeterAnssi implements PasswordStrengthMeterInterface
                 '[ÀÂÄÆÇÈÉÊËÎÏÔŒÙÛÜ]' => 16
             ];
 
-            foreach ($patterns as $pattern => $entropy) {
+            foreach ($patterns as $pattern => $symbols) {
                 if (false !== mb_ereg($pattern, $string)) {
-                    $result += $entropy;
+                    $result += $symbols;
                 }
             }
         }
@@ -111,13 +121,14 @@ class PasswordStrengthMeterAnssi implements PasswordStrengthMeterInterface
     {
         $entropy = static::entropy($string);
         $thresholds = static::thresholds();
+        $result = static::STRENGTH_VERY_WEAK;
 
         foreach ($thresholds as $threshold => $strength) {
-            if ($entropy >= $threshold) {
-                return $strength;
+            if ($entropy >= $threshold && $strength > $result) {
+                $result = $strength;
             }
         }
 
-        return static::STRENGTH_VERY_WEAK;
+        return $result;
     }
 }

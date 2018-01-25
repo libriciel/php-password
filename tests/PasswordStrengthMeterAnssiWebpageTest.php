@@ -29,17 +29,17 @@ class PasswordStrengthMeterAnssiWebpageTest extends TestCase
     {
         foreach ($data as $length => $expected) {
             $password = substr($symbols, 0, $length);
-            $actual = PasswordStrengthMeterAnssi::entropyBits($password);
+            $actual = PasswordStrengthMeterAnssi::entropy($password);
             $message = sprintf("longueur %d, %d symboles: %s", $length, $symbols, $password);
             $this->assertEquals($expected, $actual, $message);
         }
     }
 
     /**
-     * Tests de la méthode PasswordStrengthMeterAnssi::entropyBits() avec 2
+     * Tests de la méthode PasswordStrengthMeterAnssi::entropy() avec 2
      * symboles (0 ou 1) et différentes longueurs.
      */
-    public function testEntropyBits2Symbols()
+    public function testEntropy2Symbols()
     {
         $symbols = '000000000000000000000000000000';
         $data = [
@@ -57,10 +57,10 @@ class PasswordStrengthMeterAnssiWebpageTest extends TestCase
     }
 
     /**
-     * Tests de la méthode PasswordStrengthMeterAnssi::entropyBits() avec 10
+     * Tests de la méthode PasswordStrengthMeterAnssi::entropy() avec 10
      * symboles (de 0 à 9) et différentes longueurs.
      */
-    public function testEntropyBits10Symbols()
+    public function testEntropy10Symbols()
     {
         $symbols = '333333333333333333333333333333';
         $data = [
@@ -78,10 +78,10 @@ class PasswordStrengthMeterAnssiWebpageTest extends TestCase
     }
 
     /**
-     * Tests de la méthode PasswordStrengthMeterAnssi::entropyBits() avec 16
+     * Tests de la méthode PasswordStrengthMeterAnssi::entropy() avec 16
      * symboles (de 0 à 9, a à f ou A à F) et différentes longueurs.
      */
-    public function testEntropyBits16Symbols()
+    public function testEntropy16Symbols()
     {
         $symbols = '4F4F4F4F4F4F4F4F4F4F4F4F4F4F4F';
         $data = [
@@ -102,10 +102,10 @@ class PasswordStrengthMeterAnssiWebpageTest extends TestCase
     }
 
     /**
-     * Tests de la méthode PasswordStrengthMeterAnssi::entropyBits() avec 26
+     * Tests de la méthode PasswordStrengthMeterAnssi::entropy() avec 26
      * symboles (de A à Z) et différentes longueurs.
      */
-    public function testEntropyBits26Symbols()
+    public function testEntropy26Symbols()
     {
         $symbols = 'GGGGGGGGGGGGGGGGGGGGGGGGGGGGGG';
         $data = [
@@ -126,10 +126,10 @@ class PasswordStrengthMeterAnssiWebpageTest extends TestCase
     }
 
     /**
-     * Tests de la méthode PasswordStrengthMeterAnssi::entropyBits() avec 36
+     * Tests de la méthode PasswordStrengthMeterAnssi::entropy() avec 36
      * symboles (0 à 9 et A à Z) et différentes longueurs.
      */
-    public function testEntropyBits36Symbols()
+    public function testEntropy36Symbols()
     {
         $symbols = '5G5G5G5G5G5G5G5G5G5G5G5G5G5G5G';
         $data = [
@@ -147,10 +147,10 @@ class PasswordStrengthMeterAnssiWebpageTest extends TestCase
     }
 
     /**
-     * Tests de la méthode PasswordStrengthMeterAnssi::entropyBits() avec 52
+     * Tests de la méthode PasswordStrengthMeterAnssi::entropy() avec 52
      * symboles (A à Z, a à z) et différentes longueurs.
      */
-    public function testEntropyBits52Symbols()
+    public function testEntropy52Symbols()
     {
         $symbols = 'gZgZgZgZgZgZgZgZgZgZgZgZgZgZgZ';
         $data = [
@@ -168,10 +168,10 @@ class PasswordStrengthMeterAnssiWebpageTest extends TestCase
     }
 
     /**
-     * Tests de la méthode PasswordStrengthMeterAnssi::entropyBits() avec 62
+     * Tests de la méthode PasswordStrengthMeterAnssi::entropy() avec 62
      * symboles (0 à 9, A à Z, a à z) et différentes longueurs.
      */
-    public function testEntropyBits62Symbols()
+    public function testEntropy62Symbols()
     {
         $symbols = '5Ht5Ht5Ht5Ht5Ht5Ht5Ht5Ht5Ht5Ht';
         $data = [
@@ -189,10 +189,10 @@ class PasswordStrengthMeterAnssiWebpageTest extends TestCase
     }
 
     /**
-     * Tests de la méthode PasswordStrengthMeterAnssi::entropyBits() avec 70
+     * Tests de la méthode PasswordStrengthMeterAnssi::entropy() avec 70
      * symboles (0 à 9, A à Z, a à z et  ! #$*% ?) et différentes longueurs.
      */
-    public function testEntropyBits70Symbols()
+    public function testEntropy70Symbols()
     {
         $symbols = 'Hz3%Hz3%Hz3%Hz3%Hz3%Hz3%Hz3%Hz';
         $data = [
@@ -210,11 +210,11 @@ class PasswordStrengthMeterAnssiWebpageTest extends TestCase
     }
 
     /**
-     * Tests de la méthode PasswordStrengthMeterAnssi::entropyBits() avec 70
+     * Tests de la méthode PasswordStrengthMeterAnssi::entropy() avec 70
      * symboles (0 à 9, A à Z, a à z et  ! #$*% ? &[|]@^µ§ :/ ;.,<>°²³) et
      * différentes longueurs.
      */
-    public function testEntropyBits90Symbols()
+    public function testEntropy90Symbols()
     {
         $symbols = '9kL!@9kL!@9kL!@9kL!@9kL!@9kL!@';
         $data = [

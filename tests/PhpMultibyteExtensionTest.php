@@ -8,9 +8,7 @@ namespace LibricielTest\Utility;
 
 use PHPUnit\Framework\TestCase;
 
-if (false === defined('DS')) {
-    define('DS', DIRECTORY_SEPARATOR);
-}
+define('DS', DIRECTORY_SEPARATOR);
 require_once dirname(__FILE__).DS.'..'.DS.'src'.DS.'php-multibyte-extension.php';
 
 /**

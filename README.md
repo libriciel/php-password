@@ -4,6 +4,11 @@ Librairie PHP permettant de calculer la force et l'entropie d'un mot de passe et
 
 ## Documentation
 
+- Computerfile
+    - https://www.youtube.com/watch?v=7U-RbOKanYs
+    - https://www.youtube.com/watch?v=3NjQ9b3pgIg
+- Hashcat
+    - https://hashcat.net/hashcat/
 - xkcd
     - https://www.explainxkcd.com/wiki/index.php/936:_Password_Strength
     - https://www.explainxkcd.com/wiki/index.php/792:_Password_Reuse

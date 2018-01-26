@@ -1,6 +1,6 @@
 <?php
 /**
- * Code source de l'extension multibyte pour PHP.
+ * Code source des tests unitaires de l'extension multibyte pour PHP.
  *
  * @license CeCiLL V2
  */
@@ -12,7 +12,7 @@ define('DS', DIRECTORY_SEPARATOR);
 require_once dirname(__FILE__).DS.'..'.DS.'src'.DS.'php-multibyte-extension.php';
 
 /**
- * Tests unitaires de la classe Libriciel\Utility\Password\PasswordStrengthMeterAnssi
+ * Tests unitaires de la la librairie php-multibyte-extension.
  */
 class UtilityMultibyteTest extends TestCase
 {

@@ -17,7 +17,9 @@ if (false === function_exists('mb_str_split')) {
      *
      * @param string $string La chaîne d'entrée
      * @param int $length Longueur maximale de chaque élément
-     * @param string $encoding
+     * @param string $encoding Le paramètre encoding est l'encodage des caractères.
+     *  S'il est omis, l'encodage de caractres interne (mb_internal_encoding)
+     *  sera utilisé.
      * @return false|array
      */
     function mb_str_split($string, $length = 1, $encoding = null)

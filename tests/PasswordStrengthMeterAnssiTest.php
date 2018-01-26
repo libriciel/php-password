@@ -256,5 +256,13 @@ class PasswordStrengthMeterAnssiTest extends TestCase
             PasswordStrengthMeterAnssi::STRENGTH_VERY_STRONG,
             PasswordStrengthMeterAnssi::strength(str_repeat('aZ3?&', 4))
         );
+
+        // 25 caractères des 62 possibles
+        // Valeurs par défaut utilisées par PasswordGeneratorAnssi::generate
+        $password = '3357zPqv9p45PS4CXyaZPOyy5';
+        $this->assertEquals(
+            PasswordStrengthMeterAnssi::STRENGTH_VERY_STRONG,
+            PasswordStrengthMeterAnssi::strength($password)
+        );
     }
 }

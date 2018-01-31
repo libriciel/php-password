@@ -1,5 +1,5 @@
 {
-    "name": "libriciel/lib-utility-password",
+    "name": "cbuffin/php-password",
     "description": "Librairie PHP permettant de calculer la force et l'entropie d'un mot de passe et de générer des mots de passes aléatoires.",
     "type": "library",
     "license": "CeCiLL V2",

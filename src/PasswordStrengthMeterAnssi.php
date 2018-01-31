@@ -43,7 +43,7 @@ abstract class PasswordStrengthMeterAnssi implements PasswordStrengthMeterInterf
     public static function symbols($string)
     {
         $hexadecimal = false !== mb_ereg('^[0-9a-fA-F]+$', $string)
-            && false !== mb_eregi('([0-9].*[a-f]|[a-f].*[0-9])', $string);
+            && false !== mb_ereg('[a-fA-F]', $string);
 
         $result = 0;
 
@@ -77,13 +77,15 @@ abstract class PasswordStrengthMeterAnssi implements PasswordStrengthMeterInterf
      * Retourne le nombre de bits d'entropie pour une chaîne de caractères.
      *
      * @param string $string La chaîne de caractères
+     * @param int $precision Le nombre de décimales souhaitées
      * @return integer
      */
-    public static function entropy($string)
+    public static function entropy($string, $precision = 0)
     {
         $length = mb_strlen($string);
         $symbols = static::symbols($string);
-        return (int)round($length*log($symbols, 2));
+        $entropy = round($length*log($symbols, 2), $precision);
+        return 0 === $precision ? (int)$entropy : $entropy;
     }
 
     /**
@@ -103,7 +105,7 @@ abstract class PasswordStrengthMeterAnssi implements PasswordStrengthMeterInterf
         ];
         return $result;
     }
-    
+
     /**
      * Retourne la "force" d'un mot de passe.
      *

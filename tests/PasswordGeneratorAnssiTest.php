@@ -8,7 +8,6 @@ namespace LibricielTest\Utility\Password;
 
 use PHPUnit\Framework\TestCase;
 use Libriciel\Utility\Password\PasswordGeneratorAnssi;
-use Libriciel\Utility\Password\PasswordStrengthMeterAnssi;
 
 /**
  * Tests unitaires de la classe Libriciel\Utility\Password\PasswordGeneratorAnssi
@@ -37,8 +36,7 @@ class PasswordGeneratorAnssiTest extends TestCase
     }
 
     /**
-     * Test de la méthode PasswordGeneratorAnssi::generate() au moyen de la méthode
-     * PasswordStrengthMeterAnssi::symbols.
+     * Test de la méthode PasswordGeneratorAnssi::generate().
      */
     public function testGenerate()
     {

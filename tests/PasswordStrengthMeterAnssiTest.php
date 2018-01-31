@@ -69,6 +69,38 @@ class PasswordStrengthMeterAnssiTest extends TestCase
     }
     
     /**
+     * Test de la méthode PasswordStrengthMeterAnssi::symbols() avec l'entropie
+     * par symboles définie dans le tableau sur wikipedia.
+     *
+     * @see {@url https://en.wikipedia.org/wiki/Password_strength#Random_passwords}
+     */
+    public function testSymbolsWikipedia()
+    {
+        $this->assertEquals(10, PasswordStrengthMeterAnssi::symbols('2'));
+        $this->assertEquals(16, PasswordStrengthMeterAnssi::symbols('F'));
+        $this->assertEquals(26, PasswordStrengthMeterAnssi::symbols('G'));
+        $this->assertEquals(36, PasswordStrengthMeterAnssi::symbols('3G'));
+        $this->assertEquals(52, PasswordStrengthMeterAnssi::symbols('gG'));
+        $this->assertEquals(62, PasswordStrengthMeterAnssi::symbols('2gG'));
+    }
+    
+    /**
+     * Test de la méthode PasswordStrengthMeterAnssi::entropy() avec l'entropie
+     * par symboles définie dans le tableau sur wikipedia.
+     *
+     * @see {@url https://en.wikipedia.org/wiki/Password_strength#Random_passwords}
+     */
+    public function testEntropyWikipedia()
+    {
+        $this->assertEquals(3.322, PasswordStrengthMeterAnssi::entropy('2', 3));
+        $this->assertEquals(4.000, PasswordStrengthMeterAnssi::entropy('F', 3));
+        $this->assertEquals(4.700, PasswordStrengthMeterAnssi::entropy('G', 3));
+        $this->assertEquals(10.34, PasswordStrengthMeterAnssi::entropy('3G', 3));
+        $this->assertEquals(11.401, PasswordStrengthMeterAnssi::entropy('gG', 3));
+        $this->assertEquals(17.863, PasswordStrengthMeterAnssi::entropy('2gG', 3));
+    }
+    
+    /**
      * Test de la méthode PasswordStrengthMeterAnssi::entropy() avec des caractères
      * binaires.
      */

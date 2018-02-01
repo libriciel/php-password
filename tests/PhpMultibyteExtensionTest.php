@@ -8,11 +8,6 @@ namespace LibricielTest\Utility;
 
 use PHPUnit\Framework\TestCase;
 
-require_once dirname(__FILE__)
-    .DIRECTORY_SEPARATOR.'..'
-    .DIRECTORY_SEPARATOR.'src'
-    .DIRECTORY_SEPARATOR.'php-multibyte-extension.php';
-
 /**
  * Tests unitaires de la la librairie php-multibyte-extension.
  */
@@ -25,7 +20,7 @@ class UtilityMultibyteTest extends TestCase
     {
         $string = 'Hello Friend';
         $expected = ['H', 'e', 'l', 'l', 'o', ' ', 'F', 'r', 'i', 'e', 'n', 'd'];
-        $this->assertEquals($expected, mb_str_split($string));
+        $this->assertEquals($expected, \mb_str_split($string));
     }
 
     /**
@@ -35,7 +30,7 @@ class UtilityMultibyteTest extends TestCase
     {
         $string = 'Hello Friend';
         $expected = ['Hello', ' Frie', 'nd'];
-        $this->assertEquals($expected, mb_str_split($string, 5));
+        $this->assertEquals($expected, \mb_str_split($string, 5));
     }
 
     /**
@@ -48,7 +43,7 @@ class UtilityMultibyteTest extends TestCase
         foreach ($expected as $idx => $token) {
             $expected[$idx] = utf8_decode($token);
         }
-        $this->assertEquals($expected, mb_str_split($string, 5, 'ISO-8859-1'));
+        $this->assertEquals($expected, \mb_str_split($string, 5, 'ISO-8859-1'));
     }
 
     /**
@@ -61,6 +56,6 @@ class UtilityMultibyteTest extends TestCase
         // Erreur: chaîne de longueur 0
         $this->assertFalse(mb_str_split($string, 0));
 
-        $this->assertEquals([$string], mb_str_split($string, 66));
+        $this->assertEquals([$string], \mb_str_split($string, 66));
     }
 }

@@ -79,7 +79,7 @@ abstract class PasswordGeneratorAnssi
 
         foreach ($classes as $key => $enabled) {
             if (true === $enabled) {
-                $tokens = mb_str_split(static::$classes[$key], 1, $encoding);
+                $tokens = \mb_str_split(static::$classes[$key], 1, $encoding);
                 $accumulator = array_merge($accumulator, $tokens);
             }
         }

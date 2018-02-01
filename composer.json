@@ -10,6 +10,10 @@
         }
     ],
     "autoload": {
+        "files": [
+            "src/basics.php",
+            "src/php-multibyte-extension.php"
+        ],
         "psr-4": {
             "Libriciel\\Utility\\Password\\": "src/",
             "LibricielTest\\Utility\\Password\\": "tests/"

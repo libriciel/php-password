@@ -72,7 +72,7 @@ abstract class PasswordStrengthMeterAnssi implements PasswordStrengthMeterInterf
 
         return $result;
     }
-    
+
     /**
      * Retourne le nombre de bits d'entropie pour une chaîne de caractères.
      *
@@ -84,8 +84,8 @@ abstract class PasswordStrengthMeterAnssi implements PasswordStrengthMeterInterf
     {
         $length = mb_strlen($string);
         $symbols = static::symbols($string);
-        $entropy = round($length*log($symbols, 2), $precision);
-        return 0 === $precision ? (int)$entropy : $entropy;
+        $value = $length*log($symbols, 2);
+        return sprintf("%.{$precision}f", $value);
     }
 
     /**

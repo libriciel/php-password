@@ -56,7 +56,7 @@ class PasswordStrengthMeterAnssiTest extends TestCase
         // 90 symboles
         $this->assertEquals(90, PasswordStrengthMeterAnssi::symbols('aZ3Rt?&'));
     }
-    
+
 
     /**
      * Test de la méthode PasswordStrengthMeterAnssi::symbols() avec des
@@ -67,7 +67,7 @@ class PasswordStrengthMeterAnssiTest extends TestCase
         $this->assertEquals(42, PasswordStrengthMeterAnssi::symbols('été'));
         $this->assertEquals(42, PasswordStrengthMeterAnssi::symbols('GÜDRUN'));
     }
-    
+
     /**
      * Test de la méthode PasswordStrengthMeterAnssi::symbols() avec l'entropie
      * par symboles définie dans le tableau sur wikipedia.
@@ -83,7 +83,7 @@ class PasswordStrengthMeterAnssiTest extends TestCase
         $this->assertEquals(52, PasswordStrengthMeterAnssi::symbols('gG'));
         $this->assertEquals(62, PasswordStrengthMeterAnssi::symbols('2gG'));
     }
-    
+
     /**
      * Test de la méthode PasswordStrengthMeterAnssi::entropy() avec l'entropie
      * par symboles définie dans le tableau sur wikipedia.
@@ -99,7 +99,7 @@ class PasswordStrengthMeterAnssiTest extends TestCase
         $this->assertEquals(11.401, PasswordStrengthMeterAnssi::entropy('gG', 3));
         $this->assertEquals(17.863, PasswordStrengthMeterAnssi::entropy('2gG', 3));
     }
-    
+
     /**
      * Test de la méthode PasswordStrengthMeterAnssi::entropy() avec des caractères
      * binaires.
@@ -195,6 +195,20 @@ class PasswordStrengthMeterAnssiTest extends TestCase
     {
         $this->assertEquals(16, PasswordStrengthMeterAnssi::entropy('été'));
         $this->assertEquals(32, PasswordStrengthMeterAnssi::entropy('GÜDRUN'));
+    }
+
+    /**
+     * Test de la méthode PasswordStrengthMeterAnssi::entropy() avec le paramètre
+     * $precision.
+     */
+    public function testEntropyPrecision()
+    {
+        $password = 'mot de passe';
+        $this->assertEquals(61, PasswordStrengthMeterAnssi::entropy($password));
+        $this->assertEquals(61.0, PasswordStrengthMeterAnssi::entropy($password, 1));
+        $this->assertEquals(61.05, PasswordStrengthMeterAnssi::entropy($password, 2));
+        $this->assertEquals(61.050, PasswordStrengthMeterAnssi::entropy($password, 3));
+        $this->assertEquals(61.0496, PasswordStrengthMeterAnssi::entropy($password, 4));
     }
 
     /**

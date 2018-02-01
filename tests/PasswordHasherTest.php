@@ -92,4 +92,23 @@ class PasswordHasherTest extends TestCase
         $actual = PasswordHasher::hash($password, ['salt' => $salt]);
         $this->assertEquals($expected, $actual);
     }
+
+    /**
+     * Test de la configuration recommandée avec les méthodes PasswordHasher::config
+     * et PasswordHasher::hash.
+     */
+    public function testRecommendedConfig()
+    {
+        $config = [
+            'algorithm' => 'sha256', // 64 caractères à la sortie
+            // 64 caractères a-z et 0-9 (36 symboles) pour le salt (entropie de 256)
+            'salt' => '968dda000668f21e8761de477a102017fe2ca4c5c6c947a5a42fb5fb813964be',
+            'raw_output' => false
+        ];
+        PasswordHasher::config($config);
+
+        $actual = PasswordHasher::hash('mot de passe');
+        $expected = 'ab4d9bad79648740b6d9a569f66fb530bc104506d37a440941cef7187a519dc7';
+        $this->assertEquals($expected, $actual);
+    }
 }

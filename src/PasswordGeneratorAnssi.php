@@ -131,6 +131,33 @@ abstract class PasswordGeneratorAnssi
                 $result .= $characters[$random];
                 $max++;
             }
+
+            /*//------------------------------------------------------------------
+            // Permet de forcer des caractères de certaines classes
+            //------------------------------------------------------------------
+            //@fixme
+            $test = str_pad('', $length, ' ');
+            $mandatory = [
+                'numbers' => 1,
+                'lowercase_letters' => 1,
+                'uppercase_letters' => 1,
+                'symbols_1' => 1,
+                'symbols_2' => 1,
+                'lowercase_accents_fr' => 1,
+                'uppercase_accents_fr' => 1,
+            ];
+            //\debug(array_sum($mandatory));//@todo si > $length -> exception
+            foreach ($mandatory as $class => $number) {//@fixme: si class n'existe pas -> exception ?
+                $strlen = mb_strlen(static::$classes[$class], $encoding);
+                for ($idx = 0 ; $idx < $number ; $idx++) {
+                    $char = mb_substr(static::$classes[$class], random_int(0, $strlen-1), 1, $encoding);
+                    $test .= $char;
+                    $max++;
+                }
+            }
+            //@fixme: longueur + mélanger
+            $test = mb_substr($test, array_sum($mandatory)-1);
+            \debug($test);*/
         }
 
         return $result;

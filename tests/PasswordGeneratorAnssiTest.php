@@ -51,7 +51,7 @@ class PasswordGeneratorAnssiTest extends TestCase
 
         // Par défaut pour un mot de passe très fort ?
         $password = PasswordGeneratorAnssi::generate();
-        $this->assertRegexp('/^[a-zA-Z0-9]{25}$/', $password);
+        $this->assertRegexp('/^[a-zA-Z0-9]{40}$/', $password);
     }
 
     /**

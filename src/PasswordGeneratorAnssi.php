@@ -107,10 +107,7 @@ abstract class PasswordGeneratorAnssi
     }
 
     /**
-     * Génère un mot de passe aléatoire d'une certaine longueur.
-     *
-     * Par défaut un mot de passe très fort (d'entropie 149), facile à taper, de
-     * 25 caractères parmi 62 (0 à 9, a à z, A à Z).
+     * Génère un mot de passe aléatoire de la longueur désirée.
      *
      * @param integer $length La longueur du mot de passe à générer.
      * @param array $params Les paramètres définissant les classes à utiliser.
@@ -119,7 +116,7 @@ abstract class PasswordGeneratorAnssi
      *  sera utilisé.
      * @return type
      */
-    public static function generate($length = 25, array $params = [], $encoding = null)
+    public static function generate($length = 40, array $params = [], $encoding = null)
     {
         $encoding = null === $encoding ? mb_internal_encoding() : $encoding;
         $characters = static::characters($params, $encoding);

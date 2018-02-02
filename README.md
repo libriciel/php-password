@@ -1,7 +1,121 @@
 # php-password
 
-Librairie PHP permettant de calculer la force et l'entropie d'un mot de passe et
-de générer des mots de passes aléatoires.
+Librairie PHP permettant de calculer la force et l'entropie d'un mot de passe,
+de générer des mots de passes aléatoires et de calculer des empreintes de mots
+de passes afin de les stocker de façon sécurisée.
+
+## Contexte
+
+On veut éviter que quelqu'un de non autorisé puisse s'authentifier dans notre
+application.
+
+- soit en testant des mots de passes de façon brute
+- soit en ayant accès aux mots de passes stockés en base de données
+
+### Besoins
+
+- ralentir les essais en ligne
+    - sur le serveur
+        - [éviter les attaques DDOS](https://fr.wikipedia.org/wiki/Fail2ban)
+    - via l'interface graphique
+        - ne pas indiquer si c'est le nom d'utilisateur ou le mot de passe qui est invalide
+        - en cas d'échec, faire attendre de plus en plus longtemps (voir la [suite de Fibonacci](https://fr.wikipedia.org/wiki/Suite_de_Fibonacci))
+- ralentir la découverte des mots de passe dans la base de données
+    - stocker uniquement l'empreinte du mot de passe dans la base de données
+    - utiliser un sel de sécurité, une longue chaîne de caractères accolée au mot de passe avant d'en calculer l'empreinte
+    - utiliser un algorithme de calcul d'empreinte lent
+- imposer des restrictions de mots de passe à l'utilisateur
+    - force (difficulté, entropie) du mot de passe: le nombre de combinaisons possibles
+        - dépend de la longueur
+        - dépend du nombre de caractères possibles (nombres, alphabet, majuscules, accents, caractères spéciaux)
+    - rejeter certains mots de passes
+        - ceux rendus publics ou répandus
+        - contenant trop de répétitions
+
+### Utilisation de la librairie
+
+#### Prérequis PHP
+
+- 7.0 +
+- PHP de [5.2 à 5.6](http://php.net/random_int) est également supporté via une
+[librairie externe](https://github.com/paragonie/random_compat)
+
+#### Exemples
+
+##### Empreintes de mots de passes
+
+```php
+use Libriciel\Utility\Password\PasswordHasher;
+
+// Configuration recommandée pour les empreintes (hash)
+$config = [
+    // 64 caractères à la sortie (entropie de 256)
+    'algorithm' => 'sha256',
+    // 64 caractères a-z et 0-9 (36 symboles) pour le salt (entropie de 256)
+    'salt' => '968dda000668f21e8761de477a102017fe2ca4c5c6c947a5a42fb5fb813964be',
+    'raw_output' => false
+];
+PasswordHasher::config($config);
+
+// Calcul de l'empreinte d'un mot de passe avec la configuration par défaut ci-dessus
+// Retourne ab4d9bad79648740b6d9a569f66fb530bc104506d37a440941cef7187a519dc7
+PasswordHasher::hash('mot de passe');
+```
+
+##### Force du mot de passe (selon l'ANSSI)
+
+```php
+use Libriciel\Utility\Password\PasswordStrengthMeterAnssi;
+
+// L'entropie, ici 61
+PasswordStrengthMeterAnssi::entropy('mot de passe');
+
+// La force (entre 1, très faible et 5, très fort), ici 1
+PasswordStrengthMeterAnssi::strength('mot de passe');
+```
+
+##### Génération de mots de passes aléatoires
+
+Le cas d'usage est la création d'un mot de passe aléatoire à stocker hashé et
+complété du salt, à utiliser sans devoir l'écrire via le lien (ayant une autre
+valeur générée aléatoirement dans l'URL) d'un mail de remise à zéro de mot de passe.
+
+Les caractères utilisés par défaut dans les mots de passes générés sont les 62
+chiffres et lettres les plus courants de [Latin-1.](https://fr.wikipedia.org/wiki/ISO/CEI_8859-1):
+de 0 à 9, a à z et de A à Z.
+
+Par défaut est généré un mot de passe de longueur 40, correspondant à une force
+de 5 pour une entropie de 238.
+
+On n'est *jamais* certain d'avoir un caractère de chaque classe de caractère
+configurée!
+
+Dans le pire des cas, si `0000000000000000000000000000000000000000` est généré,
+on a une force de 1 pour une entropie de 40.
+
+```php
+use Libriciel\Utility\Password\PasswordGeneratorAnssi;
+
+// Configuration complète par défaut
+$config = [
+    'binary'  => false,
+    // de 0 à 9
+    'numbers'  => true,
+    'lowercase_hexadecimal' => false,
+    'uppercase_hexadecimal' => false,
+    // de a à z
+    'lowercase_letters' => true,
+    // A à Z
+    'uppercase_letters' => true,
+    'symbols_1' => false,
+    'symbols_2' => false,
+    'lowercase_accents_fr' => false,
+    'uppercase_accents_fr' => false
+];
+
+// Exemple de sortie: MUAVGHF4O5VPDboTwSJebjwNcryqYmRSS2izJHyJ
+PasswordGeneratorAnssi::generate();
+```
 
 ## Exemples de mots de passes
 
@@ -101,6 +215,12 @@ de générer des mots de passes aléatoires.
     - https://security.stackexchange.com/questions/118450/is-there-a-threshold-for-a-password-so-long-it-doesnt-get-any-more-secure-or-ev
     - https://nakedsecurity.sophos.com/2016/08/18/nists-new-password-rules-what-you-need-to-know/
     - https://auth0.com/blog/dont-pass-on-the-new-nist-password-guidelines/
+    - Restrictions, valeurs, ...
+        - http://php.net/manual/en/function.hash.php#104987
+        - http://php.net/manual/en/function.hash.php#94104
+        - http://php.net/manual/en/function.hash.php#89574
+        - https://fr.wikipedia.org/wiki/Whirlpool_(algorithme)
+        - https://en.wikipedia.org/wiki/Whirlpool_(cryptography)
 
 ### Liens
 
@@ -123,105 +243,7 @@ de générer des mots de passes aléatoires.
 ```bash
 sudo apt-get install \
     ant \
-    php-xdebug
-```
-
-```bash
-rm -rf out/* \
-&& vendor/bin/phpunit \
-    --log-junit=out/phpunit.xml \
-    --whitelist=src \
-    --coverage-html=out/coverage \
-    --coverage-clover=out/phpunit-coverage.xml \
-    tests \
-; vendor/bin/phpmd \
-    src \
-    xml \
-    cleancode,codesize,controversial,design,naming,unusedcode \
-    --reportfile out/phpmd.xml \
-; vendor/bin/phpcs \
-    --report=checkstyle \
-    --standard=PSR2 \
-    src \
-    tests \
-    > out/phpcs.xml \
-; vendor/bin/phploc \
-    --count-tests \
-    --log-xml=out/phploc.xml \
-    src \
-    tests \
-; vendor/bin/phpcpd \
-    --log-pmd=out/phpcpd.xml \
-    src \
-    tests \
-; vendor/bin/phpdoc \
-    -t out/phpdoc \
-    -d src \
-    -d tests \
-; vendor/bin/phpcb \
-    -o out/phpcb \
-    -s src \
-    -s tests \
-    --log out \
-; mkdir -p out/pdepend \
-; vendor/bin/pdepend \
-    --coverage-report=out/phpunit-coverage.xml \
-    --dependency-xml=out/pdepend/dependency.xml \
-    --jdepend-chart=out/pdepend/jdepend-chart.svg \
-    --jdepend-xml=out/pdepend/jdepend.xml \
-    --overview-pyramid=out/pdepend/overview-pyramid.svg \
-    --summary-xml=out/pdepend/summary.xml \
-    src
-```
-
-#### as@lae
-
-```php
-$checkPassword = function ($value) {
-    $chars = 0;
-    if (preg_match('/[a-z]/', $value)) {
-        $chars += 26;
-    }
-    if (preg_match('/[A-Z]/', $value)) {
-        $chars += 26;
-    }
-    if (preg_match('/[0-9]/', $value)) {
-        $chars += 10;
-    }
-    if (preg_match('/[ ! #$*%]/', $value)) {
-        $chars += 8;
-    }
-    if (preg_match('/[^a-zA-Z0-9 ! #$*%]/', $value)) {
-        $chars += 20;
-    }
-    $score = strlen($value) * log($chars, 2);
-    return $score >= Configure::read('Password.complexity');
-};
-```
-
-```php
-/**
- * Force des mot de passe
- * @see https://www.ssi.gouv.fr/administration/precautions-elementaires/calculer-la-force-dun-mot-de-passe/
- */
-/**
- * Mot de passe de 8 caractères dans un alphabet de 70 symboles
- * Taille usuelle
- */
-define('PASSWORD_ULTRA_WEAK', 49);
-/**
- * Mot de passe de 12 caractères dans un alphabet de 90 symboles
- * Taille minimale recommandée par l’ANSSI pour des mots de passe ergonomiques ou utilisés de façon locale.
- */
-define('PASSWORD_WEAK', 78);
-/**
- * Mot de passe de 16 caractères dans un alphabet de 36 symboles
- * Taille recommandée par l’ANSSI pour des mots de passe plus sûrs.
- */
-define('PASSWORD_MEDIUM', 82);
-/**
- * Mot de passe de 20 caractères dans un alphabet de 90 symboles
- * Force équivalente à la plus petite taille de clé de l’algorithme de chiffrement standard AES (128 bits).
- */
-define('PASSWORD_STRONG', 130);
+    php-xdebug \
+&& composer update \
+&& ant quality
 ```

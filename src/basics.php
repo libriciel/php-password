@@ -16,18 +16,35 @@ if (false === function_exists('debug')) {
     /**
      * Affiche le contenu d'une variable en console ou au format HTML.
      *
-     * @see CakePHP 2.9.8
+     * @see CakePHP 2.x / 3.x
      *
      * @param mixed $var
+     * @param bool $showHtml La sortie doit-elle être au format HTML ?
      */
-    function debug($var)
+    function debug($var, $showHtml = null)
     {
         $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 1);
         $file = str_replace(array(ROOT), '', $trace[0]['file']);
         $line = $trace[0]['line'];
         $lineInfo = sprintf('%s (line %s)', $file, $line);
+        $template = null;
 
-        $html = <<<HTML
+        if ((PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg') || $showHtml === false) {
+            $template = <<<TEXT
+%s
+########## DEBUG ##########
+%s
+###########################
+
+TEXT;
+        } elseif ($showHtml === null) {
+            $showHtml = true;
+        }
+
+        $var = var_export($var, true);
+
+        if ($showHtml === true) {
+            $template = <<<HTML
 <div class="cake-debug-output">
 %s
 <pre class="cake-debug">
@@ -35,20 +52,6 @@ if (false === function_exists('debug')) {
 </pre>
 </div>
 HTML;
-        $text = <<<TEXT
-%s
-########## DEBUG ##########
-%s
-###########################
-
-TEXT;
-
-        if (PHP_SAPI === 'cli') {
-            $template = $text;
-        }
-        $var = var_export($var, true);
-        if (PHP_SAPI !== 'cli') {
-            $template = $html;
             $var = htmlspecialchars($var, ENT_QUOTES);
             $lineInfo = sprintf('<span><strong>%s</strong> (line <strong>%s</strong>)</span>', $file, $line);
         }

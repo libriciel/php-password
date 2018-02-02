@@ -11,8 +11,7 @@
     ],
     "autoload": {
         "files": [
-            "src/basics.php",
-            "src/php-multibyte-extension.php"
+            "src/basics.php"
         ],
         "psr-4": {
             "Libriciel\\Utility\\Password\\": "src/",

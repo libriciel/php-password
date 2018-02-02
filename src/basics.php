@@ -26,10 +26,10 @@ if (false === function_exists('debug')) {
         $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 1);
         $file = str_replace(array(ROOT), '', $trace[0]['file']);
         $line = $trace[0]['line'];
-        $lineInfo = sprintf('%s (line %s)', $file, $line);
-        $template = null;
 
-        if ((PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg') || $showHtml === false) {
+        $var = var_export($var, true);
+
+        if ((PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg') && $showHtml !== true) {
             $template = <<<TEXT
 %s
 ########## DEBUG ##########
@@ -37,13 +37,8 @@ if (false === function_exists('debug')) {
 ###########################
 
 TEXT;
-        } elseif ($showHtml === null) {
-            $showHtml = true;
-        }
-
-        $var = var_export($var, true);
-
-        if ($showHtml === true) {
+            $lineInfo = sprintf('%s (line %s)', $file, $line);
+        } else {
             $template = <<<HTML
 <div class="cake-debug-output">
 %s

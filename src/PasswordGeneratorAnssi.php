@@ -38,10 +38,10 @@ abstract class PasswordGeneratorAnssi
      * @var array
      */
     protected static $defaults = [
-        'binary'  => true,
+        'binary'  => false,
         'numbers'  => true,
-        'lowercase_hexadecimal' => true,
-        'uppercase_hexadecimal' => true,
+        'lowercase_hexadecimal' => false,
+        'uppercase_hexadecimal' => false,
         'lowercase_letters' => true,
         'uppercase_letters' => true,
         'symbols_1' => false,
@@ -49,6 +49,26 @@ abstract class PasswordGeneratorAnssi
         'lowercase_accents_fr' => false,
         'uppercase_accents_fr' => false
     ];
+
+    /**
+     * Configuration.
+     *
+     * @var array
+     */
+    protected static $config = [];
+
+    /**
+     * Retourne la configuration en cours après l'avoir au préalable complétée
+     * par les valeurs par défaut et la configuration passée en paramètres.
+     *
+     * @param array $config La configuration à modifier.
+     * @return array
+     */
+    public static function config(array $config = [])
+    {
+        static::$config = $config + static::$config + static::$defaults;
+        return static::$config;
+    }
 
     /**
      * Retourne le paramétrage par défaut des classes à utiliser lors de la
@@ -72,8 +92,7 @@ abstract class PasswordGeneratorAnssi
      */
     public static function characters(array $params = [], $encoding = null)
     {
-        $defaults = static::defaults();
-        $classes = $params + $defaults;
+        $classes = $params + static::config();
         $encoding = null === $encoding ? mb_internal_encoding() : $encoding;
         $accumulator = [];
 

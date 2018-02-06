@@ -131,35 +131,56 @@ abstract class PasswordGeneratorAnssi
                 $result .= $characters[$random];
                 $max++;
             }
-
-            /*//------------------------------------------------------------------
-            // Permet de forcer des caractères de certaines classes
-            //------------------------------------------------------------------
-            //@fixme
-            $test = str_pad('', $length, ' ');
-            $mandatory = [
-                'numbers' => 1,
-                'lowercase_letters' => 1,
-                'uppercase_letters' => 1,
-                'symbols_1' => 1,
-                'symbols_2' => 1,
-                'lowercase_accents_fr' => 1,
-                'uppercase_accents_fr' => 1,
-            ];
-            //\debug(array_sum($mandatory));//@todo si > $length -> exception
-            foreach ($mandatory as $class => $number) {//@fixme: si class n'existe pas -> exception ?
-                $strlen = mb_strlen(static::$classes[$class], $encoding);
-                for ($idx = 0 ; $idx < $number ; $idx++) {
-                    $char = mb_substr(static::$classes[$class], random_int(0, $strlen-1), 1, $encoding);
-                    $test .= $char;
-                    $max++;
-                }
-            }
-            //@fixme: longueur + mélanger
-            $test = mb_substr($test, array_sum($mandatory)-1);
-            \debug($test);*/
         }
 
         return $result;
+    }
+
+    /**
+     * Génère un mot de passe aléatoire de la longueur désirée avec certaines
+     * classes de caractères devant être utilisées automatiquement.
+     *
+     * @param integer $length La longueur du mot de passe à générer.
+     * @param array $params Les paramètres définissant les classes à utiliser.
+     * @param array $mandatory Les paramètres définissant les classes à utiliser obligatoirement.
+     * @param string $encoding Le paramètre encoding est l'encodage des caractères.
+     *  S'il est omis, l'encodage de caractres interne (mb_internal_encoding)
+     *  sera utilisé.
+     * @return type
+     */
+    public static function constrained($length = 40, array $params = [], array $mandatory = [], $encoding = null)
+    {
+        $encoding = null === $encoding ? mb_internal_encoding() : $encoding;
+        $characters = static::characters($params, $encoding);
+        $count = count($characters);
+        $result = false;
+
+        if ($count > 0) {
+            $result = [];
+            $max = 0;
+
+            if (array_sum($mandatory) > $length) {
+                $format = 'Impossible de générer un mot de passe de longueur %d avec %d caractères obligatoires (obligatoires: %s)';
+                $message = sprintf($format, $length, array_sum($mandatory), json_encode($mandatory));
+                throw new \RuntimeException($message);                
+            }
+
+            foreach ($mandatory as $class => $number) {//@fixme: si class n'existe pas -> exception ?
+                $strlen = mb_strlen(static::$classes[$class], $encoding);
+                for ($idx=0; $idx<$number; $idx++) {
+                    $char = mb_substr(static::$classes[$class], random_int(0, $strlen-1), 1, $encoding);
+                    $result[] = $char;
+                    $max++;
+                }
+            }
+
+            while ($max<=$length) {
+                $random = random_int(0, $count-1);
+                $result[] = $characters[$random];
+                $max++;
+            }
+        }
+
+        return implode('', random_array($result));
     }
 }

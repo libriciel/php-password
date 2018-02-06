@@ -96,4 +96,17 @@ class BasicsTest extends TestCase
 
         $this->assertEquals([$string], \mb_str_split($string, 66));
     }
+
+    /**
+     * Test de la fonction random_array.
+     */
+    public function testRandomArray()
+    {
+        $array = [1, 2, 3];
+        $actual = random_array($array);
+        // @fixme: il se pourrait que l'on retrouve l'array de départ
+        $this->assertNotEquals($array, $actual);
+        sort($actual);
+        $this->assertEquals($array, $actual);
+    }
 }

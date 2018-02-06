@@ -87,3 +87,21 @@ if (false === function_exists('mb_str_split')) {
         return $result;
     }
 }
+
+if (false === function_exists('random_array')) {
+    function random_array(array $array)
+    {
+        $result = [];
+        $keys = array_keys($array);
+
+        while (count($keys) > 0) {
+            $idx = random_int(0, count($keys)-1);
+            $key = $keys[$idx];
+            $result[] = $array[$key];
+            unset($keys[$idx]);
+            $keys = array_values($keys);
+        }
+
+        return $result;
+    }
+}

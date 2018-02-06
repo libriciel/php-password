@@ -89,6 +89,12 @@ if (false === function_exists('mb_str_split')) {
 }
 
 if (false === function_exists('random_array')) {
+    /**
+     * Retourne les éléments d'un array dont les clés ont été mélangées.
+     *
+     * @param array $array Un array ayant des clés numériques
+     * @return array
+     */
     function random_array(array $array)
     {
         $result = [];
@@ -98,8 +104,7 @@ if (false === function_exists('random_array')) {
             $idx = random_int(0, count($keys)-1);
             $key = $keys[$idx];
             $result[] = $array[$key];
-            unset($keys[$idx]);
-            $keys = array_values($keys);
+            array_splice($keys, $idx, 1);
         }
 
         return $result;

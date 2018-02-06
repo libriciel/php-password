@@ -50,7 +50,7 @@ class BasicsTest extends TestCase
 </div>";
         $this->assertEquals($expected, $actual);
     }
-    
+
     /**
      * Test de la fonction mb_str_split.
      */
@@ -102,6 +102,10 @@ class BasicsTest extends TestCase
      */
     public function testRandomArray()
     {
+        // Avec un array vide
+        $this->assertEquals([], random_array([]));
+
+        // Avec quelques éléments
         $array = [1, 2, 3];
         $actual = random_array($array);
         // @fixme: il se pourrait que l'on retrouve l'array de départ

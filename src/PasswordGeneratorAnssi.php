@@ -153,32 +153,36 @@ abstract class PasswordGeneratorAnssi
         $encoding = null === $encoding ? mb_internal_encoding() : $encoding;
         $characters = static::characters($params, $encoding);
         $count = count($characters);
-        $result = false;
 
-        if ($count > 0) {
-            $result = [];
-            $max = 0;
+        if ($count === 0) {
+            $format = 'Impossible de générer un mot de passe de longueur %d sans caractère disponible';
+            $message = sprintf($format, $length, array_sum($mandatory), json_encode($mandatory));
+            throw new \RuntimeException($message);
+        }
 
-            if (array_sum($mandatory) > $length) {
-                $format = 'Impossible de générer un mot de passe de longueur %d avec %d caractères obligatoires (obligatoires: %s)';
-                $message = sprintf($format, $length, array_sum($mandatory), json_encode($mandatory));
-                throw new \RuntimeException($message);
-            }
+        if (array_sum($mandatory) > $length) {
+            $format = 'Impossible de générer un mot de passe de longueur %d avec %d caractères obligatoires (obligatoires: %s)';
+            $message = sprintf($format, $length, array_sum($mandatory), json_encode($mandatory));
+            throw new \RuntimeException($message);
+        }
 
-            foreach ($mandatory as $class => $number) {//@fixme: si class n'existe pas -> exception ?
-                $strlen = mb_strlen(static::$classes[$class], $encoding);
-                for ($idx=0; $idx<$number; $idx++) {
-                    $char = mb_substr(static::$classes[$class], random_int(0, $strlen-1), 1, $encoding);
-                    $result[] = $char;
-                    $max++;
-                }
-            }
+        $result = [];
+        $max = 0;
 
-            while ($max<$length) {
-                $random = random_int(0, $count-1);
-                $result[] = $characters[$random];
+        //@fixme: si class n'existe pas -> exception ?
+        foreach ($mandatory as $class => $number) {
+            $strlen = mb_strlen(static::$classes[$class], $encoding);
+            for ($idx=0; $idx<$number; $idx++) {
+                $char = mb_substr(static::$classes[$class], random_int(0, $strlen-1), 1, $encoding);
+                $result[] = $char;
                 $max++;
             }
+        }
+
+        while ($max<$length) {
+            $random = random_int(0, $count-1);
+            $result[] = $characters[$random];
+            $max++;
         }
 
         return implode('', random_array($result));

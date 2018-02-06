@@ -131,4 +131,39 @@ class PasswordGeneratorAnssiTest extends TestCase
         $this->assertNotFalse(mb_ereg('[0-9]', $password));
         $this->assertNotFalse(mb_ereg('[€\\!#\\$\\*%\\? ]', $password));
     }
+
+    /**
+     * Test de la méthode PasswordGeneratorAnssi::constrained().
+     *
+     * @expectedException \RuntimeException
+     * @expectedExceptionCode 0
+     * @expectedExceptionMessage Impossible de générer un mot de passe de longueur 1 avec 2 caractères obligatoires (obligatoires: {"numbers":1,"lowercase_letters":1})
+     */
+    public function testConstrainedException1()
+    {
+        $defaults = PasswordGeneratorAnssi::defaults();
+        $mandatory = [
+            'numbers' => 1,
+            'lowercase_letters' => 1
+        ];
+        PasswordGeneratorAnssi::constrained(1, $defaults, $mandatory);
+    }
+
+    /**
+     * Test de la méthode PasswordGeneratorAnssi::constrained().
+     *
+     * @expectedException \RuntimeException
+     * @expectedExceptionCode 0
+     * @expectedExceptionMessage Impossible de générer un mot de passe de longueur 3 sans caractère disponible
+     */
+    public function testConstrainedException2()
+    {
+        $defaults = PasswordGeneratorAnssi::defaults();
+        $false = array_combine(array_keys($defaults), array_fill(0, count($defaults), false));
+        $mandatory = [
+            'numbers' => 1,
+            'lowercase_letters' => 1
+        ];
+        PasswordGeneratorAnssi::constrained(3, $false, $mandatory);
+    }
 }

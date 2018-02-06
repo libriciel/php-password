@@ -17,6 +17,8 @@ application.
 - ralentir les essais en ligne
     - sur le serveur
         - [éviter les attaques DDOS](https://fr.wikipedia.org/wiki/Fail2ban)
+            - https://github.com/SuperITMan/docker-fail2ban
+            - http://www.the-lazy-dev.com/fr/installez-fail2ban-avec-docker/
     - via l'interface graphique
         - ne pas indiquer si c'est le nom d'utilisateur ou le mot de passe qui est invalide
         - en cas d'échec, faire attendre de plus en plus longtemps (voir la [suite de Fibonacci](https://fr.wikipedia.org/wiki/Suite_de_Fibonacci))

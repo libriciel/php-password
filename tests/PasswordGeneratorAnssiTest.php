@@ -109,7 +109,7 @@ class PasswordGeneratorAnssiTest extends TestCase
         // Retour aux valeurs par défaut
         PasswordGeneratorAnssi::config($this->defaultConfig);
     }
-    
+
     /**
      * Test de la méthode PasswordGeneratorAnssi::constrained().
      */
@@ -125,7 +125,7 @@ class PasswordGeneratorAnssiTest extends TestCase
 
         $password = PasswordGeneratorAnssi::constrained(6, $defaults, $mandatory);
 
-        $this->assertNotFalse(mb_ereg('^([a-zA-Z0-9]|[€\\!#\\$\\*%\\? ]){7}$', $password));
+        $this->assertNotFalse(mb_ereg('^([a-zA-Z0-9]|[€\\!#\\$\\*%\\? ]){6}$', $password));
         $this->assertNotFalse(mb_ereg('[a-z]', $password));
         $this->assertNotFalse(mb_ereg('[A-Z]', $password));
         $this->assertNotFalse(mb_ereg('[0-9]', $password));

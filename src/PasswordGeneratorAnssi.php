@@ -162,7 +162,7 @@ abstract class PasswordGeneratorAnssi
             if (array_sum($mandatory) > $length) {
                 $format = 'Impossible de générer un mot de passe de longueur %d avec %d caractères obligatoires (obligatoires: %s)';
                 $message = sprintf($format, $length, array_sum($mandatory), json_encode($mandatory));
-                throw new \RuntimeException($message);                
+                throw new \RuntimeException($message);
             }
 
             foreach ($mandatory as $class => $number) {//@fixme: si class n'existe pas -> exception ?
@@ -174,7 +174,7 @@ abstract class PasswordGeneratorAnssi
                 }
             }
 
-            while ($max<=$length) {
+            while ($max<$length) {
                 $random = random_int(0, $count-1);
                 $result[] = $characters[$random];
                 $max++;

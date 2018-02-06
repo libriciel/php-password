@@ -123,6 +123,7 @@ class PasswordGeneratorAnssiTest extends TestCase
             'symbols_1' => 1
         ];
 
+        // Entropie 37, force 1
         $password = PasswordGeneratorAnssi::constrained(6, $defaults, $mandatory);
 
         $this->assertNotFalse(mb_ereg('^([a-zA-Z0-9]|[€\\!#\\$\\*%\\? ]){6}$', $password));

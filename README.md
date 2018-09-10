@@ -229,6 +229,8 @@ PasswordGeneratorAnssi::generate();
 
 ### Liens
 
+- https://www.cnil.fr/fr/authentification-par-mot-de-passe-les-mesures-de-securite-elementaires
+- https://www.cnil.fr/fr/generer-un-mot-de-passe-solide
 - https://en.wikipedia.org/wiki/Password_strength#Entropy_as_a_measure_of_password_strength
 - https://www.ssi.gouv.fr/guide/mot-de-passe/
 - https://www.ssi.gouv.fr/uploads/IMG/pdf/NP_MDP_NoteTech.pdf

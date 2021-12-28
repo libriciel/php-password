@@ -239,18 +239,14 @@ PasswordGeneratorAnssi::generate();
 - https://www.e-services.uha.fr/mdp/
 - https://madiba.encs.concordia.ca/~x_decarn/papers/password-meters-ndss2014.pdf
 
-### Code PHP
+#### Développement
 
-- https://adullact.net/scm/viewvc.php/webrsa/trunk/app/Plugin/Password/
-
-#### Portage
-
-##### Qualité du code
-
+Construire un environnement docker tout prêt : 
 ```bash
-sudo apt-get install \
-    ant \
-    php-xdebug \
-&& composer update \
-&& ant quality
+docker-compose build
+docker-compose run app bash
 ```
+
+
+
+

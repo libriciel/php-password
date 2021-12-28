@@ -16,6 +16,8 @@ RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" &&
 
 FROM ubuntu:18.04
 
+WORKDIR /app
+
 RUN apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y  --no-install-recommends \
         ca-certificates \
@@ -31,9 +33,14 @@ RUN apt-get update && \
 COPY --from=builder /usr/lib/php/20170718/pcov.so  /usr/lib/php/20170718/pcov.so
 
 RUN echo "extension=pcov.so" > /etc/php/7.2/mods-available/pcov.ini && \
-    phpenmod pcov && \
-    phpenmod xdebug
+    phpenmod pcov xdebug
+
 
 COPY --from=builder /usr/local/bin/composer /usr/local/bin/composer
 
-WORKDIR /app
+COPY composer.* /app/
+RUN composer install
+
+COPY . /app
+
+

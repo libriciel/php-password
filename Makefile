@@ -19,7 +19,7 @@ COMPOSER=composer
 help:
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
-review: phpunit phpcs phpcpd phpmd ## Run all reviews tools (PHPUnit, PHP Code Sniffer, Copy/Paste Detector, Mess Detector)
+review: test phpcs phpcpd phpmd ## Run all reviews tools (PHPUnit, PHP Code Sniffer, Copy/Paste Detector, Mess Detector)
 
 .PHONY: phpcs
 phpcs: ## Check code style with PHP Code Sniffer
@@ -30,7 +30,7 @@ phpcbf: ## Fix all fixable code style errors
 	$(PHPCBF) $(PHPCS_ARGS)
 
 .PHONY: phpunit
-phpunit: vendor ## Run PHPUnit
+test: vendor ## Run PHPUnit
 	$(PHPUNIT)
 
 .PHONY: coverage

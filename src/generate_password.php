@@ -1,6 +1,5 @@
 <?php
 
-// @todo use ne fonctionne pas, pourquoi?!!
 use Libriciel\Utility\Password\PasswordGeneratorAnssi;
 use Libriciel\Utility\Password\PasswordStrengthMeterAnssi;
 
@@ -48,6 +47,8 @@ foreach (getopt(implode('', $shortopts), $longopts) as $key => $value) {
             break;
         case in_array($key, $config_keys):
             $config[$key] = bool_opt($value);
+            break;
+        default:
             break;
     }
 }

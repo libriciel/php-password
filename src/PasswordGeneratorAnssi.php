@@ -8,8 +8,6 @@
 
 namespace Libriciel\Utility\Password;
 
-use RuntimeException;
-
 /**
  * Cette classe permet de générer des mots de passes aléatoires suivant les
  * recommandations de l'ANSSI.
@@ -96,11 +94,11 @@ class PasswordGeneratorAnssi
      */
     public function characters(array $params = [], string $encoding = null): array
     {
-        $classes = $params + $this->config();
+        $myConfig = $params + $this->config();
         $encoding = null === $encoding ? mb_internal_encoding() : $encoding;
         $accumulator = [];
 
-        foreach ($classes as $key => $enabled) {
+        foreach ($myConfig as $key => $enabled) {
             if (true === $enabled) {
                 $tokens = \mb_str_split(static::$classes[$key], 1, $encoding);
                 $accumulator = array_merge($accumulator, $tokens);
@@ -165,7 +163,7 @@ class PasswordGeneratorAnssi
         if ($count === 0) {
             $format = 'Impossible de générer un mot de passe de longueur %d sans caractère disponible';
             $message = sprintf($format, $length, array_sum($mandatory), json_encode($mandatory));
-            throw new RuntimeException($message);
+            throw new PasswordException($message);
         }
 
         if (array_sum($mandatory) > $length) {
@@ -173,14 +171,16 @@ class PasswordGeneratorAnssi
                 'Impossible de générer un mot de passe de longueur %d ' .
                 'avec %d caractères obligatoires (obligatoires: %s)';
             $message = sprintf($format, $length, array_sum($mandatory), json_encode($mandatory));
-            throw new RuntimeException($message);
+            throw new PasswordException($message);
         }
 
         $result = [];
         $max = 0;
 
-        //@fixme: si class n'existe pas -> exception ?
         foreach ($mandatory as $class => $number) {
+            if (! isset(static::$classes[$class])){
+                throw new PasswordException("La classe de caractère $class n'est pas défini");
+            }
             $strlen = mb_strlen(static::$classes[$class], $encoding);
             for ($idx = 0; $idx < $number; $idx++) {
                 $char = mb_substr(static::$classes[$class], random_int(0, $strlen - 1), 1, $encoding);

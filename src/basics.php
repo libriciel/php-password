@@ -55,12 +55,12 @@ if (false === function_exists('random_array')) {
      * @param array $array Un array ayant des clés numériques
      * @return array
      */
-    function random_array(array $array)
+    function random_array(array $array): array
     {
         $result = [];
         $keys = array_keys($array);
 
-        while (count($keys) > 0) {
+        while (! empty($keys)) {
             $idx = random_int(0, count($keys) - 1);
             $key = $keys[$idx];
             $result[] = $array[$key];

@@ -1,0 +1,54 @@
+include:
+
+  - project: "libriciel/integration-continue/templates"
+    ref: master
+    file: '/security-check.yml'
+
+stages:
+  - build
+  - test
+
+variables:
+  CONTAINER_IMAGE: "${CI_REGISTRY_IMAGE}:${CI_COMMIT_REF_NAME}"
+
+build:
+  stage: build
+  tags:
+    - docker-build
+  variables:
+    GITHUB_API_TOKEN: "${GITHUB_API_TOKEN}"
+  script:
+    - docker login -u "gitlab-ci-token" -p "$CI_JOB_TOKEN" $CI_REGISTRY
+    - docker build --build-arg GITHUB_API_TOKEN=$GITHUB_API_TOKEN --pull -t ${CONTAINER_IMAGE} .
+    - docker login -u "gitlab-ci-token" -p "$CI_JOB_TOKEN" $CI_REGISTRY
+    - docker push ${CONTAINER_IMAGE}
+
+.tests:
+  stage: test
+  image: "$CONTAINER_IMAGE"
+  before_script:
+    - composer install
+
+check-style:
+  allow_failure: true
+  extends: .tests
+  script:
+    make phpcs
+
+mess-detector:
+  allow_failure: true
+  extends: .tests
+  script:
+    - make phpmd
+
+copy-paste-detector:
+  allow_failure: true
+  extends: .tests
+  script:
+    - make phpcpd
+
+unit-test:
+  allow_failure: true
+  extends: .tests
+  script:
+    - make coverage

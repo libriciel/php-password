@@ -1,6 +1,6 @@
 # php-password
 
-Librairie PHP permettant de calculer la force et l'entropie d'un mot de passe,
+Bibliothèque PHP permettant de calculer la force et l'entropie d'un mot de passe,
 de générer des mots de passes aléatoires et de calculer des empreintes de mots
 de passes afin de les stocker de façon sécurisée.
 

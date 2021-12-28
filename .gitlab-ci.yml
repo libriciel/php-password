@@ -7,6 +7,7 @@ include:
 stages:
   - build
   - test
+  - quality
 
 variables:
   CONTAINER_IMAGE: "${CI_REGISTRY_IMAGE}:${CI_COMMIT_REF_NAME}"
@@ -42,13 +43,29 @@ mess-detector:
     - make phpmd
 
 copy-paste-detector:
-  allow_failure: true
   extends: .tests
   script:
     - make phpcpd
 
 unit-test:
-  allow_failure: true
   extends: .tests
   script:
     - make coverage
+    - cp -rf coverage $CI_PROJECT_DIR
+  artifacts:
+    paths:
+      - coverage
+    expire_in: 1h
+
+
+quality:
+  stage: quality
+  only:
+    - master
+  image : gitlab.libriciel.fr:4567/docker/sonar-scanner:latest
+  script:
+    - mkdir -p /app/
+    - cp -rf $CI_PROJECT_DIR/* /app/
+    - cd /app/
+    - /sonar-scanner -Dsonar.login=$SONAR_LOGIN -Dsonar.host.url=$SONAR_HOST_URL
+

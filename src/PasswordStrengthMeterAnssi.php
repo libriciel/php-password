@@ -96,14 +96,13 @@ abstract class PasswordStrengthMeterAnssi implements PasswordStrengthMeterInterf
      */
     public static function thresholds()
     {
-        $result = [
+        return [
             128 => static::STRENGTH_VERY_STRONG,
             100 => static::STRENGTH_STRONG,
             80 => static::STRENGTH_MEDIUM,
             64 => static::STRENGTH_WEAK,
             0 => static::STRENGTH_VERY_WEAK
         ];
-        return $result;
     }
 
     /**

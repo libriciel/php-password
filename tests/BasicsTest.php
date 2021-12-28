@@ -1,11 +1,5 @@
 <?php
 
-/**
- * Code source des tests unitaires des fonctions basiques PHP.
- *
- * @license CeCiLL V2
- */
-
 namespace LibricielTest\Utility;
 
 use PHPUnit\Framework\TestCase;

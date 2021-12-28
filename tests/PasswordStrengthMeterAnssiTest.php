@@ -1,11 +1,5 @@
 <?php
 
-/**
- * Code source de la classe LibricielTest\Utility\Password\PasswordStrengthMeterAnssiTest
- *
- * @license CeCiLL V2
- */
-
 namespace LibricielTest\Utility\Password;
 
 use Libriciel\Utility\Password\PasswordStrengthMeterInterface;

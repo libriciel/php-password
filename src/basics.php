@@ -1,11 +1,5 @@
 <?php
 
-/**
- * Définitions et fonctions basiques.
- *
- * @license CeCiLL V2
- */
-
 if (false === defined('ROOT')) {
     define('ROOT', dirname(dirname(__FILE__)));
 }

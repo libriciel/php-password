@@ -1,11 +1,5 @@
 <?php
 
-/**
- * Code source de la classe LibricielTest\Utility\Password\PasswordGeneratorAnssiTest
- *
- * @license CeCiLL V2
- */
-
 namespace LibricielTest\Utility\Password;
 
 use PHPUnit\Framework\TestCase;

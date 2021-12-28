@@ -1,11 +1,5 @@
 <?php
 
-/**
- * Code source de l'interface Libriciel\Utility\PasswordPasswordStrengthMeterInterface
- *
- * @license CeCiLL V2
- */
-
 namespace Libriciel\Utility\Password;
 
 /**

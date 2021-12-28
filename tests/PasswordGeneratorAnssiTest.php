@@ -2,6 +2,7 @@
 
 namespace LibricielTest\Utility\Password;
 
+use Libriciel\Utility\Password\PasswordException;
 use PHPUnit\Framework\TestCase;
 use Libriciel\Utility\Password\PasswordGeneratorAnssi;
 
@@ -137,16 +138,9 @@ class PasswordGeneratorAnssiTest extends TestCase
         $this->assertNotFalse(mb_ereg('[€\\!#\\$\\*%\\? ]', $password));
     }
 
-    /**
-     * Test de la méthode PasswordGeneratorAnssi::constrained().
-     *
-     * @expectedException \RuntimeException
-     * @expectedExceptionCode 0
-     * @expectedExceptionMessage Impossible de générer un mot de passe de longueur 1 avec 2 caractères obligatoires
-     * (obligatoires: {"numbers":1,"lowercase_letters":1})
-     */
     public function testConstrainedException1()
     {
+
         $pwdGeneratorAnsi = new PasswordGeneratorAnssi();
 
         $defaults = $pwdGeneratorAnsi->defaults();
@@ -154,16 +148,14 @@ class PasswordGeneratorAnssiTest extends TestCase
             'numbers' => 1,
             'lowercase_letters' => 1
         ];
+        $this->expectException(PasswordException::class);
+        $this->expectExceptionCode(0);
+        $this->expectExceptionMessage(
+            "Impossible de générer un mot de passe de longueur 1 avec 2 caractères obligatoires"
+        );
         $pwdGeneratorAnsi->constrained(1, $defaults, $mandatory);
     }
 
-    /**
-     * Test de la méthode PasswordGeneratorAnssi::constrained().
-     *
-     * @expectedException \RuntimeException
-     * @expectedExceptionCode 0
-     * @expectedExceptionMessage Impossible de générer un mot de passe de longueur 3 sans caractère disponible
-     */
     public function testConstrainedException2()
     {
         $pwdGeneratorAnsi = new PasswordGeneratorAnssi();
@@ -174,6 +166,11 @@ class PasswordGeneratorAnssiTest extends TestCase
             'numbers' => 1,
             'lowercase_letters' => 1
         ];
+        $this->expectException(PasswordException::class);
+        $this->expectExceptionCode(0);
+        $this->expectExceptionMessage(
+            "Impossible de générer un mot de passe de longueur 3 sans caractère disponible"
+        );
         $pwdGeneratorAnsi->constrained(3, $false, $mandatory);
     }
 }

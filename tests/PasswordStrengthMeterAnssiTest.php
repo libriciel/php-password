@@ -48,7 +48,7 @@ class PasswordStrengthMeterAnssiTest extends TestCase
             '70 symbols' => [70, 'aZ3Rt?'],
             '90 symbols' => [90, 'aZ3Rt?&'],
             'french diacritic' => [42, 'été'],
-            'french diacritic upper case' => ['42', 'GÜDRUN'],
+            'french diacritic upper case' => [42, 'GÜDRUN'],
             'Wikipedia test 1' => [10, '2'],
             'Wikipedia test 2' => [16, 'F'],
             'Wikipedia test 3' => [26, 'G'],
@@ -62,7 +62,7 @@ class PasswordStrengthMeterAnssiTest extends TestCase
      * Test de la méthode PasswordStrengthMeterAnssi::symbols().
      * @dataProvider symbolsProvider
      */
-    public function testSymbols(string $expectedSymbols, string $input)
+    public function testSymbols(int $expectedSymbols, string $input)
     {
         $pwdStrengthMeter = new PasswordStrengthMeterAnssi();
         $this->assertEquals(

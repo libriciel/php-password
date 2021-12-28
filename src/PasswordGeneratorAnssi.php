@@ -178,7 +178,7 @@ class PasswordGeneratorAnssi
         $max = 0;
 
         foreach ($mandatory as $class => $number) {
-            if (! isset(static::$classes[$class])){
+            if (! isset(static::$classes[$class])) {
                 throw new PasswordException("La classe de caractère $class n'est pas défini");
             }
             $strlen = mb_strlen(static::$classes[$class], $encoding);

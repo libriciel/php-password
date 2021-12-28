@@ -1,9 +1,11 @@
 <?php
+
 /**
  * Définitions et fonctions basiques.
  *
  * @license CeCiLL V2
  */
+
 if (false === defined('ROOT')) {
     define('ROOT', dirname(dirname(__FILE__)));
 }
@@ -76,10 +78,10 @@ if (false === function_exists('mb_str_split')) {
         $encoding = null === $encoding ? mb_internal_encoding() : $encoding;
         $result = false;
 
-        if ($length >=1) {
+        if ($length >= 1) {
             $result = [];
             $strlen = mb_strlen($string, $encoding);
-            for ($idx=0; $idx<$strlen; $idx+=$length) {
+            for ($idx = 0; $idx < $strlen; $idx += $length) {
                 $result[] = mb_substr($string, $idx, $length, $encoding);
             }
         }
@@ -101,7 +103,7 @@ if (false === function_exists('random_array')) {
         $keys = array_keys($array);
 
         while (count($keys) > 0) {
-            $idx = random_int(0, count($keys)-1);
+            $idx = random_int(0, count($keys) - 1);
             $key = $keys[$idx];
             $result[] = $array[$key];
             array_splice($keys, $idx, 1);
@@ -109,4 +111,53 @@ if (false === function_exists('random_array')) {
 
         return $result;
     }
+}
+
+
+/**
+ * Affiche l'aide du programme.
+ *
+ * @param array $defaults
+ * @param array $config
+ */
+function usage(array $defaults, array $config)
+{
+    $basename = basename(__FILE__);
+    printf("NAME\n");
+    printf("  %s\n", $basename);
+    printf("\nDESCRIPTION\n");
+    printf("  Génère une ou plusieurs chaîne(s) de caractères aléatoires.\n");
+    printf("  Il est possible de spécifier différentes options, dont les classes de caractères à utiliser.\n");
+    printf("  Ces classes sont celles utilisées par la classe PasswordGeneratorAnssi.\n");
+    printf("\nSYNOPSIS\n");
+    printf("  %s [OPTION]...\n", $basename);
+    printf("\nOPTIONS\n");
+    printf("  -h --help\t\t\tAffiche cette aide\n");
+    printf("  -l --length\t\t\tSpécifie la longueur des mots de passe générés. Par défaut: %d\n", $defaults['length']);
+    printf("  -m --max\t\t\tSpécifie le nombre de mots de passe à générer. Par défaut: %d\n", $defaults['max']);
+    foreach ($config as $key => $default) {
+        $tabs = 3 - (int)floor(strlen($key) / 8);
+        $spacer = str_repeat("\t", $tabs);
+        printf(
+            "     --{$key}{$spacer}Configuration de cette classe de caractères. Par défaut: %s\n",
+            $default ? 'true' : 'false'
+        );
+    }
+    printf("\nEXEMPLES\n");
+    printf("  %s -h\n", $basename);
+    printf("  %s -l=100 -m=10 --symbols_1=true\n", $basename);
+    printf("  %s -l=29 -m=5 --lowercase_letters=false --uppercase_letters=false\n", $basename);
+}
+
+function bool_opt($value)
+{
+    $value = strtolower($value);
+
+    if (is_string($value) && in_array($value, ['true', 'false'])) {
+        $result = $value === 'true' ? true : false;
+    } else {
+        $result = (bool)$value;
+    }
+
+    return $result;
 }

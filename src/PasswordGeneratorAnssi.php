@@ -1,9 +1,11 @@
 <?php
+
 /**
  * Code source de la classe Libriciel\Utility\Password\PasswordGeneratorAnssi
  *
  * @license CeCiLL V2
  */
+
 namespace Libriciel\Utility\Password;
 
 /**
@@ -126,8 +128,8 @@ abstract class PasswordGeneratorAnssi
         if ($count > 0) {
             $result = '';
             $max = 0;
-            while ($max<$length) {
-                $random = random_int(0, $count-1);
+            while ($max < $length) {
+                $random = random_int(0, $count - 1);
                 $result .= $characters[$random];
                 $max++;
             }
@@ -161,7 +163,9 @@ abstract class PasswordGeneratorAnssi
         }
 
         if (array_sum($mandatory) > $length) {
-            $format = 'Impossible de générer un mot de passe de longueur %d avec %d caractères obligatoires (obligatoires: %s)';
+            $format =
+                'Impossible de générer un mot de passe de longueur %d ' .
+                'avec %d caractères obligatoires (obligatoires: %s)';
             $message = sprintf($format, $length, array_sum($mandatory), json_encode($mandatory));
             throw new \RuntimeException($message);
         }
@@ -172,15 +176,15 @@ abstract class PasswordGeneratorAnssi
         //@fixme: si class n'existe pas -> exception ?
         foreach ($mandatory as $class => $number) {
             $strlen = mb_strlen(static::$classes[$class], $encoding);
-            for ($idx=0; $idx<$number; $idx++) {
-                $char = mb_substr(static::$classes[$class], random_int(0, $strlen-1), 1, $encoding);
+            for ($idx = 0; $idx < $number; $idx++) {
+                $char = mb_substr(static::$classes[$class], random_int(0, $strlen - 1), 1, $encoding);
                 $result[] = $char;
                 $max++;
             }
         }
 
-        while ($max<$length) {
-            $random = random_int(0, $count-1);
+        while ($max < $length) {
+            $random = random_int(0, $count - 1);
             $result[] = $characters[$random];
             $max++;
         }

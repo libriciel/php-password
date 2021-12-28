@@ -18,7 +18,6 @@ use Libriciel\Utility\Password\PasswordStrengthMeterInterface;
  */
 abstract class PasswordStrengthMeterAnssi implements PasswordStrengthMeterInterface
 {
-
     /**
      * Retourne le nombre de symboles possibles à tester pour trouver une chaîne
      * de caractères du même type que le mot de passe.
@@ -84,7 +83,7 @@ abstract class PasswordStrengthMeterAnssi implements PasswordStrengthMeterInterf
     {
         $length = mb_strlen($string);
         $symbols = static::symbols($string);
-        $value = $length*log($symbols, 2);
+        $value = $length * log($symbols, 2);
         return sprintf("%.{$precision}f", $value);
     }
 

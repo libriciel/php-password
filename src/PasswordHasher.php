@@ -1,9 +1,11 @@
 <?php
+
 /**
  * Code source de la classe Libriciel\Utility\Password\PasswordHasher
  *
  * @license CeCiLL V2
  */
+
 namespace Libriciel\Utility\Password;
 
 /**
@@ -47,7 +49,7 @@ abstract class PasswordHasher
     protected static function configCheck(array $config)
     {
         $algorithms = hash_algos();
-        
+
         if (false === in_array($config['algorithm'], $algorithms, true)) {
             $format = "L'algorithme %s n'est pas disponible; merci de choisir une valeur parmi %s";
             sort($algorithms);
@@ -81,7 +83,7 @@ abstract class PasswordHasher
     {
         $config += static::config();
         static::configCheck($config);
-        
+
         if (true === empty((string)$config['salt'])) {
             $message = "Il faudrait utiliser un sel de hashage (aléatoire, d'au moins 40 caractères)";
             trigger_error(sprintf($message, get_called_class()), E_USER_NOTICE);
@@ -89,7 +91,7 @@ abstract class PasswordHasher
 
         return hash(
             $config['algorithm'],
-            (string)$password.(string)$config['salt'],
+            (string)$password . (string)$config['salt'],
             $config['raw_output']
         );
     }

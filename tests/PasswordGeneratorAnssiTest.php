@@ -1,9 +1,11 @@
 <?php
+
 /**
  * Code source de la classe LibricielTest\Utility\Password\PasswordGeneratorAnssiTest
  *
  * @license CeCiLL V2
  */
+
 namespace LibricielTest\Utility\Password;
 
 use PHPUnit\Framework\TestCase;
@@ -138,7 +140,8 @@ class PasswordGeneratorAnssiTest extends TestCase
      *
      * @expectedException \RuntimeException
      * @expectedExceptionCode 0
-     * @expectedExceptionMessage Impossible de générer un mot de passe de longueur 1 avec 2 caractères obligatoires (obligatoires: {"numbers":1,"lowercase_letters":1})
+     * @expectedExceptionMessage Impossible de générer un mot de passe de longueur 1 avec 2 caractères obligatoires
+     * (obligatoires: {"numbers":1,"lowercase_letters":1})
      */
     public function testConstrainedException1()
     {

@@ -1,9 +1,11 @@
 <?php
+
 /**
  * Code source de l'interface Libriciel\Utility\PasswordPasswordStrengthMeterInterface
  *
  * @license CeCiLL V2
  */
+
 namespace Libriciel\Utility\Password;
 
 /**
@@ -14,28 +16,28 @@ interface PasswordStrengthMeterInterface
     /**
      * La constante utilisée pour une force de mot de passe "très forte".
      */
-    const STRENGTH_VERY_STRONG = 5;
+    public const STRENGTH_VERY_STRONG = 5;
 
     /**
      * La constante utilisée pour une force de mot de passe "forte".
      */
-    const STRENGTH_STRONG = 4;
+    public const STRENGTH_STRONG = 4;
 
     /**
      * La constante utilisée pour une force de mot de passe "moyenne".
      */
-    const STRENGTH_MEDIUM = 3;
+    public const STRENGTH_MEDIUM = 3;
 
     /**
      * La constante utilisée pour une force de mot de passe "faible".
      */
-    const STRENGTH_WEAK = 2;
+    public const STRENGTH_WEAK = 2;
 
     /**
      * La constante utilisée pour une force de mot de passe "très faible".
      */
-    const STRENGTH_VERY_WEAK = 1;
-    
+    public const STRENGTH_VERY_WEAK = 1;
+
     /**
      * Retourne le nombre estimé de symboles à tester pour la chaîne de
      * caractères.
@@ -44,7 +46,7 @@ interface PasswordStrengthMeterInterface
      * @return int
      */
     public static function symbols($string);
-    
+
     /**
      * Retourne la force d'un mot de passe.
      *

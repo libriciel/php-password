@@ -31,7 +31,6 @@ build:
     - cd /app/
 
 check-style:
-  allow_failure: true
   extends: .tests
   script:
     make phpcs

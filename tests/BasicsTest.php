@@ -9,7 +9,6 @@ use PHPUnit\Framework\TestCase;
  */
 class BasicsTest extends TestCase
 {
-
     /**
      * Test de la fonction random_array.
      */

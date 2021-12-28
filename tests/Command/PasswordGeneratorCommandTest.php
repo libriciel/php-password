@@ -21,6 +21,6 @@ class PasswordGeneratorCommandTest extends TestCase
     {
         $command = new PasswordGeneratorCommand();
         $commandTester = new CommandTester($command);
-        $this->assertSame(0, $commandTester->execute([], ['verbosity'=>OutputInterface::VERBOSITY_VERBOSE]));
+        $this->assertSame(0, $commandTester->execute([], ['verbosity' => OutputInterface::VERBOSITY_VERBOSE]));
     }
 }

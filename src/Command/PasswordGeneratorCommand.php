@@ -35,21 +35,21 @@ class PasswordGeneratorCommand extends Command
             );
 
 
-        $passwordGeneratorAnsi = new PasswordGeneratorAnssi();
+        $pwdGeneratorAnsi = new PasswordGeneratorAnssi();
 
-        $config = $passwordGeneratorAnsi->config();
-        foreach ($config as $config_key => $default_value) {
-            $this->addOption($config_key, null, InputOption::VALUE_REQUIRED, "", $default_value);
+        $config = $pwdGeneratorAnsi->config();
+        foreach ($config as $configKey => $defaultValue) {
+            $this->addOption($configKey, null, InputOption::VALUE_REQUIRED, "", $defaultValue);
         }
     }
 
     public function execute(InputInterface $input, OutputInterface $output)
     {
-        $passwordGeneratorAnsi = new PasswordGeneratorAnssi();
-        $config = $passwordGeneratorAnsi->config();
+        $pwdGeneratorAnsi = new PasswordGeneratorAnssi();
+        $config = $pwdGeneratorAnsi->config();
         $options = [];
-        foreach (array_keys($config) as $config_keys) {
-            $options[$config_keys] =  (bool) filter_var($input->getOption($config_keys), FILTER_VALIDATE_BOOL);
+        foreach (array_keys($config) as $configKeys) {
+            $options[$configKeys] =  (bool) filter_var($input->getOption($configKeys), FILTER_VALIDATE_BOOL);
         }
 
         if ($output->isVerbose()) {
@@ -58,8 +58,8 @@ class PasswordGeneratorCommand extends Command
                 $input->getOption('max'),
                 $input->getOption('length')
             ));
-            foreach ($options as $config_keys => $values) {
-                $output->writeln("$config_keys : $values");
+            foreach ($options as $configKeys => $values) {
+                $output->writeln("$configKeys : $values");
             }
             $output->writeln("");
         }
@@ -67,7 +67,7 @@ class PasswordGeneratorCommand extends Command
         $pwdStrengthMeter = new PasswordStrengthMeterAnssi();
 
         for ($i = 0; $i < $input->getOption('max'); $i++) {
-            $password = $passwordGeneratorAnsi->generate(
+            $password = $pwdGeneratorAnsi->generate(
                 $input->getOption('length'),
                 $options
             );

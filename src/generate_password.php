@@ -1,6 +1,5 @@
 <?php
 
-
 // @todo use ne fonctionne pas, pourquoi?!!
 use Libriciel\Utility\Password\PasswordGeneratorAnssi;
 

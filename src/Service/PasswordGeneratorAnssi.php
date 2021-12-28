@@ -191,6 +191,21 @@ class PasswordGeneratorAnssi
             $max++;
         }
 
-        return implode('', random_array($result));
+        return implode('', $this->randomArray($result));
+    }
+
+    private function randomArray(array $array): array
+    {
+        $result = [];
+        $keys = array_keys($array);
+
+        while (! empty($keys)) {
+            $idx = random_int(0, count($keys) - 1);
+            $key = $keys[$idx];
+            $result[] = $array[$key];
+            array_splice($keys, $idx, 1);
+        }
+
+        return $result;
     }
 }

@@ -173,4 +173,21 @@ class PasswordGeneratorAnssiTest extends TestCase
         );
         $pwdGeneratorAnsi->constrained(3, $false, $mandatory);
     }
+
+    public function testWithUnexpectedClass()
+    {
+        $pwdGeneratorAnsi = new PasswordGeneratorAnssi();
+
+
+        $mandatory = [
+            'numbers' => 1,
+            'not_existing' => 1
+        ];
+        $this->expectException(PasswordException::class);
+        $this->expectExceptionCode(0);
+        $this->expectExceptionMessage(
+            "La classe de caractère not_existing n'est pas défini"
+        );
+        $pwdGeneratorAnsi->constrained(3, $mandatory, $mandatory);
+    }
 }

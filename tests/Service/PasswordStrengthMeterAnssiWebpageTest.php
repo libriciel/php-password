@@ -1,9 +1,9 @@
 <?php
 
-namespace LibricielTest\Utility\Password;
+namespace LibricielTest\Password\Service;
 
+use Libriciel\Password\Service\PasswordStrengthMeterAnssi;
 use PHPUnit\Framework\TestCase;
-use Libriciel\Utility\Password\PasswordStrengthMeterAnssi;
 
 /**
  * Tests unitaires de la classe Libriciel\Utility\Password\PasswordStrengthMeterAnssi

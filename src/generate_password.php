@@ -1,7 +1,6 @@
 <?php
 
-use Libriciel\Utility\Password\PasswordGeneratorAnssi;
-use Libriciel\Utility\Password\PasswordStrengthMeterAnssi;
+use Libriciel\Password\Service\PasswordGeneratorAnssi;
 
 require_once __DIR__ . "/../vendor/autoload.php";
 

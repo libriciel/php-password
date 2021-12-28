@@ -1,6 +1,6 @@
 <?php
 
-namespace Libriciel\Utility\Password;
+namespace Libriciel\Password\Service;
 
 /**
  * Une interface pour les classes qui retournent la force d'un mot de passe.

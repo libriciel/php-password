@@ -1,10 +1,10 @@
 <?php
 
-namespace LibricielTest\Utility\Password;
+namespace LibricielTest\Password\Service;
 
-use Libriciel\Utility\Password\PasswordException;
+use Libriciel\Password\PasswordException;
+use Libriciel\Password\Service\PasswordGeneratorAnssi;
 use PHPUnit\Framework\TestCase;
-use Libriciel\Utility\Password\PasswordGeneratorAnssi;
 
 /**
  * Tests unitaires de la classe Libriciel\Utility\Password\PasswordGeneratorAnssi

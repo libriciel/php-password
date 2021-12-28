@@ -1,6 +1,6 @@
 <?php
 
-namespace Libriciel\Utility\Password;
+namespace Libriciel\Password;
 
 use RuntimeException;
 

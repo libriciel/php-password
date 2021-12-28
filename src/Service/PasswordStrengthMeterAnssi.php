@@ -1,6 +1,6 @@
 <?php
 
-namespace Libriciel\Utility\Password;
+namespace Libriciel\Password\Service;
 
 /**
  * Cette classe calcule la force et l'entropie d'un mot de passe comme définis

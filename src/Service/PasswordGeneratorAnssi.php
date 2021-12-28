@@ -1,6 +1,8 @@
 <?php
 
-namespace Libriciel\Utility\Password;
+namespace Libriciel\Password\Service;
+
+use Libriciel\Password\PasswordException;
 
 /**
  * Cette classe permet de générer des mots de passes aléatoires suivant les

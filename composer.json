@@ -16,8 +16,8 @@
             "src/basics.php"
         ],
         "psr-4": {
-            "Libriciel\\Utility\\Password\\": "src/",
-            "LibricielTest\\Utility\\Password\\": "tests/"
+            "Libriciel\\Password\\": "src/",
+            "LibricielTest\\Password\\": "tests/"
         }
     },
     "require": {

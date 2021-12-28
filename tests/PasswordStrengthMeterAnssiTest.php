@@ -1,6 +1,6 @@
 <?php
 
-namespace LibricielTest\Utility\Password;
+namespace LibricielTest\Utility\Password\Utility\Password;
 
 use Libriciel\Utility\Password\PasswordStrengthMeterInterface;
 use PHPUnit\Framework\TestCase;

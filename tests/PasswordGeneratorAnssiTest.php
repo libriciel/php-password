@@ -1,6 +1,6 @@
 <?php
 
-namespace LibricielTest\Utility\Password;
+namespace LibricielTest\Utility\Password\Utility\Password;
 
 use PHPUnit\Framework\TestCase;
 use Libriciel\Utility\Password\PasswordGeneratorAnssi;

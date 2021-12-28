@@ -1,6 +1,6 @@
 <?php
 
-namespace LibricielTest\Utility\Password;
+namespace LibricielTest\Utility\Password\Utility\Password;
 
 use PHPUnit\Framework\TestCase;
 use Libriciel\Utility\Password\PasswordStrengthMeterAnssi;
@@ -21,7 +21,7 @@ class PasswordStrengthMeterAnssiWebpageTest extends TestCase
      * @param array $data Les valeur des assertions, en fonction de la longueur
      * @param string $symbols Une chaîne d'au moins 30 caractères
      */
-    protected function assertEqualEntropiesByLength($data, $symbols)
+    protected function assertEqualEntropiesByLength(array $data, string $symbols)
     {
         $pwdStrengthMeter = new PasswordStrengthMeterAnssi();
 

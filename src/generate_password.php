@@ -3,10 +3,7 @@
 use Libriciel\Utility\Password\PasswordGeneratorAnssi;
 use Libriciel\Utility\Password\PasswordStrengthMeterAnssi;
 
-require_once __DIR__ . DIRECTORY_SEPARATOR . 'basics.php';
-require_once __DIR__ . DS . 'PasswordGeneratorAnssi.php';
-require_once __DIR__ . DS . 'PasswordStrengthMeterInterface.php';
-require_once __DIR__ . DS . 'PasswordStrengthMeterAnssi.php';
+require_once __DIR__ . "/../vendor/autoload.php";
 
 $defaults = [
     'debug' => false,

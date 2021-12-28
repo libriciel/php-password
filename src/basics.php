@@ -1,47 +1,5 @@
 <?php
 
-if (false === defined('ROOT')) {
-    define('ROOT', dirname(dirname(__FILE__)));
-}
-
-if (false === defined('DS')) {
-    define('DS', DIRECTORY_SEPARATOR);
-}
-
-if (false === function_exists('mb_str_split')) {
-    /**
-     * Convertit une chaîne de caractères en tableau.
-     *
-     * FALSE est retourné si length est inférieur à 1.
-     * Si length est supérieur à la longueur de string, la chaîne
-     * entière est retournée dans le premier (et seul) élément du tableau.
-     *
-     * @see {@url http://www.php.net/manual/en/function.str-split.php}
-     *
-     * @param string $string La chaîne d'entrée
-     * @param int $length Longueur maximale de chaque élément
-     * @param string $encoding Le paramètre encoding est l'encodage des caractères.
-     *  S'il est omis, l'encodage de caractres interne (mb_internal_encoding)
-     *  sera utilisé.
-     * @return false|array
-     */
-    function mb_str_split($string, $length = 1, $encoding = null)
-    {
-        $encoding = null === $encoding ? mb_internal_encoding() : $encoding;
-        $result = false;
-
-        if ($length >= 1) {
-            $result = [];
-            $strlen = mb_strlen($string, $encoding);
-            for ($idx = 0; $idx < $strlen; $idx += $length) {
-                $result[] = mb_substr($string, $idx, $length, $encoding);
-            }
-        }
-
-        return $result;
-    }
-}
-
 if (false === function_exists('random_array')) {
     /**
      * Retourne les éléments d'un array dont les clés ont été mélangées.
@@ -101,12 +59,12 @@ function usage(array $defaults, array $config)
     printf("  %s -l=29 -m=5 --lowercase_letters=false --uppercase_letters=false\n", $basename);
 }
 
-function bool_opt($value)
+function bool_opt($value): bool
 {
     $value = strtolower($value);
 
-    if (is_string($value) && in_array($value, ['true', 'false'])) {
-        return ($value === 'true' ? true : false);
+    if (in_array($value, ['true', 'false'])) {
+        return ($value === 'true');
     }
 
     return (bool)$value;

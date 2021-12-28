@@ -1,8 +1,7 @@
 # php-password
 
 Bibliothèque PHP permettant de calculer la force et l'entropie d'un mot de passe,
-de générer des mots de passes aléatoires et de calculer des empreintes de mots
-de passes afin de les stocker de façon sécurisée.
+de générer des mots de passes aléatoires.
 
 ## Contexte
 
@@ -39,33 +38,8 @@ application.
 
 ### Utilisation de la librairie
 
-#### Prérequis PHP
-
-- 7.0 +
-- PHP de [5.2 à 5.6](http://php.net/random_int) est également supporté via une
-[librairie externe](https://github.com/paragonie/random_compat)
 
 #### Exemples
-
-##### Empreintes de mots de passes
-
-```php
-use Libriciel\Utility\Password\PasswordHasher;
-
-// Configuration recommandée pour les empreintes (hash)
-$config = [
-    // 64 caractères à la sortie (entropie de 256)
-    'algorithm' => 'sha256',
-    // 64 caractères a-z et 0-9 (36 symboles) pour le salt (entropie de 256)
-    'salt' => '968dda000668f21e8761de477a102017fe2ca4c5c6c947a5a42fb5fb813964be',
-    'raw_output' => false
-];
-PasswordHasher::config($config);
-
-// Calcul de l'empreinte d'un mot de passe avec la configuration par défaut ci-dessus
-// Retourne ab4d9bad79648740b6d9a569f66fb530bc104506d37a440941cef7187a519dc7
-PasswordHasher::hash('mot de passe');
-```
 
 ##### Force du mot de passe (selon l'ANSSI)
 

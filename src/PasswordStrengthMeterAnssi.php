@@ -8,15 +8,13 @@
 
 namespace Libriciel\Utility\Password;
 
-use Libriciel\Utility\Password\PasswordStrengthMeterInterface;
-
 /**
  * Cette classe calcule la force et l'entropie d'un mot de passe comme définis
  * sur le site de l'ANSSI.
  *
  * @see {@url https://www.ssi.gouv.fr/administration/precautions-elementaires/calculer-la-force-dun-mot-de-passe/}
  */
-abstract class PasswordStrengthMeterAnssi implements PasswordStrengthMeterInterface
+class PasswordStrengthMeterAnssi implements PasswordStrengthMeterInterface
 {
     /**
      * Retourne le nombre de symboles possibles à tester pour trouver une chaîne
@@ -24,7 +22,7 @@ abstract class PasswordStrengthMeterAnssi implements PasswordStrengthMeterInterf
      *
      * Par exemple, "chien" reverra 24, "Chien" renverra 52, "chien6" renverra 36.
      *
-     * Les classes de caractères sont les suivantes:
+     * Les classes de caractères sont les suivantes :
      *  - 0 et 1
      *  - 0 à 9
      *  - 0 à 9, a à f ou A à F
@@ -39,7 +37,7 @@ abstract class PasswordStrengthMeterAnssi implements PasswordStrengthMeterInterf
      * @param string $string Le mot de passe
      * @return int
      */
-    public static function symbols($string)
+    public function symbols(string $string): int
     {
         $hexadecimal = false !== mb_ereg('^[0-9a-fA-F]+$', $string)
             && false !== mb_ereg('[a-fA-F]', $string);
@@ -47,25 +45,27 @@ abstract class PasswordStrengthMeterAnssi implements PasswordStrengthMeterInterf
         $result = 0;
 
         if (false !== mb_ereg('^[01]+$', $string)) {
-            $result = 2;
-        } elseif (true === $hexadecimal) {
-            $result = false !== mb_ereg('([A-F].*[a-f]|[a-f].*[A-F])', $string)
-                ? 22 : 16;
-        } else {
-            $patterns = [
-                '[0-9]' => 10,
-                '[a-z]' => 26,
-                '[A-Z]' => 26,
-                '[€\\!#\\$\\*%\\? ]' => 8,
-                '[&\\[\\|\\]@\\^µ§\\:/;\\.,\\<\\>°²³\'"]' => 20,
-                '[àâäæçèéêëîïôœùûü]' => 16,
-                '[ÀÂÄÆÇÈÉÊËÎÏÔŒÙÛÜ]' => 16
-            ];
+            return 2;
+        }
 
-            foreach ($patterns as $pattern => $symbols) {
-                if (false !== mb_ereg($pattern, $string)) {
-                    $result += $symbols;
-                }
+        if (true === $hexadecimal) {
+            return (false !== mb_ereg('([A-F].*[a-f]|[a-f].*[A-F])', $string)
+                ? 22 : 16);
+        }
+
+        $patterns = [
+            '[0-9]' => 10,
+            '[a-z]' => 26,
+            '[A-Z]' => 26,
+            '[€\\!#\\$\\*%\\? ]' => 8,
+            '[&\\[\\|\\]@\\^µ§\\:/;\\.,\\<\\>°²³\'"]' => 20,
+            '[àâäæçèéêëîïôœùûü]' => 16,
+            '[ÀÂÄÆÇÈÉÊËÎÏÔŒÙÛÜ]' => 16
+        ];
+
+        foreach ($patterns as $pattern => $symbols) {
+            if (false !== mb_ereg($pattern, $string)) {
+                $result += $symbols;
             }
         }
 
@@ -77,12 +77,12 @@ abstract class PasswordStrengthMeterAnssi implements PasswordStrengthMeterInterf
      *
      * @param string $string La chaîne de caractères
      * @param int $precision Le nombre de décimales souhaitées
-     * @return integer
+     * @return float
      */
-    public static function entropy($string, $precision = 0)
+    public function entropy(string $string, int $precision = 0): float
     {
         $length = mb_strlen($string);
-        $symbols = static::symbols($string);
+        $symbols = $this->symbols($string);
         $value = $length * log($symbols, 2);
         return sprintf("%.{$precision}f", $value);
     }
@@ -93,7 +93,7 @@ abstract class PasswordStrengthMeterAnssi implements PasswordStrengthMeterInterf
      *
      * @return array
      */
-    public static function thresholds()
+    public function thresholds(): array
     {
         return [
             128 => static::STRENGTH_VERY_STRONG,
@@ -108,7 +108,7 @@ abstract class PasswordStrengthMeterAnssi implements PasswordStrengthMeterInterf
      * Retourne la "force" d'un mot de passe.
      *
      * Il s'agit d'un chiffre entre 1 (très faible) et 5 (très fort) qui
-     * correspond au constantes de classe STRENGTH_VERY_WEAK (1), STRENGTH_WEAK (2),
+     * correspond aux constantes de classe STRENGTH_VERY_WEAK (1), STRENGTH_WEAK (2),
      * STRENGTH_MEDIUM (3), STRENGTH_STRONG (4) et STRENGTH_VERY_STRONG (5)
      * à partir de l'entropie calculée par la méthode entropy().
      *
@@ -117,18 +117,17 @@ abstract class PasswordStrengthMeterAnssi implements PasswordStrengthMeterInterf
      * @param string $string Le mot de passe
      * @return integer
      */
-    public static function strength($string)
+    public function strength(string $string): int
     {
-        $entropy = static::entropy($string);
-        $thresholds = static::thresholds();
-        $result = static::STRENGTH_VERY_WEAK;
+        $entropy = $this->entropy($string);
+        $thresholds = $this->thresholds();
+        $result = self::STRENGTH_VERY_WEAK;
 
         foreach ($thresholds as $threshold => $strength) {
             if ($entropy >= $threshold && $strength > $result) {
                 $result = $strength;
             }
         }
-
         return $result;
     }
 }

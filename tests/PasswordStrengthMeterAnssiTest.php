@@ -8,6 +8,7 @@
 
 namespace LibricielTest\Utility\Password;
 
+use Libriciel\Utility\Password\PasswordStrengthMeterInterface;
 use PHPUnit\Framework\TestCase;
 use Libriciel\Utility\Password\PasswordStrengthMeterAnssi;
 
@@ -21,296 +22,158 @@ class PasswordStrengthMeterAnssiTest extends TestCase
      */
     public function testThresholds()
     {
-        $actual = PasswordStrengthMeterAnssi::thresholds();
+        $pwdStrengthMeter = new PasswordStrengthMeterAnssi();
+        $actual = $pwdStrengthMeter->thresholds();
         $expected = [
-            128 => PasswordStrengthMeterAnssi::STRENGTH_VERY_STRONG,
-            100 => PasswordStrengthMeterAnssi::STRENGTH_STRONG,
-            80 => PasswordStrengthMeterAnssi::STRENGTH_MEDIUM,
-            64 => PasswordStrengthMeterAnssi::STRENGTH_WEAK,
-            0 => PasswordStrengthMeterAnssi::STRENGTH_VERY_WEAK,
+            128 => PasswordStrengthMeterInterface::STRENGTH_VERY_STRONG,
+            100 => PasswordStrengthMeterInterface::STRENGTH_STRONG,
+            80 => PasswordStrengthMeterInterface::STRENGTH_MEDIUM,
+            64 => PasswordStrengthMeterInterface::STRENGTH_WEAK,
+            0 => PasswordStrengthMeterInterface::STRENGTH_VERY_WEAK,
         ];
         $this->assertEquals($expected, $actual);
     }
 
     /**
-     * Test de la méthode PasswordStrengthMeterAnssi::symbols().
-     */
-    public function testSymbols()
-    {
-        // Binaire
-        $this->assertEquals(2, PasswordStrengthMeterAnssi::symbols('0110'));
-        // Décimal
-        $this->assertEquals(10, PasswordStrengthMeterAnssi::symbols('0123'));
-        // Hexadécimal
-        $this->assertEquals(16, PasswordStrengthMeterAnssi::symbols('012F'));
-        // Hexadécimal, majuscules et minuscules
-        $this->assertEquals(22, PasswordStrengthMeterAnssi::symbols('012Ff'));
-        // Alphabétique
-        $this->assertEquals(26, PasswordStrengthMeterAnssi::symbols('azerty'));
-        // Alphabétique, majuscules et minuscules
-        $this->assertEquals(52, PasswordStrengthMeterAnssi::symbols('aZeRtY'));
-        // Alphanumérique
-        $this->assertEquals(36, PasswordStrengthMeterAnssi::symbols('az3rty'));
-        // Alphanumérique, majuscules et minuscules
-        $this->assertEquals(62, PasswordStrengthMeterAnssi::symbols('aZ3RtY'));
-        // 70 symboles
-        $this->assertEquals(70, PasswordStrengthMeterAnssi::symbols('aZ3Rt?'));
-        // 90 symboles
-        $this->assertEquals(90, PasswordStrengthMeterAnssi::symbols('aZ3Rt?&'));
-    }
-
-
-    /**
-     * Test de la méthode PasswordStrengthMeterAnssi::symbols() avec des
-     * caractères français accentués.
-     */
-    public function testSymbolsFrenchAccents()
-    {
-        $this->assertEquals(42, PasswordStrengthMeterAnssi::symbols('été'));
-        $this->assertEquals(42, PasswordStrengthMeterAnssi::symbols('GÜDRUN'));
-    }
-
-    /**
-     * Test de la méthode PasswordStrengthMeterAnssi::symbols() avec l'entropie
-     * par symboles définie dans le tableau sur wikipedia.
-     *
+     * Pour les tests Wikipédia :
      * @see {@url https://en.wikipedia.org/wiki/Password_strength#Random_passwords}
+     *
+     *
      */
-    public function testSymbolsWikipedia()
+    public function symbolsProvider(): array
     {
-        $this->assertEquals(10, PasswordStrengthMeterAnssi::symbols('2'));
-        $this->assertEquals(16, PasswordStrengthMeterAnssi::symbols('F'));
-        $this->assertEquals(26, PasswordStrengthMeterAnssi::symbols('G'));
-        $this->assertEquals(36, PasswordStrengthMeterAnssi::symbols('3G'));
-        $this->assertEquals(52, PasswordStrengthMeterAnssi::symbols('gG'));
-        $this->assertEquals(62, PasswordStrengthMeterAnssi::symbols('2gG'));
+        return [
+            'binary' => [2, '0110'],
+            'decimal' => [10, '0123'],
+            'hexadecimal' => [16, '012F'],
+            'hexadecimal with upper and lower case' => [22, '012Ff'],
+            'alphabet' => [26,'azerty'],
+            'alphabet with upper and lower case' => [52, 'aZeRtY'],
+            'alphanumeric' => [36, 'az3rty'],
+            'alphanumeric with upper and lower case' => [62, 'aZ3RtY'],
+            '70 symbols' => [70, 'aZ3Rt?'],
+            '90 symbols' => [90, 'aZ3Rt?&'],
+            'french diacritic' => [42, 'été'],
+            'french diacritic upper case' => ['42', 'GÜDRUN'],
+            'Wikipedia test 1' => [10, '2'],
+            'Wikipedia test 2' => [16, 'F'],
+            'Wikipedia test 3' => [26, 'G'],
+            'Wikipedia test 4' => [36, '3G'],
+            'Wikipedia test 5' => [52, 'gG'],
+            'Wikipedia test 6' => [62, '2gG'],
+        ];
+    }
+
+    /**
+     * Test de la méthode PasswordStrengthMeterAnssi::symbols().
+     * @dataProvider symbolsProvider
+     */
+    public function testSymbols(string $expectedSymbols, string $input)
+    {
+        $pwdStrengthMeter = new PasswordStrengthMeterAnssi();
+        $this->assertEquals(
+            $expectedSymbols,
+            $pwdStrengthMeter->symbols($input)
+        );
+    }
+
+    /**
+     * Pour Wikipédia :
+     * @see {@url https://en.wikipedia.org/wiki/Password_strength#Random_passwords}
+     *
+     */
+    public function entropyProvider(): array
+    {
+        return [
+            'Wikipedia test 1' => [3.322, '2',3],
+            'Wikipedia test 2' => [4.000, 'F',3],
+            'Wikipedia test 3' => [4.700, 'G',3],
+            'Wikipedia test 4' => [10.34, '3G',3],
+            'Wikipedia test 5' => [11.401, 'gG',3],
+            'Wikipedia test 6' => [17.863, '2gG',3],
+            'binary 4' => [4, '0110'],
+            'binary 6' => [6, '011001'],
+            'binary 8' => [8, '01100110'],
+            'binary 10' => [10, '0110011001'],
+            'binary 12' => [12, '011001100110'],
+            'binary 16' => [16, '0110011001101111'],
+            'binary 20' => [20, '01100110011011111001'],
+            'binary 25' => [25, '0110011001101111100110011'],
+            'binary 30' => [30, '011001100110111110011001101001'],
+            'decimal 4' => [13, '0123'],
+            'decimal 6' => [20, '012301'],
+            'decimal 8' => [27, '01230123'],
+            'hexadecimal 4' => [16, '012F'],
+            'hexadecimal 8' => [32, '012F012F'],
+            'hexadecimal 4 with lower case' => [16, '012f'],
+            'hexadecimal 8 with lower case' => [32, '012f012f'],
+            'alphabet 4 upper' => [19, 'ABCZ'],
+            'alphabet 8 upper' => [38, 'ABCZABCZ'],
+            'alphabet 4 lower' => [19, 'abcz'],
+            'alphabet 8 lower' => [38, 'abczabcz'],
+            'alphabet 4 upper and lower' => [23, 'AbCz'],
+            'alphabet 8 upper and lower' => [46, 'AbCzaBcZ'],
+            'alphanumeric 4' => [21, '01AZ'],
+            'alphanumeric 8' => [41, '01AZ01AF'],
+            'french diacritic lower 3' => [16, 'été'],
+            'french diacritic upper 6' => [32, 'GÜDRUN'],
+            'precision 0' => [61, 'mot de passe'],
+            'precision 1' => [61.0, 'mot de passe', 1],
+            'precision 2' => [61.05, 'mot de passe', 2],
+            'precision 3' => [61.050, 'mot de passe', 3],
+            'precision 4' => [61.0496, 'mot de passe', 4],
+            // @see {@url https://www.ssi.gouv.fr/guide/mot-de-passe/}
+            'ssi 1' => [67, 'ght8CD%E7am'],
+            'ssi 2' => [60, '1tvmQ2tl’A'],
+            'ssi 3' => [64, '1tvmQ2tl\'A'],
+            // @see {@url https://www.explainxkcd.com/wiki/index.php/936:_Password_Strength}
+            'xkcd 1' => [70, 'Tr0ub4dor&3'],
+            'xkcd 2' => [118, 'correcthorsebatterystaple'],
+        ];
     }
 
     /**
      * Test de la méthode PasswordStrengthMeterAnssi::entropy() avec l'entropie
      * par symboles définie dans le tableau sur wikipedia.
+     * @dataProvider entropyProvider
      *
-     * @see {@url https://en.wikipedia.org/wiki/Password_strength#Random_passwords}
      */
-    public function testEntropyWikipedia()
+    public function testEntropy(float $expectedEntropy, string $input, int $precision = 0)
     {
-        $this->assertEquals(3.322, PasswordStrengthMeterAnssi::entropy('2', 3));
-        $this->assertEquals(4.000, PasswordStrengthMeterAnssi::entropy('F', 3));
-        $this->assertEquals(4.700, PasswordStrengthMeterAnssi::entropy('G', 3));
-        $this->assertEquals(10.34, PasswordStrengthMeterAnssi::entropy('3G', 3));
-        $this->assertEquals(11.401, PasswordStrengthMeterAnssi::entropy('gG', 3));
-        $this->assertEquals(17.863, PasswordStrengthMeterAnssi::entropy('2gG', 3));
+        $pwdStrengthMeter = new PasswordStrengthMeterAnssi();
+        $this->assertEquals($expectedEntropy, $pwdStrengthMeter->entropy($input, $precision));
+    }
+
+    public function strengthProvider(): array
+    {
+        return [
+            'very weak' =>  [PasswordStrengthMeterInterface::STRENGTH_VERY_WEAK, str_repeat('Abz', 3)],
+            'weak' =>  [PasswordStrengthMeterInterface::STRENGTH_WEAK, str_repeat('ABCZ', 4)],
+            'medium 1' =>  [PasswordStrengthMeterInterface::STRENGTH_MEDIUM, 'AbCzaBcZAbCzaB'],
+            'medium 2' =>  [PasswordStrengthMeterInterface::STRENGTH_MEDIUM, 'AbCzaBcZAbCzaBcZ'],
+            'strong 1' =>  [PasswordStrengthMeterInterface::STRENGTH_STRONG, str_repeat('0123456789', 3)],
+            'strong 2' =>  [PasswordStrengthMeterInterface::STRENGTH_STRONG, 'AbCzaBcZAbCzaBcZaBcZ'],
+            'very strong 1' =>  [
+                PasswordStrengthMeterInterface::STRENGTH_VERY_STRONG,
+                str_repeat('aZ3?&', 4)
+            ],
+            'very strong 2' =>  [PasswordStrengthMeterInterface::STRENGTH_VERY_STRONG, '3357zPqv9p45PS4CXyaZPOyy5'],
+
+        ];
     }
 
     /**
-     * Test de la méthode PasswordStrengthMeterAnssi::entropy() avec des caractères
-     * binaires.
+     * @param int $expectedStrength
+     * @param string $input
+     * @return void
+     * @dataProvider strengthProvider
      */
-    public function testEntropyBinary()
+    public function testStrength(int $expectedStrength, string $input): void
     {
-        // 4 caractères
-        $this->assertEquals(4, PasswordStrengthMeterAnssi::entropy('0110'));
-        // 6 caractères
-        $this->assertEquals(6, PasswordStrengthMeterAnssi::entropy('011001'));
-        // 8 caractères
-        $this->assertEquals(8, PasswordStrengthMeterAnssi::entropy('01100110'));
-        // 10 caractères
-        $this->assertEquals(10, PasswordStrengthMeterAnssi::entropy('0110011001'));
-        // 12 caractères
-        $this->assertEquals(12, PasswordStrengthMeterAnssi::entropy('011001100110'));
-        // 16 caractères
-        $this->assertEquals(16, PasswordStrengthMeterAnssi::entropy('0110011001101111'));
-        // 20 caractères
-        $this->assertEquals(20, PasswordStrengthMeterAnssi::entropy('01100110011011111001'));
-        // 25 caractères
-        $this->assertEquals(25, PasswordStrengthMeterAnssi::entropy('0110011001101111100110011'));
-        // 30 caractères
-        $this->assertEquals(30, PasswordStrengthMeterAnssi::entropy('011001100110111110011001101001'));
-    }
-
-    /**
-     * Test de la méthode PasswordStrengthMeterAnssi::entropy() avec des caractères
-     * décimaux.
-     */
-    public function testEntropyDecimal()
-    {
-        // 4 caractères
-        $this->assertEquals(13, PasswordStrengthMeterAnssi::entropy('0123'));
-        // 6 caractères
-        $this->assertEquals(20, PasswordStrengthMeterAnssi::entropy('012301'));
-        // 8 caractères
-        $this->assertEquals(27, PasswordStrengthMeterAnssi::entropy('01230123'));
-    }
-
-    /**
-     * Test de la méthode PasswordStrengthMeterAnssi::entropy() avec des caractères
-     * hexadécimaux.
-     */
-    public function testEntropyHexadecimal()
-    {
-        // Majuscules
-        $this->assertEquals(16, PasswordStrengthMeterAnssi::entropy('012F'));
-        $this->assertEquals(32, PasswordStrengthMeterAnssi::entropy('012F012F'));
-
-        // Minuscules
-        $this->assertEquals(16, PasswordStrengthMeterAnssi::entropy('012f'));
-        $this->assertEquals(32, PasswordStrengthMeterAnssi::entropy('012f012f'));
-
-        // Majuscules et minuscules ?
-    }
-
-    /**
-     * Test de la méthode PasswordStrengthMeterAnssi::entropy() avec des caractères
-     * alphabétiques.
-     */
-    public function testEntropyAlphabetical()
-    {
-        // Majuscules
-        $this->assertEquals(19, PasswordStrengthMeterAnssi::entropy('ABCZ'));
-        $this->assertEquals(38, PasswordStrengthMeterAnssi::entropy('ABCZABCZ'));
-
-        // Minuscules
-        $this->assertEquals(19, PasswordStrengthMeterAnssi::entropy('abcz'));
-        $this->assertEquals(38, PasswordStrengthMeterAnssi::entropy('abczabcz'));
-
-        // Majuscules et minuscules
-        $this->assertEquals(23, PasswordStrengthMeterAnssi::entropy('AbCz'));
-        $this->assertEquals(46, PasswordStrengthMeterAnssi::entropy('AbCzaBcZ'));
-    }
-
-    /**
-     * Test de la méthode PasswordStrengthMeterAnssi::entropy() avec des caractères
-     * alphanumériques.
-     */
-    public function testEntropyAlphanumeric()
-    {
-        // Majuscules
-        $this->assertEquals(21, PasswordStrengthMeterAnssi::entropy('01AZ'));
-        $this->assertEquals(41, PasswordStrengthMeterAnssi::entropy('01AZ01AF'));
-    }
-
-    /**
-     * Test de la méthode PasswordStrengthMeterAnssi::entropy() avec des
-     * caractères français accentués.
-     */
-    public function testEntropyFrenchAccents()
-    {
-        $this->assertEquals(16, PasswordStrengthMeterAnssi::entropy('été'));
-        $this->assertEquals(32, PasswordStrengthMeterAnssi::entropy('GÜDRUN'));
-    }
-
-    /**
-     * Test de la méthode PasswordStrengthMeterAnssi::entropy() avec le paramètre
-     * $precision.
-     */
-    public function testEntropyPrecision()
-    {
-        $password = 'mot de passe';
-        $this->assertEquals(61, PasswordStrengthMeterAnssi::entropy($password));
-        $this->assertEquals(61.0, PasswordStrengthMeterAnssi::entropy($password, 1));
-        $this->assertEquals(61.05, PasswordStrengthMeterAnssi::entropy($password, 2));
-        $this->assertEquals(61.050, PasswordStrengthMeterAnssi::entropy($password, 3));
-        $this->assertEquals(61.0496, PasswordStrengthMeterAnssi::entropy($password, 4));
-    }
-
-    /**
-     * Test de la méthode PasswordStrengthMeterAnssi::entropy() avec des
-     * exemples concrêts.
-     */
-    public function testEntropyExemples()
-    {
-        // @see {@url https://www.ssi.gouv.fr/guide/mot-de-passe/}
-        $this->assertEquals(67, PasswordStrengthMeterAnssi::entropy('ght8CD%E7am'));
-        $this->assertEquals(60, PasswordStrengthMeterAnssi::entropy('1tvmQ2tl’A'));
-        $this->assertEquals(64, PasswordStrengthMeterAnssi::entropy('1tvmQ2tl\'A'));
-
-        // @see {@url https://www.explainxkcd.com/wiki/index.php/936:_Password_Strength}
-        $this->assertEquals(70, PasswordStrengthMeterAnssi::entropy('Tr0ub4dor&3'));
-        $this->assertEquals(118, PasswordStrengthMeterAnssi::entropy('correcthorsebatterystaple'));
-    }
-
-    /**
-     * Test de la méthode PasswordStrengthMeterAnssi::strength() avec des mots de passe
-     * de force "très faible".
-     */
-    public function testStrengthVeryWeak()
-    {
-        // 9 caractères latin, majuscules et minuscules => 51 entropy
+        $pwdStrengthMeter = new PasswordStrengthMeterAnssi();
         $this->assertEquals(
-            PasswordStrengthMeterAnssi::STRENGTH_VERY_WEAK,
-            PasswordStrengthMeterAnssi::strength(str_repeat('Abz', 3))
-        );
-    }
-
-    /**
-     * Test de la méthode PasswordStrengthMeterAnssi::strength() avec des mots de passe
-     * de force "faible".
-     */
-    public function testStrengthWeak()
-    {
-        // 16 caractères latin majuscules => 75 entropy
-        $this->assertEquals(
-            PasswordStrengthMeterAnssi::STRENGTH_WEAK,
-            PasswordStrengthMeterAnssi::strength(str_repeat('ABCZ', 4))
-        );
-    }
-
-    /**
-     * Test de la méthode PasswordStrengthMeterAnssi::strength() avec des mots de passe
-     * de force "moyenne".
-     */
-    public function testStrengthMedium()
-    {
-        // 14 caractères latin, majuscules et minuscules => 80 entropy
-        $this->assertEquals(
-            PasswordStrengthMeterAnssi::STRENGTH_MEDIUM,
-            PasswordStrengthMeterAnssi::strength('AbCzaBcZAbCzaB')
-        );
-
-        // 16 caractères latin, majuscules et minuscules => 91 entropy
-        $this->assertEquals(
-            PasswordStrengthMeterAnssi::STRENGTH_MEDIUM,
-            PasswordStrengthMeterAnssi::strength('AbCzaBcZAbCzaBcZ')
-        );
-    }
-
-    /**
-     * Test de la méthode PasswordStrengthMeterAnssi::strength() avec des mots de passe
-     * de force "forte".
-     */
-    public function testStrengthStrong()
-    {
-        // 30 caractères numériques => 100 entropy
-        $this->assertEquals(
-            PasswordStrengthMeterAnssi::STRENGTH_STRONG,
-            PasswordStrengthMeterAnssi::strength(str_repeat('0123456789', 3))
-        );
-
-        // 20 caractères latin, majuscules et minuscules => 114 entropy
-        $this->assertEquals(
-            PasswordStrengthMeterAnssi::STRENGTH_STRONG,
-            PasswordStrengthMeterAnssi::strength('AbCzaBcZAbCzaBcZaBcZ')
-        );
-    }
-
-    /**
-     * Test de la méthode PasswordStrengthMeterAnssi::strength() avec des mots de passe
-     * de force "très forte".
-     */
-    public function testStrengthVeryStrong()
-    {
-        // 20 caractères des 70 possibles => 130 entropy
-        $this->assertEquals(
-            PasswordStrengthMeterAnssi::STRENGTH_VERY_STRONG,
-            PasswordStrengthMeterAnssi::strength(str_repeat('aZ3?&', 4))
-        );
-
-        // 25 caractères des 62 possibles
-        // Valeurs par défaut utilisées par PasswordGeneratorAnssi::generate
-        $password = '3357zPqv9p45PS4CXyaZPOyy5';
-        $this->assertEquals(
-            PasswordStrengthMeterAnssi::STRENGTH_VERY_STRONG,
-            PasswordStrengthMeterAnssi::strength($password)
+            $expectedStrength,
+            $pwdStrengthMeter->strength($input)
         );
     }
 }

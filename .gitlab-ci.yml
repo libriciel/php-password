@@ -36,7 +36,6 @@ check-style:
     make phpcs
 
 mess-detector:
-  allow_failure: true
   extends: .tests
   script:
     - make phpmd

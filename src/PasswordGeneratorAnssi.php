@@ -8,13 +8,15 @@
 
 namespace Libriciel\Utility\Password;
 
+use RuntimeException;
+
 /**
  * Cette classe permet de générer des mots de passes aléatoires suivant les
  * recommandations de l'ANSSI.
  *
  * @see {@url https://www.ssi.gouv.fr/administration/precautions-elementaires/calculer-la-force-dun-mot-de-passe/}
  */
-abstract class PasswordGeneratorAnssi
+class PasswordGeneratorAnssi
 {
     /**
      * Les chaînes de caractères autorisées, le clé est le nom de leur classe.
@@ -57,7 +59,7 @@ abstract class PasswordGeneratorAnssi
      *
      * @var array
      */
-    protected static $config = [];
+    protected $config = [];
 
     /**
      * Retourne la configuration en cours après l'avoir au préalable complétée
@@ -66,10 +68,10 @@ abstract class PasswordGeneratorAnssi
      * @param array $config La configuration à modifier.
      * @return array
      */
-    public static function config(array $config = [])
+    public function config(array $config = []): array
     {
-        static::$config = $config + static::$config + static::$defaults;
-        return static::$config;
+        $this->config = $config + $this->config + static::$defaults;
+        return $this->config;
     }
 
     /**
@@ -78,7 +80,7 @@ abstract class PasswordGeneratorAnssi
      *
      * @return array
      */
-    public static function defaults()
+    public function defaults(): array
     {
         return self::$defaults;
     }
@@ -87,14 +89,14 @@ abstract class PasswordGeneratorAnssi
      * Retourne la liste des caractères en fonction des classes à utiliser.
      *
      * @param array $params Les paramètres définissant les classes à utiliser
-     * @param string $encoding Le paramètre encoding est l'encodage des caractères.
+     * @param ?string $encoding Le paramètre encoding est l'encodage des caractères.
      *  S'il est omis, l'encodage de caractres interne (mb_internal_encoding)
      *  sera utilisé.
      * @return array
      */
-    public static function characters(array $params = [], $encoding = null)
+    public function characters(array $params = [], string $encoding = null): array
     {
-        $classes = $params + static::config();
+        $classes = $params + $this->config();
         $encoding = null === $encoding ? mb_internal_encoding() : $encoding;
         $accumulator = [];
 
@@ -113,15 +115,15 @@ abstract class PasswordGeneratorAnssi
      *
      * @param integer $length La longueur du mot de passe à générer.
      * @param array $params Les paramètres définissant les classes à utiliser.
-     * @param string $encoding Le paramètre encoding est l'encodage des caractères.
+     * @param ?string $encoding Le paramètre encoding est l'encodage des caractères.
      *  S'il est omis, l'encodage de caractres interne (mb_internal_encoding)
      *  sera utilisé.
-     * @return type
+     * @return string
      */
-    public static function generate($length = 40, array $params = [], $encoding = null)
+    public function generate(int $length = 40, array $params = [], string $encoding = null): string
     {
         $encoding = null === $encoding ? mb_internal_encoding() : $encoding;
-        $characters = static::characters($params, $encoding);
+        $characters = $this->characters($params, $encoding);
         $count = count($characters);
         $result = false;
 
@@ -145,13 +147,17 @@ abstract class PasswordGeneratorAnssi
      * @param integer $length La longueur du mot de passe à générer.
      * @param array $params Les paramètres définissant les classes à utiliser.
      * @param array $mandatory Les paramètres définissant les classes à utiliser obligatoirement.
-     * @param string $encoding Le paramètre encoding est l'encodage des caractères.
+     * @param ?string $encoding Le paramètre encoding est l'encodage des caractères.
      *  S'il est omis, l'encodage de caractres interne (mb_internal_encoding)
      *  sera utilisé.
-     * @return type
+     * @return string
      */
-    public static function constrained($length = 40, array $params = [], array $mandatory = [], $encoding = null)
-    {
+    public function constrained(
+        int $length = 40,
+        array $params = [],
+        array $mandatory = [],
+        string $encoding = null
+    ): string {
         $encoding = null === $encoding ? mb_internal_encoding() : $encoding;
         $characters = static::characters($params, $encoding);
         $count = count($characters);
@@ -159,7 +165,7 @@ abstract class PasswordGeneratorAnssi
         if ($count === 0) {
             $format = 'Impossible de générer un mot de passe de longueur %d sans caractère disponible';
             $message = sprintf($format, $length, array_sum($mandatory), json_encode($mandatory));
-            throw new \RuntimeException($message);
+            throw new RuntimeException($message);
         }
 
         if (array_sum($mandatory) > $length) {
@@ -167,7 +173,7 @@ abstract class PasswordGeneratorAnssi
                 'Impossible de générer un mot de passe de longueur %d ' .
                 'avec %d caractères obligatoires (obligatoires: %s)';
             $message = sprintf($format, $length, array_sum($mandatory), json_encode($mandatory));
-            throw new \RuntimeException($message);
+            throw new RuntimeException($message);
         }
 
         $result = [];

@@ -39,7 +39,9 @@ class PasswordGeneratorAnssiTest extends TestCase
      */
     public function testDefaults()
     {
-        $actual = PasswordGeneratorAnssi::defaults();
+        $pwdGeneratorAnsi = new PasswordGeneratorAnssi();
+
+        $actual = $pwdGeneratorAnsi->defaults();
         $this->assertEquals($this->defaultConfig, $actual);
     }
 
@@ -49,10 +51,10 @@ class PasswordGeneratorAnssiTest extends TestCase
      */
     public function testGenerateDefaultConfig()
     {
-        $defaults = PasswordGeneratorAnssi::defaults();
+        $pwdGeneratorAnsi = new PasswordGeneratorAnssi();
 
         // Par défaut pour un mot de passe très fort ?
-        $password = PasswordGeneratorAnssi::generate();
+        $password = $pwdGeneratorAnsi->generate();
         $this->assertRegexp('/^[a-zA-Z0-9]{40}$/', $password);
     }
 
@@ -61,10 +63,12 @@ class PasswordGeneratorAnssiTest extends TestCase
      */
     public function testGenerate()
     {
-        $defaults = PasswordGeneratorAnssi::defaults();
+        $pwdGeneratorAnsi = new PasswordGeneratorAnssi();
+
+        $defaults = $pwdGeneratorAnsi->defaults();
 
         // Security.salt (CakePHP 2.x)
-        $password = PasswordGeneratorAnssi::generate(40, $defaults);
+        $password = $pwdGeneratorAnsi->generate(40, $defaults);
         $this->assertRegExp('/^[a-zA-Z0-9]{40}$/', $password);
 
         // Security.cipherSeed (CakePHP 2.x)
@@ -72,7 +76,7 @@ class PasswordGeneratorAnssiTest extends TestCase
             'lowercase_letters' => false,
             'uppercase_letters' => false
         ];
-        $password = PasswordGeneratorAnssi::generate(29, $params + $defaults);
+        $password = $pwdGeneratorAnsi->generate(29, $params + $defaults);
         $this->assertRegExp('/^[0-9]{29}$/', $password);
     }
 
@@ -82,15 +86,17 @@ class PasswordGeneratorAnssiTest extends TestCase
      */
     public function testConfig()
     {
+        $pwdGeneratorAnsi = new PasswordGeneratorAnssi();
+
         // On récupère la configuration par défaut
-        $actual = PasswordGeneratorAnssi::config();
+        $actual = $pwdGeneratorAnsi->config();
         $this->assertEquals($this->defaultConfig, $actual);
 
         $params = [
             'lowercase_letters' => false,
             'uppercase_letters' => false
         ];
-        $actual = PasswordGeneratorAnssi::config($params);
+        $actual = $pwdGeneratorAnsi->config($params);
         $expected = [
             'binary'  => false,
             'numbers'  => true,
@@ -105,11 +111,11 @@ class PasswordGeneratorAnssiTest extends TestCase
         ];
         $this->assertEquals($expected, $actual);
 
-        $actual = PasswordGeneratorAnssi::generate(20);
+        $actual = $pwdGeneratorAnsi->generate(20);
         $this->assertRegexp('/^[0-9]{20}$/', $actual);
 
         // Retour aux valeurs par défaut
-        PasswordGeneratorAnssi::config($this->defaultConfig);
+        $pwdGeneratorAnsi->config($this->defaultConfig);
     }
 
     /**
@@ -117,7 +123,9 @@ class PasswordGeneratorAnssiTest extends TestCase
      */
     public function testConstrained()
     {
-        $defaults = PasswordGeneratorAnssi::defaults();
+        $pwdGeneratorAnsi = new PasswordGeneratorAnssi();
+
+        $defaults = $pwdGeneratorAnsi->defaults();
         $mandatory = [
             'numbers' => 1,
             'lowercase_letters' => 1,
@@ -126,7 +134,7 @@ class PasswordGeneratorAnssiTest extends TestCase
         ];
 
         // Entropie 37, force 1
-        $password = PasswordGeneratorAnssi::constrained(6, $defaults, $mandatory);
+        $password = $pwdGeneratorAnsi->constrained(6, $defaults, $mandatory);
 
         $this->assertNotFalse(mb_ereg('^([a-zA-Z0-9]|[€\\!#\\$\\*%\\? ]){6}$', $password));
         $this->assertNotFalse(mb_ereg('[a-z]', $password));
@@ -145,12 +153,14 @@ class PasswordGeneratorAnssiTest extends TestCase
      */
     public function testConstrainedException1()
     {
-        $defaults = PasswordGeneratorAnssi::defaults();
+        $pwdGeneratorAnsi = new PasswordGeneratorAnssi();
+
+        $defaults = $pwdGeneratorAnsi->defaults();
         $mandatory = [
             'numbers' => 1,
             'lowercase_letters' => 1
         ];
-        PasswordGeneratorAnssi::constrained(1, $defaults, $mandatory);
+        $pwdGeneratorAnsi->constrained(1, $defaults, $mandatory);
     }
 
     /**
@@ -162,12 +172,14 @@ class PasswordGeneratorAnssiTest extends TestCase
      */
     public function testConstrainedException2()
     {
-        $defaults = PasswordGeneratorAnssi::defaults();
+        $pwdGeneratorAnsi = new PasswordGeneratorAnssi();
+
+        $defaults = $pwdGeneratorAnsi->defaults();
         $false = array_combine(array_keys($defaults), array_fill(0, count($defaults), false));
         $mandatory = [
             'numbers' => 1,
             'lowercase_letters' => 1
         ];
-        PasswordGeneratorAnssi::constrained(3, $false, $mandatory);
+        $pwdGeneratorAnsi->constrained(3, $false, $mandatory);
     }
 }

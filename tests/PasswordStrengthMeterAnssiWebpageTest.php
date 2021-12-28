@@ -29,9 +29,11 @@ class PasswordStrengthMeterAnssiWebpageTest extends TestCase
      */
     protected function assertEqualEntropiesByLength($data, $symbols)
     {
+        $pwdStrengthMeter = new PasswordStrengthMeterAnssi();
+
         foreach ($data as $length => $expected) {
             $password = substr($symbols, 0, $length);
-            $actual = PasswordStrengthMeterAnssi::entropy($password);
+            $actual = $pwdStrengthMeter->entropy($password);
             $message = sprintf("longueur %d, %d symboles: %s", $length, $symbols, $password);
             $this->assertEquals($expected, $actual, $message);
         }

@@ -1,3 +1,9 @@
+# 2.0.1 - 2021-12-29
+
+## Supression
+
+- supression de la dépendance paragonie/random_compat (pas de support de PHP 5)
+
 # 2.0.0 - 2021-12-29
 
 ## Ajout

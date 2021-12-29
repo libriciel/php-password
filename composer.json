@@ -1,6 +1,6 @@
 {
     "name": "libriciel/php-password",
-    "version": "2.0.0",
+    "version": "2.0.1",
     "description": "Bibliothèque PHP permettant de calculer la force et l'entropie d'un mot de passe et de générer des mots de passes aléatoires.",
     "type": "library",
     "license": "MIT",

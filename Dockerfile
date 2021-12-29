@@ -42,5 +42,3 @@ COPY composer.* /app/
 RUN composer install
 
 COPY . /app
-
-

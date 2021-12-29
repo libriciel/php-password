@@ -1,7 +1,11 @@
-# 2.0.0
+# 2.0.0 - 2021-12-29
 
 ## Ajout
 - Fork du projet à partir de cbuffin-php-password
+
+## Evolution
+
+- La commande de génération de mot de passe utilise la console Symfony
 
 ## Suppression
 

@@ -15,4 +15,4 @@
 
 ## Suppression
 
-- Le calcul de hash de mot de passe doit être basé sur la fonction password_hash 
+- Le calcul de hash de mot de passe doit être basé sur la fonction password_hash

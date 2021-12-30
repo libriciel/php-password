@@ -46,11 +46,12 @@ application.
 ```php
 use Libriciel\Utility\Password\PasswordStrengthMeterAnssi;
 
+$pwdStrengthAnssi = new  PasswordStrengthMeterAnssi();
 // L'entropie, ici 61
-PasswordStrengthMeterAnssi::entropy('mot de passe');
+$pwdStrengthAnssi->entropy('mot de passe');
 
 // La force (entre 1, très faible et 5, très fort), ici 1
-PasswordStrengthMeterAnssi::strength('mot de passe');
+$pwdStrengthAnssi->strength('mot de passe');
 ```
 
 ##### Génération de mots de passes aléatoires
@@ -92,8 +93,9 @@ $config = [
     'uppercase_accents_fr' => false
 ];
 
+$pwdGeneratorAnssi = new PasswordGeneratorAnssi();
 // Exemple de sortie: MUAVGHF4O5VPDboTwSJebjwNcryqYmRSS2izJHyJ
-PasswordGeneratorAnssi::generate();
+$pwdGeneratorAnssi->generate();
 ```
 
 ## Exemples de mots de passes

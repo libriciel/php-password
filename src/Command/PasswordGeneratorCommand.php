@@ -83,5 +83,6 @@ class PasswordGeneratorCommand extends Command
             );
             $output->writeln("");
         }
+        return Command::SUCCESS;
     }
 }

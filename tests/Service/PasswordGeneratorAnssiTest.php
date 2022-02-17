@@ -16,7 +16,7 @@ class PasswordGeneratorAnssiTest extends TestCase
      *
      * @var array
      */
-    protected $defaultConfig = [
+    protected array $defaultConfig = [
         'binary'  => false,
         'numbers'  => true,
         'lowercase_hexadecimal' => false,
@@ -50,7 +50,7 @@ class PasswordGeneratorAnssiTest extends TestCase
 
         // Par défaut pour un mot de passe très fort ?
         $password = $pwdGeneratorAnsi->generate();
-        $this->assertRegexp('/^[a-zA-Z0-9]{40}$/', $password);
+        $this->assertMatchesRegularExpression('/^[a-zA-Z0-9]{40}$/', $password);
     }
 
     /**
@@ -64,7 +64,7 @@ class PasswordGeneratorAnssiTest extends TestCase
 
         // Security.salt (CakePHP 2.x)
         $password = $pwdGeneratorAnsi->generate(40, $defaults);
-        $this->assertRegExp('/^[a-zA-Z0-9]{40}$/', $password);
+        $this->assertMatchesRegularExpression('/^[a-zA-Z0-9]{40}$/', $password);
 
         // Security.cipherSeed (CakePHP 2.x)
         $params = [
@@ -72,7 +72,7 @@ class PasswordGeneratorAnssiTest extends TestCase
             'uppercase_letters' => false
         ];
         $password = $pwdGeneratorAnsi->generate(29, $params + $defaults);
-        $this->assertRegExp('/^[0-9]{29}$/', $password);
+        $this->assertMatchesRegularExpression('/^[0-9]{29}$/', $password);
     }
 
 
@@ -107,7 +107,7 @@ class PasswordGeneratorAnssiTest extends TestCase
         $this->assertEquals($expected, $actual);
 
         $actual = $pwdGeneratorAnsi->generate(20);
-        $this->assertRegexp('/^[0-9]{20}$/', $actual);
+        $this->assertMatchesRegularExpression('/^[0-9]{20}$/', $actual);
 
         // Retour aux valeurs par défaut
         $pwdGeneratorAnsi->config($this->defaultConfig);

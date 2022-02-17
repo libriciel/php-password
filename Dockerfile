@@ -1,4 +1,4 @@
-FROM ubuntu:18.04 AS builder
+FROM ubuntu:22.04 AS builder
 
 RUN apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y \
@@ -14,7 +14,7 @@ RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" &&
     mv /usr/local/bin/composer.phar /usr/local/bin/composer && \
     php -r "unlink('composer-setup.php');"
 
-FROM ubuntu:18.04
+FROM ubuntu:22.04
 
 WORKDIR /app
 
@@ -30,9 +30,9 @@ RUN apt-get update && \
         unzip \
         && rm -r /var/lib/apt/lists/*
 
-COPY --from=builder /usr/lib/php/20170718/pcov.so  /usr/lib/php/20170718/pcov.so
+COPY --from=builder /usr/lib/php/20210902/pcov.so  /usr/lib/php/20210902/pcov.so
 
-RUN echo "extension=pcov.so" > /etc/php/7.2/mods-available/pcov.ini && \
+RUN echo "extension=pcov.so" > /etc/php/8.1/mods-available/pcov.ini && \
     phpenmod pcov xdebug
 
 

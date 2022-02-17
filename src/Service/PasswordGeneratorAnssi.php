@@ -2,7 +2,10 @@
 
 namespace Libriciel\Password\Service;
 
+use Exception;
 use Libriciel\Password\PasswordException;
+
+use function mb_str_split;
 
 /**
  * Cette classe permet de générer des mots de passes aléatoires suivant les
@@ -13,11 +16,11 @@ use Libriciel\Password\PasswordException;
 class PasswordGeneratorAnssi
 {
     /**
-     * Les chaînes de caractères autorisées, le clé est le nom de leur classe.
+     * Les chaînes de caractères autorisées, la clé est le nom de leur classe.
      *
      * @var array
      */
-    protected static $classes = [
+    protected static array $classes = [
         'binary'  => '01',
         'numbers'  => '0123456789',
         'lowercase_hexadecimal' => '0123456789abcdef',
@@ -35,7 +38,7 @@ class PasswordGeneratorAnssi
      *
      * @var array
      */
-    protected static $defaults = [
+    protected static array $defaults = [
         'binary'  => false,
         'numbers'  => true,
         'lowercase_hexadecimal' => false,
@@ -53,7 +56,7 @@ class PasswordGeneratorAnssi
      *
      * @var array
      */
-    protected $config = [];
+    protected array $config = [];
 
     /**
      * Retourne la configuration en cours après l'avoir au préalable complétée
@@ -84,7 +87,7 @@ class PasswordGeneratorAnssi
      *
      * @param array $params Les paramètres définissant les classes à utiliser
      * @param ?string $encoding Le paramètre encoding est l'encodage des caractères.
-     *  S'il est omis, l'encodage de caractres interne (mb_internal_encoding)
+     *  S'il est omis, l'encodage de caractères interne (mb_internal_encoding)
      *  sera utilisé.
      * @return array
      */
@@ -96,7 +99,7 @@ class PasswordGeneratorAnssi
 
         foreach ($myConfig as $key => $enabled) {
             if (true === $enabled) {
-                $tokens = \mb_str_split(static::$classes[$key], 1, $encoding);
+                $tokens = mb_str_split(static::$classes[$key], 1, $encoding);
                 $accumulator = array_merge($accumulator, $tokens);
             }
         }
@@ -110,9 +113,10 @@ class PasswordGeneratorAnssi
      * @param integer $length La longueur du mot de passe à générer.
      * @param array $params Les paramètres définissant les classes à utiliser.
      * @param ?string $encoding Le paramètre encoding est l'encodage des caractères.
-     *  S'il est omis, l'encodage de caractres interne (mb_internal_encoding)
+     *  S'il est omis, l'encodage de caractères interne (mb_internal_encoding)
      *  sera utilisé.
      * @return string
+     * @throws Exception
      */
     public function generate(int $length = 40, array $params = [], string $encoding = null): string
     {
@@ -142,9 +146,10 @@ class PasswordGeneratorAnssi
      * @param array $params Les paramètres définissant les classes à utiliser.
      * @param array $mandatory Les paramètres définissant les classes à utiliser obligatoirement.
      * @param ?string $encoding Le paramètre encoding est l'encodage des caractères.
-     *  S'il est omis, l'encodage de caractres interne (mb_internal_encoding)
+     *  S'il est omis, l'encodage de caractères interne (mb_internal_encoding)
      *  sera utilisé.
      * @return string
+     * @throws Exception
      */
     public function constrained(
         int $length = 40,
@@ -177,9 +182,9 @@ class PasswordGeneratorAnssi
             if (! isset(static::$classes[$class])) {
                 throw new PasswordException("La classe de caractère $class n'est pas défini");
             }
-            $strlen = mb_strlen(static::$classes[$class], $encoding);
+            $stringLength = mb_strlen(static::$classes[$class], $encoding);
             for ($idx = 0; $idx < $number; $idx++) {
-                $char = mb_substr(static::$classes[$class], random_int(0, $strlen - 1), 1, $encoding);
+                $char = mb_substr(static::$classes[$class], random_int(0, $stringLength - 1), 1, $encoding);
                 $result[] = $char;
                 $max++;
             }
@@ -194,6 +199,11 @@ class PasswordGeneratorAnssi
         return implode('', $this->randomArray($result));
     }
 
+    /**
+     * @param array $array
+     * @return array
+     * @throws Exception
+     */
     private function randomArray(array $array): array
     {
         $result = [];

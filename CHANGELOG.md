@@ -1,3 +1,9 @@
+# 3.0.0 - 2022-02-17
+
+## Evolution
+
+- La version 3 est basée sur PHP 8.1
+
 # 2.0.1 - 2021-12-29
 
 ## Supression

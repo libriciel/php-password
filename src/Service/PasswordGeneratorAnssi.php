@@ -5,8 +5,6 @@ namespace Libriciel\Password\Service;
 use Exception;
 use Libriciel\Password\PasswordException;
 
-use function mb_str_split;
-
 /**
  * Cette classe permet de générer des mots de passes aléatoires suivant les
  * recommandations de l'ANSSI.

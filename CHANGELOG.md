@@ -1,3 +1,13 @@
+# 3.0.0 - 2022-02-17
+
+## Evolution
+
+- La version 3 est basée sur PHP 8.1
+
+## Suppression
+
+- Retrait de la commande symfony de génération de mot de passe (non utilisatble dans le programme qui importe la lib)
+
 # 2.0.1 - 2021-12-29
 
 ## Supression

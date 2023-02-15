@@ -1,3 +1,7 @@
+# 3.0.1 - 2023-02-15
+
+- Fix PasswordStrengthMeterAnssi::entropy() qui renvoyait un string à la place d'un float
+
 # 3.0.0 - 2022-02-24
 
 ## Evolution
@@ -6,7 +10,7 @@
 
 ## Suppression
 
-- Retrait de la commande symfony de génération de mot de passe (non utilisatble dans le programme qui importe la lib)
+- Retrait de la commande symfony de génération de mot de passe (non utilisable dans le programme qui importe la lib)
 
 # 2.0.1 - 2021-12-29
 

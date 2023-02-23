@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Libriciel\Password\Service;
 
 /**
@@ -78,7 +80,7 @@ class PasswordStrengthMeterAnssi implements PasswordStrengthMeterInterface
         $length = mb_strlen($string);
         $symbols = $this->symbols($string);
         $value = $length * log($symbols, 2);
-        return sprintf("%.{$precision}f", $value);
+        return round($value, $precision);
     }
 
     /**

@@ -17,6 +17,10 @@ build:
     - docker push ${CONTAINER_IMAGE}
 
 
+container_scanning:
+  variables:
+    CS_IMAGE: $CONTAINER_IMAGE
+
 .tests:
   stage: test
   image: "$CONTAINER_IMAGE"

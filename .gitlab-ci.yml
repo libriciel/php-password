@@ -1,13 +1,5 @@
 include:
-
-  - project: "libriciel/integration-continue/templates"
-    ref: master
-    file: '/security-check.yml'
-
-stages:
-  - build
-  - test
-  - quality
+  - template: Security/Container-Scanning.gitlab-ci.yml
 
 variables:
   CONTAINER_IMAGE: "${CI_REGISTRY_IMAGE}:${CI_COMMIT_REF_NAME}"
@@ -59,7 +51,7 @@ unit-test:
     expire_in: 1h
 
 quality:
-  stage: quality
+  stage: test
   only:
     - master
   image : gitlab.libriciel.fr:4567/docker/sonar-scanner:latest

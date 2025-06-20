@@ -21,32 +21,15 @@ container_scanning:
   variables:
     CS_IMAGE: $CONTAINER_IMAGE
 
-.tests:
+
+unit_test:
   stage: test
-  image: "$CONTAINER_IMAGE"
-  before_script:
+  image : "$CONTAINER_IMAGE"
+  script:
     - cd /app/
-
-check-style:
-  extends: .tests
-  script:
-    make phpcs
-
-mess-detector:
-  extends: .tests
-  script:
-    - make phpmd
-
-copy-paste-detector:
-  extends: .tests
-  script:
-    - make phpcpd
-
-unit-test:
-  extends: .tests
-  script:
-    - make coverage
+    - php -dpcov.enabled=1 -dpcov.directory=. vendor/bin/phpunit --coverage-text --colors=never --coverage-clover coverage/coverage.xml --log-junit coverage/logfile.xml
     - cp -rf coverage $CI_PROJECT_DIR
+  coverage: '/^\s*Lines:\s*\d+.\d+\%/'
   artifacts:
     paths:
       - coverage

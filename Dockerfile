@@ -1,22 +1,14 @@
-FROM ubuntu:22.04
+FROM hubdocker.libriciel.fr/php:8.3.21-fpm-alpine3.20
 
 WORKDIR /app
 
-RUN apt-get update && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y  --no-install-recommends \
-        ca-certificates \
-        make \
-        php-cli  \
-        php-curl \
-        php-dom \
-        php-mbstring \
-        php-pcov \
-        php-xdebug \
-        unzip \
-        && rm -r /var/lib/apt/lists/*
 
-
-RUN phpenmod pcov xdebug
+RUN <<EOF
+apk add bash bash-completion git php83-pecl-pcov php83-xdebug
+cp /usr/lib/php83/modules/pcov.so /usr/local/lib/php/extensions/no-debug-non-zts-20230831/
+cp /usr/lib/php83/modules/xdebug.so /usr/local/lib/php/extensions/no-debug-non-zts-20230831/
+docker-php-ext-enable pcov xdebug
+EOF
 
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 

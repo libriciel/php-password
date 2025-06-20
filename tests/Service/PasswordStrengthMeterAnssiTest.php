@@ -9,7 +9,7 @@ use Libriciel\Password\Service\PasswordStrengthMeterInterface;
 use PHPUnit\Framework\TestCase;
 
 /**
- * Tests unitaires de la classe Libriciel\Utility\Password\PasswordStrengthMeterAnssi
+ * Tests unitaires de la classe Libriciel\Utility\Password\PasswordStrengthMeterAnssi.
  */
 class PasswordStrengthMeterAnssiTest extends TestCase
 {
@@ -32,9 +32,8 @@ class PasswordStrengthMeterAnssiTest extends TestCase
 
     /**
      * Pour les tests Wikipédia :
+     *
      * @see {@url https://en.wikipedia.org/wiki/Password_strength#Random_passwords}
-     *
-     *
      */
     public function symbolsProvider(): array
     {
@@ -43,7 +42,7 @@ class PasswordStrengthMeterAnssiTest extends TestCase
             'decimal' => [10, '0123'],
             'hexadecimal' => [16, '012F'],
             'hexadecimal with upper and lower case' => [22, '012Ff'],
-            'alphabet' => [26,'azerty'],
+            'alphabet' => [26, 'azerty'],
             'alphabet with upper and lower case' => [52, 'aZeRtY'],
             'alphanumeric' => [36, 'az3rty'],
             'alphanumeric with upper and lower case' => [62, 'aZ3RtY'],
@@ -62,6 +61,7 @@ class PasswordStrengthMeterAnssiTest extends TestCase
 
     /**
      * Test de la méthode PasswordStrengthMeterAnssi::symbols().
+     *
      * @dataProvider symbolsProvider
      */
     public function testSymbols(int $expectedSymbols, string $input)
@@ -75,18 +75,18 @@ class PasswordStrengthMeterAnssiTest extends TestCase
 
     /**
      * Pour Wikipédia :
-     * @see {@url https://en.wikipedia.org/wiki/Password_strength#Random_passwords}
      *
+     * @see {@url https://en.wikipedia.org/wiki/Password_strength#Random_passwords}
      */
     public function entropyProvider(): array
     {
         return [
-            'Wikipedia test 1' => [3.322, '2',3],
-            'Wikipedia test 2' => [4.000, 'F',3],
-            'Wikipedia test 3' => [4.700, 'G',3],
-            'Wikipedia test 4' => [10.34, '3G',3],
-            'Wikipedia test 5' => [11.401, 'gG',3],
-            'Wikipedia test 6' => [17.863, '2gG',3],
+            'Wikipedia test 1' => [3.322, '2', 3],
+            'Wikipedia test 2' => [4.000, 'F', 3],
+            'Wikipedia test 3' => [4.700, 'G', 3],
+            'Wikipedia test 4' => [10.34, '3G', 3],
+            'Wikipedia test 5' => [11.401, 'gG', 3],
+            'Wikipedia test 6' => [17.863, '2gG', 3],
             'binary 4' => [4, '0110'],
             'binary 6' => [6, '011001'],
             'binary 8' => [8, '01100110'],
@@ -131,8 +131,8 @@ class PasswordStrengthMeterAnssiTest extends TestCase
     /**
      * Test de la méthode PasswordStrengthMeterAnssi::entropy() avec l'entropie
      * par symboles définie dans le tableau sur wikipedia.
-     * @dataProvider entropyProvider
      *
+     * @dataProvider entropyProvider
      */
     public function testEntropy(float $expectedEntropy, string $input, int $precision = 0)
     {
@@ -143,25 +143,21 @@ class PasswordStrengthMeterAnssiTest extends TestCase
     public function strengthProvider(): array
     {
         return [
-            'very weak' =>  [PasswordStrengthMeterInterface::STRENGTH_VERY_WEAK, str_repeat('Abz', 3)],
-            'weak' =>  [PasswordStrengthMeterInterface::STRENGTH_WEAK, str_repeat('ABCZ', 4)],
-            'medium 1' =>  [PasswordStrengthMeterInterface::STRENGTH_MEDIUM, 'AbCzaBcZAbCzaB'],
-            'medium 2' =>  [PasswordStrengthMeterInterface::STRENGTH_MEDIUM, 'AbCzaBcZAbCzaBcZ'],
-            'strong 1' =>  [PasswordStrengthMeterInterface::STRENGTH_STRONG, str_repeat('0123456789', 3)],
-            'strong 2' =>  [PasswordStrengthMeterInterface::STRENGTH_STRONG, 'AbCzaBcZAbCzaBcZaBcZ'],
-            'very strong 1' =>  [
+            'very weak' => [PasswordStrengthMeterInterface::STRENGTH_VERY_WEAK, str_repeat('Abz', 3)],
+            'weak' => [PasswordStrengthMeterInterface::STRENGTH_WEAK, str_repeat('ABCZ', 4)],
+            'medium 1' => [PasswordStrengthMeterInterface::STRENGTH_MEDIUM, 'AbCzaBcZAbCzaB'],
+            'medium 2' => [PasswordStrengthMeterInterface::STRENGTH_MEDIUM, 'AbCzaBcZAbCzaBcZ'],
+            'strong 1' => [PasswordStrengthMeterInterface::STRENGTH_STRONG, str_repeat('0123456789', 3)],
+            'strong 2' => [PasswordStrengthMeterInterface::STRENGTH_STRONG, 'AbCzaBcZAbCzaBcZaBcZ'],
+            'very strong 1' => [
                 PasswordStrengthMeterInterface::STRENGTH_VERY_STRONG,
-                str_repeat('aZ3?&', 4)
+                str_repeat('aZ3?&', 4),
             ],
-            'very strong 2' =>  [PasswordStrengthMeterInterface::STRENGTH_VERY_STRONG, '3357zPqv9p45PS4CXyaZPOyy5'],
-
+            'very strong 2' => [PasswordStrengthMeterInterface::STRENGTH_VERY_STRONG, '3357zPqv9p45PS4CXyaZPOyy5'],
         ];
     }
 
     /**
-     * @param int $expectedStrength
-     * @param string $input
-     * @return void
      * @dataProvider strengthProvider
      */
     public function testStrength(int $expectedStrength, string $input): void

@@ -1,13 +1,5 @@
 include:
-
-  - project: "libriciel/integration-continue/templates"
-    ref: master
-    file: '/security-check.yml'
-
-stages:
-  - build
-  - test
-  - quality
+  - template: Security/Container-Scanning.gitlab-ci.yml
 
 variables:
   CONTAINER_IMAGE: "${CI_REGISTRY_IMAGE}:${CI_COMMIT_REF_NAME}"
@@ -24,42 +16,36 @@ build:
     - docker login -u "gitlab-ci-token" -p "$CI_JOB_TOKEN" $CI_REGISTRY
     - docker push ${CONTAINER_IMAGE}
 
-security_scan:
-  allow_failure: true
 
-.tests:
+container_scanning:
+  variables:
+    CS_IMAGE: $CONTAINER_IMAGE
+
+
+unit_test:
   stage: test
-  image: "$CONTAINER_IMAGE"
-  before_script:
+  image : "$CONTAINER_IMAGE"
+  script:
     - cd /app/
-
-check-style:
-  extends: .tests
-  script:
-    make phpcs
-
-mess-detector:
-  extends: .tests
-  script:
-    - make phpmd
-
-copy-paste-detector:
-  extends: .tests
-  script:
-    - make phpcpd
-
-unit-test:
-  extends: .tests
-  script:
-    - make coverage
+    - php -dpcov.enabled=1 -dpcov.directory=. vendor/bin/phpunit --coverage-text --colors=never --coverage-clover coverage/coverage.xml --log-junit coverage/logfile.xml
     - cp -rf coverage $CI_PROJECT_DIR
+  coverage: '/^\s*Lines:\s*\d+.\d+\%/'
   artifacts:
     paths:
       - coverage
     expire_in: 1h
 
+php-cs-fixer:
+  stage: test
+  image: "$CONTAINER_IMAGE"
+  variables:
+    NO_DATABASE: true
+  script:
+    - cd /app/
+    - ./vendor/bin/php-cs-fixer fix --dry-run --diff
+
 quality:
-  stage: quality
+  stage: test
   only:
     - master
   image : gitlab.libriciel.fr:4567/docker/sonar-scanner:latest

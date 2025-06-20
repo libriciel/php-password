@@ -37,7 +37,6 @@ interface PasswordStrengthMeterInterface
      * caractères.
      *
      * @param string $string La chaîne de caractères
-     * @return int
      */
     public function symbols(string $string): int;
 
@@ -49,7 +48,6 @@ interface PasswordStrengthMeterInterface
      * STRENGTH_MEDIUM (3), STRENGTH_STRONG (4) et STRENGTH_VERY_STRONG (5).
      *
      * @param string $string Le mot de passe
-     * @return integer
      */
     public function strength(string $string): int;
 }

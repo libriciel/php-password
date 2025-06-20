@@ -31,7 +31,6 @@ class PasswordStrengthMeterAnssi implements PasswordStrengthMeterInterface
      *      - ÀÂÄÆÇÈÉÊËÎÏÔŒÙÛÜ: 16
      *
      * @param string $string Le mot de passe
-     * @return int
      */
     public function symbols(string $string): int
     {
@@ -45,8 +44,8 @@ class PasswordStrengthMeterAnssi implements PasswordStrengthMeterInterface
         }
 
         if (true === $hexadecimal) {
-            return (false !== mb_ereg('([A-F].*[a-f]|[a-f].*[A-F])', $string)
-                ? 22 : 16);
+            return false !== mb_ereg('([A-F].*[a-f]|[a-f].*[A-F])', $string)
+                ? 22 : 16;
         }
 
         $patterns = [
@@ -56,7 +55,7 @@ class PasswordStrengthMeterAnssi implements PasswordStrengthMeterInterface
             '[€\\!#\\$\\*%\\? ]' => 8,
             '[&\\[\\|\\]@\\^µ§\\:/;\\.,\\<\\>°²³\'"]' => 20,
             '[àâäæçèéêëîïôœùûü]' => 16,
-            '[ÀÂÄÆÇÈÉÊËÎÏÔŒÙÛÜ]' => 16
+            '[ÀÂÄÆÇÈÉÊËÎÏÔŒÙÛÜ]' => 16,
         ];
 
         foreach ($patterns as $pattern => $symbols) {
@@ -71,23 +70,21 @@ class PasswordStrengthMeterAnssi implements PasswordStrengthMeterInterface
     /**
      * Retourne le nombre de bits d'entropie pour une chaîne de caractères.
      *
-     * @param string $string La chaîne de caractères
-     * @param int $precision Le nombre de décimales souhaitées
-     * @return float
+     * @param string $string    La chaîne de caractères
+     * @param int    $precision Le nombre de décimales souhaitées
      */
     public function entropy(string $string, int $precision = 0): float
     {
         $length = mb_strlen($string);
         $symbols = $this->symbols($string);
         $value = $length * log($symbols, 2);
+
         return round($value, $precision);
     }
 
     /**
      * Retourne les valeurs minimales (seuils) d'entropie, en ordre
      * descendant, pour les différentes forces de mots de passe.
-     *
-     * @return array
      */
     public function thresholds(): array
     {
@@ -96,7 +93,7 @@ class PasswordStrengthMeterAnssi implements PasswordStrengthMeterInterface
             100 => static::STRENGTH_STRONG,
             80 => static::STRENGTH_MEDIUM,
             64 => static::STRENGTH_WEAK,
-            0 => static::STRENGTH_VERY_WEAK
+            0 => static::STRENGTH_VERY_WEAK,
         ];
     }
 
@@ -111,7 +108,6 @@ class PasswordStrengthMeterAnssi implements PasswordStrengthMeterInterface
      * @see PasswordAnssi::entropy()
      *
      * @param string $string Le mot de passe
-     * @return integer
      */
     public function strength(string $string): int
     {
@@ -124,6 +120,7 @@ class PasswordStrengthMeterAnssi implements PasswordStrengthMeterInterface
                 $result = $strength;
             }
         }
+
         return $result;
     }
 }

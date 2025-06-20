@@ -35,6 +35,15 @@ unit_test:
       - coverage
     expire_in: 1h
 
+php-cs-fixer:
+  stage: test
+  image: "$CONTAINER_IMAGE"
+  variables:
+    NO_DATABASE: true
+  script:
+    - cd /app/
+    - ./vendor/bin/php-cs-fixer fix --dry-run --diff
+
 quality:
   stage: test
   only:

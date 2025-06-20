@@ -7,18 +7,16 @@ use Libriciel\Password\Service\PasswordGeneratorAnssi;
 use PHPUnit\Framework\TestCase;
 
 /**
- * Tests unitaires de la classe Libriciel\Utility\Password\PasswordGeneratorAnssi
+ * Tests unitaires de la classe Libriciel\Utility\Password\PasswordGeneratorAnssi.
  */
 class PasswordGeneratorAnssiTest extends TestCase
 {
     /**
      * Configuration par défaut.
-     *
-     * @var array
      */
     protected array $defaultConfig = [
-        'binary'  => false,
-        'numbers'  => true,
+        'binary' => false,
+        'numbers' => true,
         'lowercase_hexadecimal' => false,
         'uppercase_hexadecimal' => false,
         'lowercase_letters' => true,
@@ -26,7 +24,7 @@ class PasswordGeneratorAnssiTest extends TestCase
         'symbols_1' => false,
         'symbols_2' => false,
         'lowercase_accents_fr' => false,
-        'uppercase_accents_fr' => false
+        'uppercase_accents_fr' => false,
     ];
 
     /**
@@ -69,12 +67,11 @@ class PasswordGeneratorAnssiTest extends TestCase
         // Security.cipherSeed (CakePHP 2.x)
         $params = [
             'lowercase_letters' => false,
-            'uppercase_letters' => false
+            'uppercase_letters' => false,
         ];
         $password = $pwdGeneratorAnsi->generate(29, $params + $defaults);
         $this->assertMatchesRegularExpression('/^[0-9]{29}$/', $password);
     }
-
 
     /**
      * Test de la configuration via PasswordGeneratorAnssi::config().
@@ -89,12 +86,12 @@ class PasswordGeneratorAnssiTest extends TestCase
 
         $params = [
             'lowercase_letters' => false,
-            'uppercase_letters' => false
+            'uppercase_letters' => false,
         ];
         $actual = $pwdGeneratorAnsi->config($params);
         $expected = [
-            'binary'  => false,
-            'numbers'  => true,
+            'binary' => false,
+            'numbers' => true,
             'lowercase_hexadecimal' => false,
             'uppercase_hexadecimal' => false,
             'lowercase_letters' => false,
@@ -102,7 +99,7 @@ class PasswordGeneratorAnssiTest extends TestCase
             'symbols_1' => false,
             'symbols_2' => false,
             'lowercase_accents_fr' => false,
-            'uppercase_accents_fr' => false
+            'uppercase_accents_fr' => false,
         ];
         $this->assertEquals($expected, $actual);
 
@@ -125,7 +122,7 @@ class PasswordGeneratorAnssiTest extends TestCase
             'numbers' => 1,
             'lowercase_letters' => 1,
             'uppercase_letters' => 1,
-            'symbols_1' => 1
+            'symbols_1' => 1,
         ];
 
         // Entropie 37, force 1
@@ -140,18 +137,17 @@ class PasswordGeneratorAnssiTest extends TestCase
 
     public function testConstrainedException1()
     {
-
         $pwdGeneratorAnsi = new PasswordGeneratorAnssi();
 
         $defaults = $pwdGeneratorAnsi->defaults();
         $mandatory = [
             'numbers' => 1,
-            'lowercase_letters' => 1
+            'lowercase_letters' => 1,
         ];
         $this->expectException(PasswordException::class);
         $this->expectExceptionCode(0);
         $this->expectExceptionMessage(
-            "Impossible de générer un mot de passe de longueur 1 avec 2 caractères obligatoires"
+            'Impossible de générer un mot de passe de longueur 1 avec 2 caractères obligatoires'
         );
         $pwdGeneratorAnsi->constrained(1, $defaults, $mandatory);
     }
@@ -164,12 +160,12 @@ class PasswordGeneratorAnssiTest extends TestCase
         $false = array_combine(array_keys($defaults), array_fill(0, count($defaults), false));
         $mandatory = [
             'numbers' => 1,
-            'lowercase_letters' => 1
+            'lowercase_letters' => 1,
         ];
         $this->expectException(PasswordException::class);
         $this->expectExceptionCode(0);
         $this->expectExceptionMessage(
-            "Impossible de générer un mot de passe de longueur 3 sans caractère disponible"
+            'Impossible de générer un mot de passe de longueur 3 sans caractère disponible'
         );
         $pwdGeneratorAnsi->constrained(3, $false, $mandatory);
     }
@@ -178,10 +174,9 @@ class PasswordGeneratorAnssiTest extends TestCase
     {
         $pwdGeneratorAnsi = new PasswordGeneratorAnssi();
 
-
         $mandatory = [
             'numbers' => 1,
-            'not_existing' => 1
+            'not_existing' => 1,
         ];
         $this->expectException(PasswordException::class);
         $this->expectExceptionCode(0);

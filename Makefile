@@ -24,3 +24,6 @@ clean: ## Cleaning all but vendor directory
 
 bash: ## Obtain a shell console on the app container
 	$(DOCKER_COMPOSE) run --remove-orphans $(APP_NAME) bash
+
+fix-cs: ## Fix the project style
+	$(DOCKER_COMPOSE) run --entrypoint 'vendor/bin/php-cs-fixer fix' $(APP_NAME)

@@ -18,7 +18,7 @@ class PasswordStrengthMeterAnssiWebpageTest extends TestCase
      * attendue au moyen d'un bout de la chaîne de symboles coupée à la longueur
      * désirée.
      *
-     * @param array $data Les valeur des assertions, en fonction de la longueur
+     * @param array  $data    Les valeur des assertions, en fonction de la longueur
      * @param string $symbols Une chaîne d'au moins 30 caractères
      */
     protected function assertEqualEntropiesByLength(array $data, string $symbols)
@@ -28,7 +28,7 @@ class PasswordStrengthMeterAnssiWebpageTest extends TestCase
         foreach ($data as $length => $expected) {
             $password = substr($symbols, 0, $length);
             $actual = $pwdStrengthMeter->entropy($password);
-            $message = sprintf("longueur %d, %d symboles: %s", $length, $symbols, $password);
+            $message = sprintf('longueur %d, %d symboles: %s', $length, $symbols, $password);
             $this->assertEquals($expected, $actual, $message);
         }
     }
@@ -49,7 +49,7 @@ class PasswordStrengthMeterAnssiWebpageTest extends TestCase
             16 => 16,
             20 => 20,
             25 => 25,
-            30 => 30
+            30 => 30,
         ];
         $this->assertEqualEntropiesByLength($data, $symbols);
     }
@@ -70,7 +70,7 @@ class PasswordStrengthMeterAnssiWebpageTest extends TestCase
             16 => 53,
             20 => 66,
             25 => 83,
-            30 => 100
+            30 => 100,
         ];
         $this->assertEqualEntropiesByLength($data, $symbols);
     }
@@ -91,7 +91,7 @@ class PasswordStrengthMeterAnssiWebpageTest extends TestCase
             16 => 64,
             20 => 80,
             25 => 100,
-            30 => 120
+            30 => 120,
         ];
         $this->assertEqualEntropiesByLength($data, $symbols);
 
@@ -115,7 +115,7 @@ class PasswordStrengthMeterAnssiWebpageTest extends TestCase
             16 => 75,
             20 => 94,
             25 => 118,
-            30 => 141
+            30 => 141,
         ];
         $this->assertEqualEntropiesByLength($data, $symbols);
 
@@ -139,7 +139,7 @@ class PasswordStrengthMeterAnssiWebpageTest extends TestCase
             16 => 83,
             20 => 103,
             25 => 129,
-            30 => 155
+            30 => 155,
         ];
         $this->assertEqualEntropiesByLength($data, $symbols);
     }
@@ -160,7 +160,7 @@ class PasswordStrengthMeterAnssiWebpageTest extends TestCase
             16 => 91,
             20 => 114,
             25 => 143,
-            30 => 171
+            30 => 171,
         ];
         $this->assertEqualEntropiesByLength($data, $symbols);
     }
@@ -181,7 +181,7 @@ class PasswordStrengthMeterAnssiWebpageTest extends TestCase
             16 => 95,
             20 => 119,
             25 => 149,
-            30 => 179
+            30 => 179,
         ];
         $this->assertEqualEntropiesByLength($data, $symbols);
     }
@@ -202,7 +202,7 @@ class PasswordStrengthMeterAnssiWebpageTest extends TestCase
             16 => 98,
             20 => 123,
             25 => 153,
-            30 => 184
+            30 => 184,
         ];
         $this->assertEqualEntropiesByLength($data, $symbols);
     }
@@ -224,7 +224,7 @@ class PasswordStrengthMeterAnssiWebpageTest extends TestCase
             16 => 104,
             20 => 130,
             25 => 162,
-            30 => 195
+            30 => 195,
         ];
         $this->assertEqualEntropiesByLength($data, $symbols);
     }

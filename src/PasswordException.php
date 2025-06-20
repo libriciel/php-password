@@ -2,9 +2,7 @@
 
 namespace Libriciel\Password;
 
-use RuntimeException;
-
-class PasswordException extends RuntimeException
+class PasswordException extends \RuntimeException
 {
-    //Nothing to do
+    // Nothing to do
 }

@@ -1,4 +1,5 @@
-FROM hubdocker.libriciel.fr/php:8.3.22-fpm-alpine3.22
+# FROM hubdocker.libriciel.fr/php:8.3.22-fpm-alpine3.22
+FROM hubdocker.libriciel.fr/php:8.3.19-fpm-alpine3.20
 
 WORKDIR /app
 

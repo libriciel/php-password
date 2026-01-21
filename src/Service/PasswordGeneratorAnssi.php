@@ -14,6 +14,7 @@ class PasswordGeneratorAnssi
 {
     /**
      * Les chaînes de caractères autorisées, la clé est le nom de leur classe.
+     * @var array<string, string>
      */
     protected static array $classes = [
         'binary' => '01',
@@ -30,6 +31,7 @@ class PasswordGeneratorAnssi
 
     /**
      * Les valeurs par défaut des classes à paramétrer pour la génération.
+     * @var array<string, bool>
      */
     protected static array $defaults = [
         'binary' => false,
@@ -46,6 +48,7 @@ class PasswordGeneratorAnssi
 
     /**
      * Configuration.
+     * @var array<string, bool>
      */
     protected array $config = [];
 
@@ -53,7 +56,8 @@ class PasswordGeneratorAnssi
      * Retourne la configuration en cours après l'avoir au préalable complétée
      * par les valeurs par défaut et la configuration passée en paramètres.
      *
-     * @param array $config la configuration à modifier
+     * @param array<string, bool> $config la configuration à modifier
+     * @return array<string,bool>
      */
     public function config(array $config = []): array
     {
@@ -65,24 +69,32 @@ class PasswordGeneratorAnssi
     /**
      * Retourne le paramétrage par défaut des classes à utiliser lors de la
      * génération.
+     * @return array<string,bool>
+     *
      */
     public function defaults(): array
     {
         return self::$defaults;
     }
 
+    private function getEncoding(?string $encoding = null): string
+    {
+        return $encoding ?? mb_internal_encoding();
+    }
+
     /**
      * Retourne la liste des caractères en fonction des classes à utiliser.
      *
-     * @param array   $params   Les paramètres définissant les classes à utiliser
-     * @param ?string $encoding Le paramètre encoding est l'encodage des caractères.
-     *                          S'il est omis, l'encodage de caractères interne (mb_internal_encoding)
-     *                          sera utilisé.
+     * @param array<string,bool>       $params   Les paramètres définissant les classes à utiliser
+     * @param string|null $encoding Le paramètre encoding est l'encodage des caractères.
+     *                              S'il est omis, l'encodage de caractères interne (mb_internal_encoding)
+     *                              sera utilisé.
+     * @return array<string>
      */
     public function characters(array $params = [], ?string $encoding = null): array
     {
         $myConfig = $params + $this->config();
-        $encoding = null === $encoding ? mb_internal_encoding() : $encoding;
+        $encoding = $this->getEncoding($encoding);
         $accumulator = [];
 
         foreach ($myConfig as $key => $enabled) {
@@ -99,16 +111,16 @@ class PasswordGeneratorAnssi
      * Génère un mot de passe aléatoire de la longueur désirée.
      *
      * @param int     $length   la longueur du mot de passe à générer
-     * @param array   $params   les paramètres définissant les classes à utiliser
-     * @param ?string $encoding Le paramètre encoding est l'encodage des caractères.
+     * @param array<string,bool>   $params   les paramètres définissant les classes à utiliser
+     * @param string|null $encoding Le paramètre encoding est l'encodage des caractères.
      *                          S'il est omis, l'encodage de caractères interne (mb_internal_encoding)
      *                          sera utilisé.
      *
      * @throws \Exception
      */
-    public function generate(int $length = 40, array $params = [], ?string $encoding = null): string
+    public function generate(int $length = 40, array $params = [], string|null $encoding = null): string|false
     {
-        $encoding = null === $encoding ? mb_internal_encoding() : $encoding;
+        $encoding = $this->getEncoding($encoding);
         $characters = $this->characters($params, $encoding);
         $count = count($characters);
         $result = false;
@@ -130,12 +142,12 @@ class PasswordGeneratorAnssi
      * Génère un mot de passe aléatoire de la longueur désirée avec certaines
      * classes de caractères devant être utilisées automatiquement.
      *
-     * @param int     $length    la longueur du mot de passe à générer
-     * @param array   $params    les paramètres définissant les classes à utiliser
-     * @param array   $mandatory les paramètres définissant les classes à utiliser obligatoirement
-     * @param ?string $encoding  Le paramètre encoding est l'encodage des caractères.
-     *                           S'il est omis, l'encodage de caractères interne (mb_internal_encoding)
-     *                           sera utilisé.
+     * @param int         $length    la longueur du mot de passe à générer
+     * @param array<string,bool>      $params    les paramètres définissant les classes à utiliser
+     * @param array<string,int>       $mandatory les paramètres définissant les classes à utiliser obligatoirement
+     * @param string|null $encoding  Le paramètre encoding est l'encodage des caractères.
+     *                               S'il est omis, l'encodage de caractères interne (mb_internal_encoding)
+     *                               sera utilisé.
      *
      * @throws \Exception
      */
@@ -145,13 +157,15 @@ class PasswordGeneratorAnssi
         array $mandatory = [],
         ?string $encoding = null,
     ): string {
-        $encoding = null === $encoding ? mb_internal_encoding() : $encoding;
-        $characters = static::characters($params, $encoding);
+        $encoding = $this->getEncoding($encoding);
+        $characters = $this->characters($params, $encoding);
         $count = count($characters);
 
         if (0 === $count) {
-            $format = 'Impossible de générer un mot de passe de longueur %d sans caractère disponible';
-            $message = sprintf($format, $length, array_sum($mandatory), json_encode($mandatory));
+            $message = sprintf(
+                'Impossible de générer un mot de passe de longueur %d sans caractère disponible',
+                $length
+            );
             throw new PasswordException($message);
         }
 
@@ -159,7 +173,7 @@ class PasswordGeneratorAnssi
             $format =
                 'Impossible de générer un mot de passe de longueur %d '.
                 'avec %d caractères obligatoires (obligatoires: %s)';
-            $message = sprintf($format, $length, array_sum($mandatory), json_encode($mandatory));
+            $message = sprintf($format, $length, array_sum($mandatory), json_encode($mandatory, JSON_THROW_ON_ERROR));
             throw new PasswordException($message);
         }
 
@@ -171,6 +185,9 @@ class PasswordGeneratorAnssi
                 throw new PasswordException("La classe de caractère $class n'est pas défini");
             }
             $stringLength = mb_strlen(static::$classes[$class], $encoding);
+            if ($stringLength === 0){
+                throw new PasswordException("La classe de caractère $class est vide");
+            }
             for ($idx = 0; $idx < $number; ++$idx) {
                 $char = mb_substr(static::$classes[$class], random_int(0, $stringLength - 1), 1, $encoding);
                 $result[] = $char;
@@ -188,6 +205,8 @@ class PasswordGeneratorAnssi
     }
 
     /**
+     * @param array<string> $array
+     * @return array<string>
      * @throws \Exception
      */
     private function randomArray(array $array): array

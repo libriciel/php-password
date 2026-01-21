@@ -13,6 +13,7 @@ class PasswordGeneratorAnssiTest extends TestCase
 {
     /**
      * Configuration par défaut.
+     * @var array<string, bool>
      */
     protected array $defaultConfig = [
         'binary' => false,
@@ -30,7 +31,7 @@ class PasswordGeneratorAnssiTest extends TestCase
     /**
      * Test de la méthode PasswordGeneratorAnssi::defaults().
      */
-    public function testDefaults()
+    public function testDefaults(): void
     {
         $pwdGeneratorAnsi = new PasswordGeneratorAnssi();
 
@@ -42,19 +43,20 @@ class PasswordGeneratorAnssiTest extends TestCase
      * Test de la méthode PasswordGeneratorAnssi::generate() avec la configuration
      * par défaut.
      */
-    public function testGenerateDefaultConfig()
+    public function testGenerateDefaultConfig(): void
     {
         $pwdGeneratorAnsi = new PasswordGeneratorAnssi();
 
         // Par défaut pour un mot de passe très fort ?
         $password = $pwdGeneratorAnsi->generate();
+        self::assertNotFalse($password);
         $this->assertMatchesRegularExpression('/^[a-zA-Z0-9]{40}$/', $password);
     }
 
     /**
      * Test de la méthode PasswordGeneratorAnssi::generate().
      */
-    public function testGenerate()
+    public function testGenerate(): void
     {
         $pwdGeneratorAnsi = new PasswordGeneratorAnssi();
 
@@ -62,6 +64,7 @@ class PasswordGeneratorAnssiTest extends TestCase
 
         // Security.salt (CakePHP 2.x)
         $password = $pwdGeneratorAnsi->generate(40, $defaults);
+        self::assertNotFalse($password);
         $this->assertMatchesRegularExpression('/^[a-zA-Z0-9]{40}$/', $password);
 
         // Security.cipherSeed (CakePHP 2.x)
@@ -70,13 +73,14 @@ class PasswordGeneratorAnssiTest extends TestCase
             'uppercase_letters' => false,
         ];
         $password = $pwdGeneratorAnsi->generate(29, $params + $defaults);
+        self::assertNotFalse($password);
         $this->assertMatchesRegularExpression('/^[0-9]{29}$/', $password);
     }
 
     /**
      * Test de la configuration via PasswordGeneratorAnssi::config().
      */
-    public function testConfig()
+    public function testConfig(): void
     {
         $pwdGeneratorAnsi = new PasswordGeneratorAnssi();
 
@@ -104,6 +108,7 @@ class PasswordGeneratorAnssiTest extends TestCase
         $this->assertEquals($expected, $actual);
 
         $actual = $pwdGeneratorAnsi->generate(20);
+        self::assertNotFalse($actual);
         $this->assertMatchesRegularExpression('/^[0-9]{20}$/', $actual);
 
         // Retour aux valeurs par défaut
@@ -113,7 +118,7 @@ class PasswordGeneratorAnssiTest extends TestCase
     /**
      * Test de la méthode PasswordGeneratorAnssi::constrained().
      */
-    public function testConstrained()
+    public function testConstrained(): void
     {
         $pwdGeneratorAnsi = new PasswordGeneratorAnssi();
 
@@ -135,7 +140,7 @@ class PasswordGeneratorAnssiTest extends TestCase
         $this->assertNotFalse(mb_ereg('[€\\!#\\$\\*%\\? ]', $password));
     }
 
-    public function testConstrainedException1()
+    public function testConstrainedException1(): void
     {
         $pwdGeneratorAnsi = new PasswordGeneratorAnssi();
 
@@ -152,7 +157,7 @@ class PasswordGeneratorAnssiTest extends TestCase
         $pwdGeneratorAnsi->constrained(1, $defaults, $mandatory);
     }
 
-    public function testConstrainedException2()
+    public function testConstrainedException2(): void
     {
         $pwdGeneratorAnsi = new PasswordGeneratorAnssi();
 
@@ -170,7 +175,7 @@ class PasswordGeneratorAnssiTest extends TestCase
         $pwdGeneratorAnsi->constrained(3, $false, $mandatory);
     }
 
-    public function testWithUnexpectedClass()
+    public function testWithUnexpectedClass(): void
     {
         $pwdGeneratorAnsi = new PasswordGeneratorAnssi();
 
@@ -183,6 +188,34 @@ class PasswordGeneratorAnssiTest extends TestCase
         $this->expectExceptionMessage(
             "La classe de caractère not_existing n'est pas défini"
         );
-        $pwdGeneratorAnsi->constrained(3, $mandatory, $mandatory);
+        $pwdGeneratorAnsi->constrained(3, [], $mandatory);
+    }
+
+    /**
+     * Test que la méthode constrained lance une exception quand une classe de caractères est vide
+     */
+    public function testConstrainedWithEmptyCharacterClass(): void
+    {
+        // On crée une classe anonyme qui hérite de PasswordGeneratorAnssi
+        // pour pouvoir tester avec une classe de caractères vide
+        $pwdGeneratorAnsi = new class extends PasswordGeneratorAnssi {
+            protected static array $classes = [
+                'numbers' => '0123456789',
+                'empty_class' => '', // Classe vide pour le test
+            ];
+        };
+
+        $mandatory = [
+            'numbers' => 1,
+            'empty_class' => 1, // On demande un caractère de la classe vide
+        ];
+
+        $this->expectException(PasswordException::class);
+        $this->expectExceptionCode(0);
+        $this->expectExceptionMessage(
+            "La classe de caractère empty_class est vide"
+        );
+
+        $pwdGeneratorAnsi->constrained(10, [], $mandatory);
     }
 }

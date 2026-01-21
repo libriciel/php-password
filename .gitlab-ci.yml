@@ -38,11 +38,16 @@ unit_test:
 php-cs-fixer:
   stage: test
   image: "$CONTAINER_IMAGE"
-  variables:
-    NO_DATABASE: true
   script:
     - cd /app/
     - ./vendor/bin/php-cs-fixer fix --dry-run --diff
+
+phpstan:
+  stage: test
+  image: "$CONTAINER_IMAGE"
+  script:
+    - cd /app/
+    - ./vendor/bin/phpstan
 
 quality:
   stage: test

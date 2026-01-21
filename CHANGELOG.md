@@ -1,5 +1,17 @@
 # CHANGELOG
 
+## 4.0.0 - 2023-02-15
+
+### Evolution
+
+- migration vers PHP 8.3
+- ajout de phpstan
+
+## Suppression
+
+- suppression de phpmd, phpcpd et phpcodesniffer
+
+
 ## 3.0.2
 - mise à jour de sécurité
 ## 3.0.1 - 2023-02-15
@@ -10,7 +22,7 @@
 ## 3.0.0 - 2022-02-17
 
 ### Evolution
-- 
+
 - La version 3 est basée sur PHP 8.1
 
 ### Suppression

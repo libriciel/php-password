@@ -10,27 +10,27 @@ interface PasswordStrengthMeterInterface
     /**
      * La constante utilisée pour une force de mot de passe "très forte".
      */
-    public const STRENGTH_VERY_STRONG = 5;
+    public const int STRENGTH_VERY_STRONG = 5;
 
     /**
      * La constante utilisée pour une force de mot de passe "forte".
      */
-    public const STRENGTH_STRONG = 4;
+    public const int STRENGTH_STRONG = 4;
 
     /**
      * La constante utilisée pour une force de mot de passe "moyenne".
      */
-    public const STRENGTH_MEDIUM = 3;
+    public const int STRENGTH_MEDIUM = 3;
 
     /**
      * La constante utilisée pour une force de mot de passe "faible".
      */
-    public const STRENGTH_WEAK = 2;
+    public const int STRENGTH_WEAK = 2;
 
     /**
      * La constante utilisée pour une force de mot de passe "très faible".
      */
-    public const STRENGTH_VERY_WEAK = 1;
+    public const int STRENGTH_VERY_WEAK = 1;
 
     /**
      * Retourne le nombre estimé de symboles à tester pour la chaîne de

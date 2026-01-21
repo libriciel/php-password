@@ -18,10 +18,10 @@ class PasswordStrengthMeterAnssiWebpageTest extends TestCase
      * attendue au moyen d'un bout de la chaîne de symboles coupée à la longueur
      * désirée.
      *
-     * @param array  $data    Les valeur des assertions, en fonction de la longueur
+     * @param array<int,int>  $data    Les valeur des assertions, en fonction de la longueur
      * @param string $symbols Une chaîne d'au moins 30 caractères
      */
-    protected function assertEqualEntropiesByLength(array $data, string $symbols)
+    protected function assertEqualEntropiesByLength(array $data, string $symbols): void
     {
         $pwdStrengthMeter = new PasswordStrengthMeterAnssi();
 
@@ -37,7 +37,7 @@ class PasswordStrengthMeterAnssiWebpageTest extends TestCase
      * Tests de la méthode PasswordStrengthMeterAnssi::entropy() avec 2
      * symboles (0 ou 1) et différentes longueurs.
      */
-    public function testEntropy2Symbols()
+    public function testEntropy2Symbols(): void
     {
         $symbols = '000000000000000000000000000000';
         $data = [
@@ -58,7 +58,7 @@ class PasswordStrengthMeterAnssiWebpageTest extends TestCase
      * Tests de la méthode PasswordStrengthMeterAnssi::entropy() avec 10
      * symboles (de 0 à 9) et différentes longueurs.
      */
-    public function testEntropy10Symbols()
+    public function testEntropy10Symbols(): void
     {
         $symbols = '333333333333333333333333333333';
         $data = [
@@ -79,7 +79,7 @@ class PasswordStrengthMeterAnssiWebpageTest extends TestCase
      * Tests de la méthode PasswordStrengthMeterAnssi::entropy() avec 16
      * symboles (de 0 à 9, a à f ou A à F) et différentes longueurs.
      */
-    public function testEntropy16Symbols()
+    public function testEntropy16Symbols(): void
     {
         $symbols = '4F4F4F4F4F4F4F4F4F4F4F4F4F4F4F';
         $data = [
@@ -103,7 +103,7 @@ class PasswordStrengthMeterAnssiWebpageTest extends TestCase
      * Tests de la méthode PasswordStrengthMeterAnssi::entropy() avec 26
      * symboles (de A à Z) et différentes longueurs.
      */
-    public function testEntropy26Symbols()
+    public function testEntropy26Symbols(): void
     {
         $symbols = 'GGGGGGGGGGGGGGGGGGGGGGGGGGGGGG';
         $data = [
@@ -127,7 +127,7 @@ class PasswordStrengthMeterAnssiWebpageTest extends TestCase
      * Tests de la méthode PasswordStrengthMeterAnssi::entropy() avec 36
      * symboles (0 à 9 et A à Z) et différentes longueurs.
      */
-    public function testEntropy36Symbols()
+    public function testEntropy36Symbols(): void
     {
         $symbols = '5G5G5G5G5G5G5G5G5G5G5G5G5G5G5G';
         $data = [
@@ -148,7 +148,7 @@ class PasswordStrengthMeterAnssiWebpageTest extends TestCase
      * Tests de la méthode PasswordStrengthMeterAnssi::entropy() avec 52
      * symboles (A à Z, a à z) et différentes longueurs.
      */
-    public function testEntropy52Symbols()
+    public function testEntropy52Symbols(): void
     {
         $symbols = 'gZgZgZgZgZgZgZgZgZgZgZgZgZgZgZ';
         $data = [
@@ -169,7 +169,7 @@ class PasswordStrengthMeterAnssiWebpageTest extends TestCase
      * Tests de la méthode PasswordStrengthMeterAnssi::entropy() avec 62
      * symboles (0 à 9, A à Z, a à z) et différentes longueurs.
      */
-    public function testEntropy62Symbols()
+    public function testEntropy62Symbols(): void
     {
         $symbols = '5Ht5Ht5Ht5Ht5Ht5Ht5Ht5Ht5Ht5Ht';
         $data = [
@@ -190,7 +190,7 @@ class PasswordStrengthMeterAnssiWebpageTest extends TestCase
      * Tests de la méthode PasswordStrengthMeterAnssi::entropy() avec 70
      * symboles (0 à 9, A à Z, a à z et  ! #$*% ?) et différentes longueurs.
      */
-    public function testEntropy70Symbols()
+    public function testEntropy70Symbols(): void
     {
         $symbols = 'Hz3%Hz3%Hz3%Hz3%Hz3%Hz3%Hz3%Hz';
         $data = [
@@ -212,7 +212,7 @@ class PasswordStrengthMeterAnssiWebpageTest extends TestCase
      * symboles (0 à 9, A à Z, a à z et  ! #$*% ? &[|]@^µ§ :/ ;.,<>°²³) et
      * différentes longueurs.
      */
-    public function testEntropy90Symbols()
+    public function testEntropy90Symbols(): void
     {
         $symbols = '9kL!@9kL!@9kL!@9kL!@9kL!@9kL!@';
         $data = [

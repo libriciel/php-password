@@ -6,6 +6,7 @@ namespace LibricielTest\Password\Service;
 
 use Libriciel\Password\Service\PasswordStrengthMeterAnssi;
 use Libriciel\Password\Service\PasswordStrengthMeterInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -16,7 +17,7 @@ class PasswordStrengthMeterAnssiTest extends TestCase
     /**
      * Test de la méthode PasswordStrengthMeterAnssi::thresholds().
      */
-    public function testThresholds()
+    public function testThresholds(): void
     {
         $pwdStrengthMeter = new PasswordStrengthMeterAnssi();
         $actual = $pwdStrengthMeter->thresholds();
@@ -33,9 +34,10 @@ class PasswordStrengthMeterAnssiTest extends TestCase
     /**
      * Pour les tests Wikipédia :
      *
+     * @return array<string,list<int|string>>
      * @see {@url https://en.wikipedia.org/wiki/Password_strength#Random_passwords}
      */
-    public function symbolsProvider(): array
+    public static function symbolsProvider(): array
     {
         return [
             'binary' => [2, '0110'],
@@ -59,12 +61,8 @@ class PasswordStrengthMeterAnssiTest extends TestCase
         ];
     }
 
-    /**
-     * Test de la méthode PasswordStrengthMeterAnssi::symbols().
-     *
-     * @dataProvider symbolsProvider
-     */
-    public function testSymbols(int $expectedSymbols, string $input)
+    #[DataProvider('symbolsProvider')]
+    public function testSymbols(int $expectedSymbols, string $input): void
     {
         $pwdStrengthMeter = new PasswordStrengthMeterAnssi();
         $this->assertEquals(
@@ -76,9 +74,10 @@ class PasswordStrengthMeterAnssiTest extends TestCase
     /**
      * Pour Wikipédia :
      *
+     * @return array<string,list<float|int|string>>
      * @see {@url https://en.wikipedia.org/wiki/Password_strength#Random_passwords}
      */
-    public function entropyProvider(): array
+    public static function entropyProvider(): array
     {
         return [
             'Wikipedia test 1' => [3.322, '2', 3],
@@ -131,16 +130,18 @@ class PasswordStrengthMeterAnssiTest extends TestCase
     /**
      * Test de la méthode PasswordStrengthMeterAnssi::entropy() avec l'entropie
      * par symboles définie dans le tableau sur wikipedia.
-     *
-     * @dataProvider entropyProvider
      */
-    public function testEntropy(float $expectedEntropy, string $input, int $precision = 0)
+    #[DataProvider('entropyProvider')]
+    public function testEntropy(float $expectedEntropy, string $input, int $precision = 0): void
     {
         $pwdStrengthMeter = new PasswordStrengthMeterAnssi();
         $this->assertEquals($expectedEntropy, $pwdStrengthMeter->entropy($input, $precision));
     }
 
-    public function strengthProvider(): array
+    /**
+     * @return array<string,list<int|string>>
+     */
+    public static function strengthProvider(): array
     {
         return [
             'very weak' => [PasswordStrengthMeterInterface::STRENGTH_VERY_WEAK, str_repeat('Abz', 3)],
@@ -157,9 +158,7 @@ class PasswordStrengthMeterAnssiTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider strengthProvider
-     */
+    #[DataProvider('strengthProvider')]
     public function testStrength(int $expectedStrength, string $input): void
     {
         $pwdStrengthMeter = new PasswordStrengthMeterAnssi();

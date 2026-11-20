@@ -75,20 +75,22 @@ build:
   tags:
     - docker-build
   # Configuration Docker propre au job : les jobs d'un runner shell partagent le $HOME du
-  # runner, un login concurrent écraserait le jeton de ce job. Elle est hors de
+  # runner, un login concurrent écraserait le jeton de ce job. Le runner docker-build en
+  # exporte déjà une (mktemp) ; à défaut, on en crée une. Elle est hors de
   # $CI_PROJECT_DIR, sinon `COPY . /app` embarquerait les identifiants dans l'image.
   variables:
     DOCKER_BUILDKIT: 1
-    DOCKER_CONFIG: "/tmp/docker-$CI_JOB_ID"
-    COMPOSER_AUTH_FILE: "/tmp/docker-$CI_JOB_ID/composer_auth.json"
   before_script:
+    - export DOCKER_CONFIG="${DOCKER_CONFIG:-/tmp/docker-$CI_JOB_ID}"
     - mkdir -m 700 -p "$DOCKER_CONFIG"
-    - if [ -d "$HOME/.docker/cli-plugins" ]; then ln -s "$HOME/.docker/cli-plugins" "$DOCKER_CONFIG/cli-plugins"; fi
+    - if [ -d "$HOME/.docker/cli-plugins" ] && [ ! -e "$DOCKER_CONFIG/cli-plugins" ]; then ln -s "$HOME/.docker/cli-plugins" "$DOCKER_CONFIG/cli-plugins"; fi
     - echo "$CI_JOB_TOKEN" | docker login -u gitlab-ci-token --password-stdin "$CI_REGISTRY"
+    - export COMPOSER_AUTH_FILE="$DOCKER_CONFIG/composer_auth.json"
   script:
     - !reference [.composer_auth, script]
     # Le jeton passe en secret BuildKit : il n'apparaît pas dans l'historique de l'image.
     - docker build --secret id=composer_auth,src="$COMPOSER_AUTH_FILE" --pull -t ${CONTAINER_IMAGE} .
+    - rm -f "$COMPOSER_AUTH_FILE"
     - docker push ${CONTAINER_IMAGE}
   after_script:
     - rm -rf "/tmp/docker-$CI_JOB_ID"
@@ -107,7 +109,8 @@ vendor:
     COMPOSER_AUTH_FILE: "/tmp/composer_auth.json"
   script:
     - !reference [.composer_auth, script]
-    # L'image composer n'a pas mbstring, que PHPUnit 13 exige : les images de test l'ont.
+    # L'image composer n'a pas mbstring ; elle ne fait qu'installer, les jobs test-php-*
+    # qui exécutent le code tournent sur des images PHP qui l'ont.
     - COMPOSER_AUTH="$(cat "$COMPOSER_AUTH_FILE")" composer install --no-interaction --no-progress --prefer-dist --ignore-platform-req=ext-mbstring
   artifacts:
     paths:

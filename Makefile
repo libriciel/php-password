@@ -4,7 +4,7 @@ RUN=$(DOCKER_COMPOSE) run --rm $(APP_NAME)
 
 .DEFAULT_GOAL := help
 
-.PHONY: help build build-app build-vendor mrproper clean bash test phpstan rector ecs fix-cs audit qa
+.PHONY: help build build-app build-vendor mrproper clean bash test coverage phpstan rector ecs fix-cs audit qa
 help:
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
@@ -28,6 +28,9 @@ bash: ## Obtain a shell console on the app container
 
 test: ## Run the unit tests
 	$(RUN) vendor/bin/phpunit
+
+coverage: ## Show line, branch and path coverage (Xdebug)
+	$(DOCKER_COMPOSE) run --rm -e XDEBUG_MODE=coverage $(APP_NAME) php -d memory_limit=-1 -d pcov.enabled=0 vendor/bin/phpunit --path-coverage --coverage-text
 
 phpstan: ## Run the static analysis
 	$(RUN) vendor/bin/phpstan analyse

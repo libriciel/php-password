@@ -20,6 +20,23 @@ namespace Libriciel\Password\Service;
 class PasswordStrengthMeterAnssi implements PasswordStrengthMeterInterface
 {
     /**
+     * Classes de caractères (expression régulière) et nombre de symboles de
+     * chacune, hors binaire et hexadécimal.
+     *
+     * @var array<string, int>
+     */
+    private const array PATTERNS = [
+        '[0-9]' => 10,
+        '[a-z]' => 26,
+        '[A-Z]' => 26,
+        '[€\\!#\\$\\*%\\? ]' => 8,
+        '[&\\[\\|\\]@\\^µ§\\\\:/;\\.,\\<\\>°²³\'"]' => 20,
+        '[\\(\\)\\+\\-=_`\\{\\}~]' => 10,
+        '[àâäæçèéêëîïôœùûü]' => 16,
+        '[ÀÂÄÆÇÈÉÊËÎÏÔŒÙÛÜ]' => 16,
+    ];
+
+    /**
      * Retourne le nombre de symboles possibles à tester pour trouver une chaîne
      * de caractères du même type que le mot de passe.
      *
@@ -42,33 +59,19 @@ class PasswordStrengthMeterAnssi implements PasswordStrengthMeterInterface
      */
     public function symbols(string $string): int
     {
-        $hexadecimal = false !== mb_ereg('^[0-9a-fA-F]+$', $string)
-            && false !== mb_ereg('[a-fA-F]', $string);
-
-        $result = 0;
-
-        if (false !== mb_ereg('^[01]+$', $string)) {
+        if (false !== \mb_ereg('^[01]+$', $string)) {
             return 2;
         }
 
-        if (true === $hexadecimal) {
-            return false !== mb_ereg('([A-F].*[a-f]|[a-f].*[A-F])', $string)
+        // Hexadécimal : uniquement des chiffres et des lettres de a à f, dont au moins une lettre
+        if (false !== \mb_ereg('^[0-9a-fA-F]*[a-fA-F][0-9a-fA-F]*$', $string)) {
+            return false !== \mb_ereg('([A-F].*[a-f]|[a-f].*[A-F])', $string)
                 ? 22 : 16;
         }
 
-        $patterns = [
-            '[0-9]' => 10,
-            '[a-z]' => 26,
-            '[A-Z]' => 26,
-            '[€\\!#\\$\\*%\\? ]' => 8,
-            '[&\\[\\|\\]@\\^µ§\\\\:/;\\.,\\<\\>°²³\'"]' => 20,
-            '[\\(\\)\\+\\-=_`\\{\\}~]' => 10,
-            '[àâäæçèéêëîïôœùûü]' => 16,
-            '[ÀÂÄÆÇÈÉÊËÎÏÔŒÙÛÜ]' => 16,
-        ];
-
-        foreach ($patterns as $pattern => $symbols) {
-            if (false !== mb_ereg($pattern, $string)) {
+        $result = 0;
+        foreach (self::PATTERNS as $pattern => $symbols) {
+            if (false !== \mb_ereg($pattern, $string)) {
                 $result += $symbols;
             }
         }
@@ -87,7 +90,7 @@ class PasswordStrengthMeterAnssi implements PasswordStrengthMeterInterface
      */
     public function entropy(string $string, int $precision = 0): float
     {
-        return round($this->exactEntropy($string), $precision);
+        return \round($this->exactEntropy($string), $precision);
     }
 
     /**
@@ -104,7 +107,7 @@ class PasswordStrengthMeterAnssi implements PasswordStrengthMeterInterface
             return 0.0;
         }
 
-        return mb_strlen($string) * log($symbols, 2);
+        return \mb_strlen($string) * \log($symbols, 2);
     }
 
     /**
@@ -140,15 +143,14 @@ class PasswordStrengthMeterAnssi implements PasswordStrengthMeterInterface
     public function strength(string $string): int
     {
         $entropy = $this->exactEntropy($string);
-        $thresholds = $this->thresholds();
-        $result = self::STRENGTH_VERY_WEAK;
 
-        foreach ($thresholds as $threshold => $strength) {
-            if ($entropy >= $threshold && $strength > $result) {
-                $result = $strength;
+        // Les seuils sont en ordre décroissant : le premier atteint est le bon
+        foreach ($this->thresholds() as $threshold => $strength) {
+            if ($entropy >= $threshold) {
+                return $strength;
             }
         }
 
-        return $result;
+        return self::STRENGTH_VERY_WEAK;
     }
 }

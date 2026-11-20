@@ -28,9 +28,9 @@ class PasswordStrengthMeterAnssiWebpageTest extends TestCase
         $pwdStrengthMeter = new PasswordStrengthMeterAnssi();
 
         foreach ($data as $length => $expected) {
-            $password = substr($symbols, 0, $length);
+            $password = \substr($symbols, 0, $length);
             $actual = $pwdStrengthMeter->entropy($password);
-            $message = sprintf(
+            $message = \sprintf(
                 'longueur %d, %d symboles: %s',
                 $length,
                 $pwdStrengthMeter->symbols($password),

@@ -141,7 +141,7 @@ class PasswordGeneratorAnssiTest extends TestCase
      */
     protected static function allDisabled(): array
     {
-        return array_fill_keys(array_keys(self::DEFAULT_CONFIG), false);
+        return \array_fill_keys(\array_keys(self::DEFAULT_CONFIG), false);
     }
 
     /**
@@ -152,7 +152,7 @@ class PasswordGeneratorAnssiTest extends TestCase
      */
     protected static function only(string ...$classes): array
     {
-        return array_fill_keys($classes, true) + self::allDisabled();
+        return \array_fill_keys($classes, true) + self::allDisabled();
     }
 
     /**
@@ -160,11 +160,11 @@ class PasswordGeneratorAnssiTest extends TestCase
      */
     protected function countInClass(string $password, string $class): int
     {
-        $characters = mb_str_split(self::CLASSES[$class]);
+        $characters = \mb_str_split(self::CLASSES[$class]);
 
-        return count(array_filter(
-            mb_str_split($password),
-            fn (string $char) => in_array($char, $characters, true)
+        return \count(\array_filter(
+            \mb_str_split($password),
+            fn (string $char) => \in_array($char, $characters, true)
         ));
     }
 
@@ -209,7 +209,7 @@ class PasswordGeneratorAnssiTest extends TestCase
     {
         $pwdGeneratorAnsi = new PasswordGeneratorAnssi();
 
-        $expected = array_merge(str_split('0123456789'), range('a', 'z'), range('A', 'Z'));
+        $expected = \array_merge(\str_split('0123456789'), \range('a', 'z'), \range('A', 'Z'));
         $this->assertSame($expected, $pwdGeneratorAnsi->characters());
     }
 
@@ -219,7 +219,7 @@ class PasswordGeneratorAnssiTest extends TestCase
     public static function classesProvider(): array
     {
         $result = [];
-        foreach (array_keys(self::CLASSES) as $class) {
+        foreach (\array_keys(self::CLASSES) as $class) {
             $result[$class] = [$class];
         }
 
@@ -235,7 +235,7 @@ class PasswordGeneratorAnssiTest extends TestCase
     {
         $pwdGeneratorAnsi = new PasswordGeneratorAnssi();
 
-        $expected = mb_str_split(self::CLASSES[$class]);
+        $expected = \mb_str_split(self::CLASSES[$class]);
         $this->assertSame($expected, $pwdGeneratorAnsi->characters(self::only($class)));
     }
 
@@ -249,15 +249,15 @@ class PasswordGeneratorAnssiTest extends TestCase
         $actual = $pwdGeneratorAnsi->characters(
             self::only('numbers', 'lowercase_hexadecimal', 'uppercase_hexadecimal')
         );
-        $expected = array_merge(str_split('0123456789'), range('a', 'f'), range('A', 'F'));
+        $expected = \array_merge(\str_split('0123456789'), \range('a', 'f'), \range('A', 'F'));
         $this->assertSame($expected, $actual);
 
         // 167 caractères au total, dont 34 en double
-        $all = array_fill_keys(array_keys(self::DEFAULT_CONFIG), true);
+        $all = \array_fill_keys(\array_keys(self::DEFAULT_CONFIG), true);
         /** @var list<string> $actual */
         $actual = $pwdGeneratorAnsi->characters($all);
         $this->assertCount(133, $actual);
-        $this->assertSame(array_values(array_unique($actual)), $actual);
+        $this->assertSame(\array_values(\array_unique($actual)), $actual);
     }
 
     public function testCharactersWithoutClass(): void
@@ -276,7 +276,7 @@ class PasswordGeneratorAnssiTest extends TestCase
 
         $params = ['binary' => 1, 'symbols_1' => 'yes', 'numbers' => true] + self::allDisabled();
         // @phpstan-ignore argument.type (valeurs non booléennes passées volontairement)
-        $this->assertSame(str_split('0123456789'), $pwdGeneratorAnsi->characters($params));
+        $this->assertSame(\str_split('0123456789'), $pwdGeneratorAnsi->characters($params));
     }
 
     /**
@@ -288,9 +288,9 @@ class PasswordGeneratorAnssiTest extends TestCase
         $pwdGeneratorAnsi = new PasswordGeneratorAnssi();
         $pwdGeneratorAnsi->config(self::only('numbers'));
 
-        $this->assertSame(str_split('0123456789'), $pwdGeneratorAnsi->characters());
+        $this->assertSame(\str_split('0123456789'), $pwdGeneratorAnsi->characters());
         $this->assertSame(
-            range('a', 'z'),
+            \range('a', 'z'),
             $pwdGeneratorAnsi->characters(['numbers' => false, 'lowercase_letters' => true])
         );
         $this->assertEquals(self::only('numbers'), $pwdGeneratorAnsi->config());
@@ -301,7 +301,7 @@ class PasswordGeneratorAnssiTest extends TestCase
         $pwdGeneratorAnsi = new PasswordGeneratorAnssi();
 
         $params = self::only('lowercase_accents_fr');
-        $expected = mb_str_split(self::CLASSES['lowercase_accents_fr']);
+        $expected = \mb_str_split(self::CLASSES['lowercase_accents_fr']);
         $this->assertSame($expected, $pwdGeneratorAnsi->characters($params, 'UTF-8'));
     }
 
@@ -328,7 +328,7 @@ class PasswordGeneratorAnssiTest extends TestCase
         $pwdGeneratorAnsi = new PasswordGeneratorAnssi();
 
         $password = $pwdGeneratorAnsi->generate($length);
-        $this->assertMatchesRegularExpression(sprintf('/^[a-zA-Z0-9]{%d}$/', $length), $password);
+        $this->assertMatchesRegularExpression(\sprintf('/^[a-zA-Z0-9]{%d}$/', $length), $password);
     }
 
     /**
@@ -342,7 +342,7 @@ class PasswordGeneratorAnssiTest extends TestCase
         $pwdGeneratorAnsi = new PasswordGeneratorAnssi();
 
         $password = $pwdGeneratorAnsi->generate(64, self::only($class));
-        $this->assertSame(64, mb_strlen($password));
+        $this->assertSame(64, \mb_strlen($password));
         $this->assertSame(64, $this->countInClass($password, $class));
     }
 
@@ -351,7 +351,7 @@ class PasswordGeneratorAnssiTest extends TestCase
         $pwdGeneratorAnsi = new PasswordGeneratorAnssi();
 
         $password = $pwdGeneratorAnsi->generate(20, self::only('uppercase_accents_fr'), 'UTF-8');
-        $this->assertSame(20, mb_strlen($password));
+        $this->assertSame(20, \mb_strlen($password));
         $this->assertSame(20, $this->countInClass($password, 'uppercase_accents_fr'));
     }
 
@@ -417,7 +417,7 @@ class PasswordGeneratorAnssiTest extends TestCase
         ];
         $password = $pwdGeneratorAnsi->constrained(6, [], $mandatory, 'UTF-8');
 
-        $this->assertSame(6, mb_strlen($password));
+        $this->assertSame(6, \mb_strlen($password));
         foreach ($mandatory as $class => $number) {
             $this->assertSame($number, $this->countInClass($password, $class), $class);
         }
@@ -434,7 +434,7 @@ class PasswordGeneratorAnssiTest extends TestCase
 
         $password = $pwdGeneratorAnsi->constrained(10, self::only('numbers'), ['uppercase_letters' => 2]);
 
-        $this->assertSame(10, mb_strlen($password));
+        $this->assertSame(10, \mb_strlen($password));
         $this->assertSame(2, $this->countInClass($password, 'uppercase_letters'));
         $this->assertSame(8, $this->countInClass($password, 'numbers'));
     }
@@ -459,9 +459,9 @@ class PasswordGeneratorAnssiTest extends TestCase
         $positions = [];
         for ($idx = 0; $idx < 64; ++$idx) {
             $password = $pwdGeneratorAnsi->constrained(2, self::only('numbers'), ['uppercase_letters' => 1]);
-            $positions[strcspn($password, implode('', range('A', 'Z')))] = true;
+            $positions[\strcspn($password, \implode('', \range('A', 'Z')))] = true;
         }
-        ksort($positions);
+        \ksort($positions);
 
         $this->assertSame([0 => true, 1 => true], $positions);
     }
@@ -505,7 +505,7 @@ class PasswordGeneratorAnssiTest extends TestCase
     {
         $pwdGeneratorAnsi = new PasswordGeneratorAnssi();
 
-        $all = array_fill_keys(array_keys(self::DEFAULT_CONFIG), true);
+        $all = \array_fill_keys(\array_keys(self::DEFAULT_CONFIG), true);
         $this->assertSame($pwdGeneratorAnsi->characters($all), $pwdGeneratorAnsi->characters($all, 'UTF-8'));
     }
 
@@ -635,11 +635,11 @@ class PasswordGeneratorAnssiTest extends TestCase
         // Entropie 37, force 1
         $password = $pwdGeneratorAnsi->constrained(6, $defaults, $mandatory);
 
-        $this->assertNotFalse(mb_ereg('^([a-zA-Z0-9]|[€\\!#\\$\\*%\\? ]){6}$', $password));
-        $this->assertNotFalse(mb_ereg('[a-z]', $password));
-        $this->assertNotFalse(mb_ereg('[A-Z]', $password));
-        $this->assertNotFalse(mb_ereg('[0-9]', $password));
-        $this->assertNotFalse(mb_ereg('[€\\!#\\$\\*%\\? ]', $password));
+        $this->assertNotFalse(\mb_ereg('^([a-zA-Z0-9]|[€\\!#\\$\\*%\\? ]){6}$', $password));
+        $this->assertNotFalse(\mb_ereg('[a-z]', $password));
+        $this->assertNotFalse(\mb_ereg('[A-Z]', $password));
+        $this->assertNotFalse(\mb_ereg('[0-9]', $password));
+        $this->assertNotFalse(\mb_ereg('[€\\!#\\$\\*%\\? ]', $password));
     }
 
     public function testConstrainedException1(): void
@@ -664,7 +664,7 @@ class PasswordGeneratorAnssiTest extends TestCase
         $pwdGeneratorAnsi = new PasswordGeneratorAnssi();
 
         $defaults = $pwdGeneratorAnsi->defaults();
-        $false = array_combine(array_keys($defaults), array_fill(0, count($defaults), false));
+        $false = \array_combine(\array_keys($defaults), \array_fill(0, \count($defaults), false));
         $mandatory = [
             'numbers' => 1,
             'lowercase_letters' => 1,
@@ -724,10 +724,10 @@ class PasswordGeneratorAnssiTest extends TestCase
             $pwdGeneratorAnsi = new PasswordGeneratorAnssi();
             try {
                 $call($pwdGeneratorAnsi);
-                $this->fail(sprintf('%s() aurait dû lever une PasswordException', $method));
+                $this->fail(\sprintf('%s() aurait dû lever une PasswordException', $method));
             } catch (PasswordException $exception) {
                 $this->assertStringStartsWith(
-                    sprintf('Classe(s) de caractères inconnue(s) : %s (classes existantes : binary, ', $expectedClasses),
+                    \sprintf('Classe(s) de caractères inconnue(s) : %s (classes existantes : binary, ', $expectedClasses),
                     $exception->getMessage(),
                     $method
                 );
@@ -756,7 +756,7 @@ class PasswordGeneratorAnssiTest extends TestCase
         $pwdGeneratorAnsi = new PasswordGeneratorAnssi();
 
         $defaults = $pwdGeneratorAnsi->defaults();
-        $false = array_combine(array_keys($defaults), array_fill(0, count($defaults), false));
+        $false = \array_combine(\array_keys($defaults), \array_fill(0, \count($defaults), false));
         $this->expectException(PasswordException::class);
         $this->expectExceptionMessage(
             'Impossible de générer un mot de passe de longueur 12 sans caractère disponible'

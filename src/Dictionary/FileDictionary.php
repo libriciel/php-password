@@ -47,6 +47,20 @@ final class FileDictionary implements PasswordDictionaryInterface
     }
 
     /**
+     * @return list<string>
+     */
+    private function read(string $file): array
+    {
+        // Le message d'erreur de PHP est remplacé par l'exception ci-dessous
+        $lines = @\file($file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+        if (false === $lines) {
+            throw new PasswordException(\sprintf('Impossible de lire le dictionnaire %s', $file));
+        }
+
+        return $lines;
+    }
+
+    /**
      * @return array<array-key, true>
      */
     private function entries(): array
@@ -54,12 +68,8 @@ final class FileDictionary implements PasswordDictionaryInterface
         if (null === $this->entries) {
             $entries = [];
             foreach ($this->files as $file) {
-                $lines = is_readable($file) ? file($file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) : false;
-                if (false === $lines) {
-                    throw new PasswordException(sprintf('Impossible de lire le dictionnaire %s', $file));
-                }
-                foreach ($lines as $line) {
-                    $entries[mb_strtolower(trim($line))] = true;
+                foreach ($this->read($file) as $line) {
+                    $entries[\mb_strtolower(\trim($line))] = true;
                 }
             }
             $this->entries = $entries;

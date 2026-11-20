@@ -71,6 +71,14 @@ et le projet suit le [versionnage sémantique](https://semver.org/lang/fr/).
 - Environnement de développement dans `compose.dev.yaml`, cibles `make test`,
   `phpstan`, `rector`, `ecs`, `audit` et `qa` (#2).
 
+- Couverture des branches à 100 % (Xdebug `--path-coverage`) : fonctions natives
+  préfixées par `\` (règle ECS `native_function_invocation`), ce qui supprime les
+  branches de recherche de fonction dans le namespace que PHP 8.4+ ajoute ;
+  conditions `||` séparées ; `symbols()`, `strength()` et `constrained()`
+  simplifiées. Les chemins restants non couverts sont impossibles (sortie d'un
+  `foreach` sur une valeur non itérable) ou des combinaisons de conditions
+  indépendantes ; cible `make coverage` (#8).
+
 ### Corrigé
 
 - `PasswordStrengthMeterAnssi::strength()` compare aux seuils l'entropie non arrondie :

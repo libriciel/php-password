@@ -150,15 +150,15 @@ class PasswordStrengthMeterAnssiTest extends TestCase
     public static function strengthProvider(): array
     {
         return [
-            'very weak' => [PasswordStrengthMeterInterface::STRENGTH_VERY_WEAK, str_repeat('Abz', 3)],
-            'weak' => [PasswordStrengthMeterInterface::STRENGTH_WEAK, str_repeat('ABCZ', 4)],
+            'very weak' => [PasswordStrengthMeterInterface::STRENGTH_VERY_WEAK, \str_repeat('Abz', 3)],
+            'weak' => [PasswordStrengthMeterInterface::STRENGTH_WEAK, \str_repeat('ABCZ', 4)],
             'medium 1' => [PasswordStrengthMeterInterface::STRENGTH_MEDIUM, 'AbCzaBcZAbCzaBc'],
             'medium 2' => [PasswordStrengthMeterInterface::STRENGTH_MEDIUM, 'AbCzaBcZAbCzaBcZ'],
-            'strong 1' => [PasswordStrengthMeterInterface::STRENGTH_STRONG, str_repeat('0123456789', 3).'01234'],
+            'strong 1' => [PasswordStrengthMeterInterface::STRENGTH_STRONG, \str_repeat('0123456789', 3).'01234'],
             'strong 2' => [PasswordStrengthMeterInterface::STRENGTH_STRONG, 'AbCzaBcZAbCzaBcZaBcZ'],
             'very strong 1' => [
                 PasswordStrengthMeterInterface::STRENGTH_VERY_STRONG,
-                str_repeat('aZ3?&', 4),
+                \str_repeat('aZ3?&', 4),
             ],
             'very strong 2' => [PasswordStrengthMeterInterface::STRENGTH_VERY_STRONG, '3357zPqv9p45PS4CXyaZPOyy5'],
         ];
@@ -197,7 +197,7 @@ class PasswordStrengthMeterAnssiTest extends TestCase
     {
         $pwdStrengthMeter = new PasswordStrengthMeterAnssi();
 
-        $this->assertSame([128, 100, 80, 64, 0], array_keys($pwdStrengthMeter->thresholds()));
+        $this->assertSame([128, 100, 80, 64, 0], \array_keys($pwdStrengthMeter->thresholds()));
     }
 
     /**
@@ -214,8 +214,8 @@ class PasswordStrengthMeterAnssiTest extends TestCase
 
         $result = [];
         foreach ($classes as $symbols => $characters) {
-            foreach (mb_str_split($characters) as $char) {
-                $result[sprintf('%d symboles: "%s"', $symbols, $char)] = [$symbols, $char];
+            foreach (\mb_str_split($characters) as $char) {
+                $result[\sprintf('%d symboles: "%s"', $symbols, $char)] = [$symbols, $char];
             }
         }
 
@@ -242,14 +242,14 @@ class PasswordStrengthMeterAnssiTest extends TestCase
     {
         $pwdStrengthMeter = new PasswordStrengthMeterAnssi();
         $pwdGenerator = new PasswordGeneratorAnssi();
-        $allClasses = array_fill_keys(array_keys($pwdGenerator->defaults()), true);
+        $allClasses = \array_fill_keys(\array_keys($pwdGenerator->defaults()), true);
         $characters = $pwdGenerator->characters($allClasses);
 
         foreach ($characters as $char) {
             $this->assertGreaterThan(
                 0,
                 $pwdStrengthMeter->symbols($char),
-                sprintf('Le caractère "%s" n\'est pas reconnu', $char)
+                \sprintf('Le caractère "%s" n\'est pas reconnu', $char)
             );
         }
     }
@@ -313,9 +313,9 @@ class PasswordStrengthMeterAnssiTest extends TestCase
         $pwdStrengthMeter = new PasswordStrengthMeterAnssi();
         $entropy = $pwdStrengthMeter->entropy($input, 2);
 
-        $this->assertTrue(is_finite($entropy));
+        $this->assertTrue(\is_finite($entropy));
         $this->assertSame($expectedEntropy, $entropy);
-        $this->assertNotFalse(json_encode($entropy));
+        $this->assertNotFalse(\json_encode($entropy));
         $this->assertSame(
             PasswordStrengthMeterInterface::STRENGTH_VERY_WEAK,
             $pwdStrengthMeter->strength($input)
@@ -356,26 +356,26 @@ class PasswordStrengthMeterAnssiTest extends TestCase
     {
         return [
             'empty string' => [PasswordStrengthMeterInterface::STRENGTH_VERY_WEAK, ''],
-            '63 bits' => [PasswordStrengthMeterInterface::STRENGTH_VERY_WEAK, str_repeat('0', 63)],
-            '64 bits' => [PasswordStrengthMeterInterface::STRENGTH_WEAK, str_repeat('0', 64)],
-            '79 bits' => [PasswordStrengthMeterInterface::STRENGTH_WEAK, str_repeat('0', 79)],
-            '80 bits' => [PasswordStrengthMeterInterface::STRENGTH_MEDIUM, str_repeat('0', 80)],
-            '99 bits' => [PasswordStrengthMeterInterface::STRENGTH_MEDIUM, str_repeat('0', 99)],
-            '100 bits' => [PasswordStrengthMeterInterface::STRENGTH_STRONG, str_repeat('0', 100)],
-            '127 bits' => [PasswordStrengthMeterInterface::STRENGTH_STRONG, str_repeat('0', 127)],
-            '128 bits' => [PasswordStrengthMeterInterface::STRENGTH_VERY_STRONG, str_repeat('0', 128)],
-            '1024 bits' => [PasswordStrengthMeterInterface::STRENGTH_VERY_STRONG, str_repeat('0', 1024)],
+            '63 bits' => [PasswordStrengthMeterInterface::STRENGTH_VERY_WEAK, \str_repeat('0', 63)],
+            '64 bits' => [PasswordStrengthMeterInterface::STRENGTH_WEAK, \str_repeat('0', 64)],
+            '79 bits' => [PasswordStrengthMeterInterface::STRENGTH_WEAK, \str_repeat('0', 79)],
+            '80 bits' => [PasswordStrengthMeterInterface::STRENGTH_MEDIUM, \str_repeat('0', 80)],
+            '99 bits' => [PasswordStrengthMeterInterface::STRENGTH_MEDIUM, \str_repeat('0', 99)],
+            '100 bits' => [PasswordStrengthMeterInterface::STRENGTH_STRONG, \str_repeat('0', 100)],
+            '127 bits' => [PasswordStrengthMeterInterface::STRENGTH_STRONG, \str_repeat('0', 127)],
+            '128 bits' => [PasswordStrengthMeterInterface::STRENGTH_VERY_STRONG, \str_repeat('0', 128)],
+            '1024 bits' => [PasswordStrengthMeterInterface::STRENGTH_VERY_STRONG, \str_repeat('0', 1024)],
             // L'entropie n'est pas arrondie avant d'être comparée aux seuils (#10)
             // 13 × log2(30) = 63,79
-            'just below 64 bits' => [PasswordStrengthMeterInterface::STRENGTH_VERY_WEAK, str_repeat('3', 12).'&'],
+            'just below 64 bits' => [PasswordStrengthMeterInterface::STRENGTH_VERY_WEAK, \str_repeat('3', 12).'&'],
             // 24 × log2(10) = 79,73
-            'just below 80 bits, decimal' => [PasswordStrengthMeterInterface::STRENGTH_WEAK, str_repeat('3', 24)],
+            'just below 80 bits, decimal' => [PasswordStrengthMeterInterface::STRENGTH_WEAK, \str_repeat('3', 24)],
             // 17 × log2(26) = 79,91
-            'just below 80 bits, alphabet' => [PasswordStrengthMeterInterface::STRENGTH_WEAK, str_repeat('g', 17)],
+            'just below 80 bits, alphabet' => [PasswordStrengthMeterInterface::STRENGTH_WEAK, \str_repeat('g', 17)],
             // 30 × log2(10) = 99,66
-            'just below 100 bits' => [PasswordStrengthMeterInterface::STRENGTH_MEDIUM, str_repeat('3', 30)],
+            'just below 100 bits' => [PasswordStrengthMeterInterface::STRENGTH_MEDIUM, \str_repeat('3', 30)],
             // 19 × log2(106) = 127,83
-            'just below 128 bits' => [PasswordStrengthMeterInterface::STRENGTH_STRONG, 'aA0&?à'.str_repeat('a', 13)],
+            'just below 128 bits' => [PasswordStrengthMeterInterface::STRENGTH_STRONG, 'aA0&?à'.\str_repeat('a', 13)],
         ];
     }
 
@@ -389,5 +389,59 @@ class PasswordStrengthMeterAnssiTest extends TestCase
         $pwdStrengthMeter = new PasswordStrengthMeterAnssi();
 
         $this->assertSame($expectedStrength, $pwdStrengthMeter->strength($input));
+    }
+
+    /**
+     * Une classe fille peut redéfinir les seuils : sans seuil atteint (ou sans
+     * seuil du tout), la force est très faible.
+     *
+     * @return array<string, array{array<int, int>}>
+     */
+    public static function customThresholdsProvider(): array
+    {
+        return [
+            'aucun seuil' => [[]],
+            'aucun seuil atteint' => [[100 => PasswordStrengthMeterInterface::STRENGTH_STRONG]],
+        ];
+    }
+
+    /**
+     * @param array<int, int> $thresholds
+     */
+    #[DataProvider('customThresholdsProvider')]
+    public function testStrengthWithCustomThresholds(array $thresholds): void
+    {
+        $meter = new class($thresholds) extends PasswordStrengthMeterAnssi {
+            /**
+             * @param array<int, int> $custom
+             */
+            public function __construct(private readonly array $custom)
+            {
+            }
+
+            public function thresholds(): array
+            {
+                return $this->custom;
+            }
+        };
+
+        $this->assertSame(PasswordStrengthMeterInterface::STRENGTH_VERY_WEAK, $meter->strength('azerty'));
+    }
+
+    /**
+     * Le premier seuil atteint, dans l'ordre décroissant, donne la force.
+     */
+    public function testStrengthWithCustomThresholdReached(): void
+    {
+        $meter = new class extends PasswordStrengthMeterAnssi {
+            public function thresholds(): array
+            {
+                return [20 => PasswordStrengthMeterInterface::STRENGTH_MEDIUM, 0 => PasswordStrengthMeterInterface::STRENGTH_WEAK];
+            }
+        };
+
+        // 6 × log2(26) = 28,2 bits
+        $this->assertSame(PasswordStrengthMeterInterface::STRENGTH_MEDIUM, $meter->strength('azerty'));
+        $this->assertSame(PasswordStrengthMeterInterface::STRENGTH_WEAK, $meter->strength('a'));
     }
 }

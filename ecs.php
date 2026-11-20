@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use PhpCsFixer\Fixer\FunctionNotation\NativeFunctionInvocationFixer;
 use PhpCsFixer\Fixer\Strict\DeclareStrictTypesFixer;
 use PhpCsFixer\FixerFactory;
 use PhpCsFixer\RuleSet\RuleSet;
@@ -33,5 +34,15 @@ foreach ($fixers as $fixer) {
 
 // En plus de @Symfony : declare(strict_types=1) dans chaque fichier.
 $rules[] = DeclareStrictTypesFixer::class;
+
+// En plus de @Symfony : fonctions natives préfixées par « \ » (\strtr()). Dans un
+// namespace, PHP 8.4+ compile un appel non qualifié avec un saut (JMP_FRAMELESS)
+// qui cherche d'abord une fonction du namespace courant : Xdebug le compte comme
+// une branche, jamais empruntée, ce qui fausse la couverture des chemins (#8).
+$config->withConfiguredRule(NativeFunctionInvocationFixer::class, [
+    'include' => ['@all'],
+    'scope' => 'namespaced',
+    'strict' => true,
+]);
 
 return $config->withRules($rules);

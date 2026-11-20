@@ -1,32 +1,168 @@
 include:
-  - template: Security/Container-Scanning.gitlab-ci.yml
+  - template: Jobs/SAST.gitlab-ci.yml
+  - template: Jobs/Secret-Detection.gitlab-ci.yml
+  - template: Security/Dependency-Scanning.gitlab-ci.yml
+  - component: $LIBRICIEL_CATALOG_PATH/renovate-runner/runner@1.6.1
+  - component: $LIBRICIEL_CATALOG_PATH/project-standards/check-libriciel-standards@3.3.1
+  - component: $LIBRICIEL_CATALOG_PATH/vulnerability-scan/container@1.0.0
+    inputs:
+      image: "${CONTAINER_IMAGE}"
+      needs: ["build"]
+
+# Un nouveau push sur une branche annule le pipeline précédent de cette branche.
+# Les pipelines de requête de fusion ne sont pas créés : ils doubleraient celui de la
+# branche, qui porte déjà tous les jobs. Le pipeline planifié ne sert qu'à Renovate.
+workflow:
+  auto_cancel:
+    on_new_commit: interruptible
+    on_job_failure: all
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      when: never
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+      variables:
+        SAST_DISABLED: "true"
+        SECRET_DETECTION_DISABLED: "true"
+        DEPENDENCY_SCANNING_DISABLED: "true"
+        PROJECT_STANDARDS_DISABLED: "true"
+    - when: always
+
+default:
+  interruptible: true
+
+stages:
+  - build
+  - test
+  - quality
 
 variables:
-  CONTAINER_IMAGE: "${CI_REGISTRY_IMAGE}:${CI_COMMIT_REF_NAME}"
+  # Une image par commit, sous ${CI_REGISTRY_IMAGE}/<branche>:<sha> : c'est la forme que
+  # check-libriciel-standards dispense de digest. La politique de nettoyage du registre les purge.
+  CONTAINER_IMAGE: "${CI_REGISTRY_IMAGE}/${CI_COMMIT_REF_NAME}:${CI_COMMIT_SHA}"
+  DIRECTORY_PROJECT: "/app"
+  # Pas d'attestations BuildKit (provenance/SBOM) : le registre GitLab rejette leur
+  # manifest poussé avant l'image (« blob unknown to registry »).
+  BUILDX_NO_DEFAULT_ATTESTATIONS: "1"
+
+.hors_planification:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+      when: never
+    - when: on_success
+
+.branches_seulement:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+      when: never
+    - if: $CI_COMMIT_TAG
+      when: never
+    - when: on_success
+
+# Fichier d'authentification Composer porté par le jeton GitHub ($GITHUB_API_TOKEN),
+# vide si la variable n'est pas définie (installation anonyme).
+.composer_auth:
+  script:
+    - |
+      if [ -n "$GITHUB_API_TOKEN" ]; then
+        printf '{"github-oauth":{"github.com":"%s"}}' "$GITHUB_API_TOKEN" > "$COMPOSER_AUTH_FILE"
+      else
+        echo '{}' > "$COMPOSER_AUTH_FILE"
+      fi
 
 build:
+  extends: .hors_planification
   stage: build
   tags:
     - docker-build
+  # Configuration Docker propre au job : les jobs d'un runner shell partagent le $HOME du
+  # runner, un login concurrent écraserait le jeton de ce job. Elle est hors de
+  # $CI_PROJECT_DIR, sinon `COPY . /app` embarquerait les identifiants dans l'image.
   variables:
-    GITHUB_API_TOKEN: "${GITHUB_API_TOKEN}"
+    DOCKER_BUILDKIT: 1
+    DOCKER_CONFIG: "/tmp/docker-$CI_JOB_ID"
+    COMPOSER_AUTH_FILE: "/tmp/docker-$CI_JOB_ID/composer_auth.json"
+  before_script:
+    - mkdir -m 700 -p "$DOCKER_CONFIG"
+    - if [ -d "$HOME/.docker/cli-plugins" ]; then ln -s "$HOME/.docker/cli-plugins" "$DOCKER_CONFIG/cli-plugins"; fi
+    - echo "$CI_JOB_TOKEN" | docker login -u gitlab-ci-token --password-stdin "$CI_REGISTRY"
   script:
-    - docker login -u "gitlab-ci-token" -p "$CI_JOB_TOKEN" $CI_REGISTRY
-    - docker build --build-arg GITHUB_API_TOKEN=$GITHUB_API_TOKEN --pull -t ${CONTAINER_IMAGE} .
-    - docker login -u "gitlab-ci-token" -p "$CI_JOB_TOKEN" $CI_REGISTRY
+    - !reference [.composer_auth, script]
+    # Le jeton passe en secret BuildKit : il n'apparaît pas dans l'historique de l'image.
+    - docker build --secret id=composer_auth,src="$COMPOSER_AUTH_FILE" --pull -t ${CONTAINER_IMAGE} .
     - docker push ${CONTAINER_IMAGE}
+  after_script:
+    - rm -rf "/tmp/docker-$CI_JOB_ID"
 
-
-container_scanning:
+# Dépendances installées une fois, pour les tests sur chaque version de PHP. Le
+# composer.lock est résolu pour PHP 8.4 (config.platform.php), la plus ancienne que
+# PHPUnit 13 accepte : il s'installe sur toutes les versions testées.
+vendor:
+  extends: .hors_planification
+  stage: build
+  needs: []
+  image:
+    name: hubdocker.libriciel.fr/composer:2.11.2@sha256:919efe8e62179c71dfd31fad035fd671fe7454211c6b2aa30a10af0ab4acedba
+    entrypoint: [""]
   variables:
-    CS_IMAGE: $CONTAINER_IMAGE
+    COMPOSER_AUTH_FILE: "/tmp/composer_auth.json"
+  script:
+    - !reference [.composer_auth, script]
+    # L'image composer n'a pas mbstring, que PHPUnit 13 exige : les images de test l'ont.
+    - COMPOSER_AUTH="$(cat "$COMPOSER_AUTH_FILE")" composer install --no-interaction --no-progress --prefer-dist --ignore-platform-req=ext-mbstring
+  artifacts:
+    paths:
+      - vendor/
+    expire_in: 1h
 
+container-scan:
+  extends: .hors_planification
+  # Code 3 : vulnérabilités trouvées, non bloquant (l'image ne sert qu'à la CI).
+  # Une erreur technique (code 1) reste bloquante.
+  allow_failure:
+    exit_codes: [3]
+
+semgrep-sast:
+  needs: []
+
+# Le gabarit GitLab livre ce job en allow_failure, donc en simple rapport : il est ici
+# bloquant. Un secret détecté doit être considéré comme fuité et tourné.
+secret_detection:
+  needs: []
+  allow_failure: false
+
+gemnasium-dependency_scanning:
+  needs: []
+
+.sur_image:
+  needs:
+    - job: build
+      artifacts: false
+  image:
+    name: $CONTAINER_IMAGE
+    entrypoint: [""]
+  variables:
+    GIT_STRATEGY: none
+  before_script:
+    - cd $DIRECTORY_PROJECT
+
+dependency_audit:
+  extends:
+    - .hors_planification
+    - .sur_image
+  stage: test
+  script:
+    # Sans --no-dev : la bibliothèque n'a aucune dépendance d'exécution, seuls les
+    # outils de développement tournent (en CI).
+    - composer audit --locked --abandoned=report
 
 unit_test:
+  extends:
+    - .hors_planification
+    - .sur_image
   stage: test
-  image : "$CONTAINER_IMAGE"
+  variables:
+    XDEBUG_MODE: "off"
   script:
-    - cd /app/
     - php -dpcov.enabled=1 -dpcov.directory=. vendor/bin/phpunit --coverage-text --colors=never --coverage-clover coverage/coverage.xml --log-junit coverage/logfile.xml
     - cp -rf coverage $CI_PROJECT_DIR
   coverage: '/^\s*Lines:\s*\d+.\d+\%/'
@@ -35,21 +171,66 @@ unit_test:
       - coverage
     expire_in: 1h
 
-php-cs-fixer:
+# PHPUnit 13 exige PHP 8.4 : les tests tournent sur chaque version de PHP 8.4 ou plus.
+.test_php:
+  extends: .hors_planification
   stage: test
-  image: "$CONTAINER_IMAGE"
-  variables:
-    NO_DATABASE: true
+  needs:
+    - job: vendor
+      artifacts: true
   script:
-    - cd /app/
-    - ./vendor/bin/php-cs-fixer fix --dry-run --diff
+    - php -v
+    - vendor/bin/phpunit --colors=never
 
-quality:
+test-php-8.4:
+  extends: .test_php
+  image: hubdocker.libriciel.fr/php:8.4.28-cli-alpine3.24@sha256:5b84d9d7524ac30fe65dc50de6117efa54b777c38b4f3d9060d7f2dfe070bf9c
+
+test-php-8.5:
+  extends: .test_php
+  image: hubdocker.libriciel.fr/php:8.5.13-cli-alpine3.24@sha256:b9d7db51a2b83c41420ba04de0b90e6078d4b6440e5cc480fc4dc51b18e0b6db
+
+phpstan:
+  extends:
+    - .branches_seulement
+    - .sur_image
   stage: test
-  only:
-    - master
-  image : gitlab.libriciel.fr:4567/docker/sonar-scanner:latest@sha256:e12600bccae008ded01d637b600bb54f15dfdf45a35398d62afc60cd64cafc21
   script:
-      - cp -rf $CI_PROJECT_DIR /app/
-      - cd /app
-      - /sonar-scanner -Dsonar.login=$SONAR_LOGIN -Dsonar.host.url=$SONAR_HOST_URL
+    - ./vendor/bin/phpstan analyse --no-progress
+
+rector:
+  extends:
+    - .branches_seulement
+    - .sur_image
+  stage: quality
+  script:
+    # Sans --dry-run, rector réécrit le code dans le conteneur et sort en succès : le job
+    # ne détecterait rien.
+    - ./vendor/bin/rector process --dry-run --no-progress-bar
+
+ecs:
+  extends:
+    - .branches_seulement
+    - .sur_image
+  stage: quality
+  script:
+    - ./vendor/bin/ecs check --no-progress-bar
+
+sonarqube:
+  stage: quality
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+      when: never
+    - if: $CI_COMMIT_BRANCH == "master"
+  needs:
+    - job: unit_test
+      artifacts: true
+  image:
+    name: hubdocker.libriciel.fr/sonarsource/sonar-scanner-cli:11.5@sha256:46341f2c2dc560381414e90347885f5cddc716db080adcbafc1cac13e1473094
+    entrypoint: [""]
+  script:
+    # Le rapport de couverture référence les sources sous /app (chemin de l'image de CI) :
+    # l'analyse est lancée depuis ce même chemin pour que SonarQube les retrouve.
+    - cp -rf $CI_PROJECT_DIR /app
+    - cd /app
+    - sonar-scanner -Dsonar.token=$SONAR_LOGIN -Dsonar.host.url=$SONAR_HOST_URL

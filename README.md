@@ -220,16 +220,20 @@ Si aucune classe de caractères n'est activée, `generate()` lève une
 
 #### Développement
 
-Construire un environnement docker tout prêt : 
+Construire un environnement docker tout prêt (`compose.dev.yaml`) :
 ```bash
 make build
 make bash
 ```
 
-Lancer les tests et vérifier le style :
+Contrôles lancés par la CI (`make help` pour la liste complète) :
 ```bash
-docker compose run --rm app vendor/bin/phpunit
-docker compose run --rm app vendor/bin/php-cs-fixer fix --dry-run --diff
+make test      # PHPUnit
+make phpstan   # analyse statique (niveau max)
+make rector    # Rector en dry-run
+make ecs       # standard de code (règles @Symfony, via ECS)
+make audit     # composer audit
+make fix-cs    # corrige le style (ECS puis Rector)
 ```
 
 

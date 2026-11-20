@@ -82,7 +82,7 @@ class PasswordGeneratorAnssi
     public function characters(array $params = [], ?string $encoding = null): array
     {
         $myConfig = $params + $this->config();
-        $encoding = null === $encoding ? mb_internal_encoding() : $encoding;
+        $encoding ??= mb_internal_encoding();
         $accumulator = [];
 
         foreach ($myConfig as $key => $enabled) {
@@ -109,7 +109,7 @@ class PasswordGeneratorAnssi
      */
     public function generate(int $length = 40, array $params = [], ?string $encoding = null): string
     {
-        $encoding = null === $encoding ? mb_internal_encoding() : $encoding;
+        $encoding ??= mb_internal_encoding();
         $characters = $this->characters($params, $encoding);
         $count = count($characters);
 
@@ -145,7 +145,7 @@ class PasswordGeneratorAnssi
         array $mandatory = [],
         ?string $encoding = null,
     ): string {
-        $encoding = null === $encoding ? mb_internal_encoding() : $encoding;
+        $encoding ??= mb_internal_encoding();
         $characters = static::characters($params, $encoding);
         $count = count($characters);
 

@@ -1,7 +1,6 @@
 # Erreurs présentes à l'introduction de PHPStan (niveau max), à résorber puis retirer d'ici.
-# Dont de vrais bugs :
-# - PasswordGeneratorAnssi::generate() renvoie false au lieu d'une chaîne (corrigé par #1) ;
-# - sprintf() avec trop d'arguments dans PasswordGeneratorAnssi::constrained().
+# Dont un vrai bug : sprintf() avec trop d'arguments dans PasswordGeneratorAnssi::constrained().
+# Le reste : types de tableaux non précisés, valeurs mixed, méthodes de test sans type de retour.
 # Régénérer avec : vendor/bin/phpstan analyse --generate-baseline phpstan-baseline.neon
 parameters:
 	ignoreErrors:
@@ -62,12 +61,6 @@ parameters:
 		-
 			message: '#^Method Libriciel\\Password\\Service\\PasswordGeneratorAnssi\:\:generate\(\) has parameter \$params with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
-			count: 1
-			path: src/Service/PasswordGeneratorAnssi.php
-
-		-
-			message: '#^Method Libriciel\\Password\\Service\\PasswordGeneratorAnssi\:\:generate\(\) should return string but returns string\|false\.$#'
-			identifier: return.type
 			count: 1
 			path: src/Service/PasswordGeneratorAnssi.php
 
@@ -175,6 +168,12 @@ parameters:
 
 		-
 			message: '#^Method LibricielTest\\Password\\Service\\PasswordGeneratorAnssiTest\:\:testGenerateDefaultConfig\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: tests/Service/PasswordGeneratorAnssiTest.php
+
+		-
+			message: '#^Method LibricielTest\\Password\\Service\\PasswordGeneratorAnssiTest\:\:testGenerateWithoutAvailableCharacter\(\) has no return type specified\.$#'
 			identifier: missingType.return
 			count: 1
 			path: tests/Service/PasswordGeneratorAnssiTest.php

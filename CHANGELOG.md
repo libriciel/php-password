@@ -24,9 +24,9 @@ et le projet suit le [versionnage sémantique](https://semver.org/lang/fr/).
   dépendances, `composer audit`, scan de l'image (composant `vulnerability-scan`),
   `check-libriciel-standards`, Renovate, PHPStan (niveau max), Rector et tests sur
   chaque version de PHP supportée (#2).
-- **Rupture de compatibilité** : PHP 8.2 minimum, PHP 8.1 n'étant plus maintenu ;
-  la CI teste PHP 8.2 à 8.5 (#4).
-- PHPUnit 11.5, dernière version compatible avec PHP 8.2, pour tester toutes les
+- **Rupture de compatibilité** : PHP 8.3 minimum, PHP 8.1 n'étant plus maintenu
+  et PHP 8.2 ne l'étant plus après le 31 décembre 2026 ; la CI teste PHP 8.3 à 8.5 (#4).
+- PHPUnit 12.5, dernière version compatible avec PHP 8.3, pour tester toutes les
   versions de PHP supportées ; data providers statiques déclarés par attributs (#4).
 - ECS remplace PHP CS Fixer, avec les mêmes règles `@Symfony` ; PHPMD et
   PHP_CodeSniffer, jamais lancés, sont retirés (#2).

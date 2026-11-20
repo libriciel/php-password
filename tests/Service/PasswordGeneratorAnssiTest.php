@@ -15,7 +15,7 @@ class PasswordGeneratorAnssiTest extends TestCase
     /**
      * Configuration par défaut.
      */
-    private const DEFAULT_CONFIG = [
+    private const array DEFAULT_CONFIG = [
         'binary' => false,
         'numbers' => true,
         'lowercase_hexadecimal' => false,
@@ -31,7 +31,7 @@ class PasswordGeneratorAnssiTest extends TestCase
     /**
      * Les caractères de chacune des classes, dans l'ordre de leur définition.
      */
-    private const CLASSES = [
+    private const array CLASSES = [
         'binary' => '01',
         'numbers' => '0123456789',
         'lowercase_hexadecimal' => '0123456789abcdef',

@@ -9,7 +9,7 @@ return RectorConfig::configure()
         __DIR__.'/src',
         __DIR__.'/tests',
     ])
-    // Version cible lue dans composer.json (php ^8.2) : rien qui ne tourne pas en 8.2.
+    // Version cible lue dans composer.json (php ^8.3) : rien qui ne tourne pas en 8.3.
     ->withPhpSets()
     ->withTypeCoverageLevel(0)
     ->withDeadCodeLevel(0)

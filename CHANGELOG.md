@@ -15,7 +15,15 @@ et le projet suit le [versionnage sémantique](https://semver.org/lang/fr/).
 - Paramètres `$encoding` explicitement nullables (`?string`), ce qui supprime les
   dépréciations de PHP 8.4 sur les types implicitement nullables.
 - Code mis au standard `@Symfony` de PHP CS Fixer.
-- Image Docker de développement basée sur PHP 8.3.
+- Image Docker de développement et de CI en PHP 8.5 ; PHP 8.6 n'est pas encore
+  supporté par pcov ni par Xdebug (#3).
+- Dépendances de développement à leur dernière version majeure : PHPUnit 13,
+  PHP_CodeSniffer 4, PHPMD 3, PHP CS Fixer 3.95 (#3).
+- Images Docker épinglées par digest (`tag@sha256:…`) dans le Dockerfile et la CI (#3).
+
+### Supprimé
+
+- Dépendance de développement `sebastian/phpcpd`, abandonnée depuis 2020 (#3).
 
 ### Sécurité
 

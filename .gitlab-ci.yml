@@ -48,7 +48,7 @@ quality:
   stage: test
   only:
     - master
-  image : gitlab.libriciel.fr:4567/docker/sonar-scanner:latest
+  image : gitlab.libriciel.fr:4567/docker/sonar-scanner:latest@sha256:e12600bccae008ded01d637b600bb54f15dfdf45a35398d62afc60cd64cafc21
   script:
       - cp -rf $CI_PROJECT_DIR /app/
       - cd /app

@@ -34,7 +34,7 @@ et le projet suit le [versionnage sémantique](https://semver.org/lang/fr/).
   `phpstan`, `rector`, `ecs`, `audit` et `qa` (#2).
 - Types des tableaux précisés en PHPDoc (`array<string, bool>`, `list<string>`…)
   dans `PasswordGeneratorAnssi` et `PasswordStrengthMeterAnssi`, pour les projets
-  qui les analysent avec PHPStan ou Psalm ; la baseline PHPStan passe de 48 erreurs
+  qui les analysent avec PHPStan ou Psalm ; la baseline PHPStan passe de 47 erreurs
   à 1 (#9).
 
 ### Supprimé

@@ -270,6 +270,7 @@ class PasswordGeneratorAnssiTest extends TestCase
         $pwdGeneratorAnsi = new PasswordGeneratorAnssi();
 
         $params = ['binary' => 1, 'symbols_1' => 'yes', 'numbers' => true] + self::allDisabled();
+        // @phpstan-ignore argument.type (valeurs non booléennes passées volontairement)
         $this->assertSame(str_split('0123456789'), $pwdGeneratorAnsi->characters($params));
     }
 

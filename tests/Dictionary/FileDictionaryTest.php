@@ -27,6 +27,13 @@ class FileDictionaryTest extends TestCase
             'international 1' => [true, 'password'],
             'international 2' => [true, 'qwerty'],
             'numérique' => [true, '123456'],
+            'international, hors top 10 000' => [true, 'sasuke123'],
+            'prénom anglais (zxcvbn)' => [true, 'jennifer'],
+            'nom de famille (zxcvbn)' => [true, 'johnson'],
+            'prénom français (INSEE)' => [true, 'mathilde'],
+            'prénom français avec accent' => [true, 'andré'],
+            'prénom français sans accent' => [true, 'andre'],
+            'prénom composé sans tiret' => [true, 'jeanpierre'],
             'absent' => [false, 'kt9#vlp2!qwz8$mnx4'],
             'vide' => [false, ''],
         ];

@@ -24,10 +24,13 @@ et le projet suit le [versionnage sémantique](https://semver.org/lang/fr/).
   (R27). `violations()` renvoie les codes des règles non respectées ;
   `validComplexity()`, `validPattern()` et `validDictionary()` contrôlent chaque
   règle séparément (#15).
-- Dictionnaire de mots de passe courants, français
-  ([richelieu](https://github.com/tarraschk/richelieu), CC BY 4.0) et internationaux
-  ([zxcvbn](https://github.com/dropbox/zxcvbn), MIT), dans `resources/dictionaries`,
-  remplaçable via `PasswordDictionaryInterface` ou `FileDictionary` (#15).
+- Dictionnaire d'environ 78 000 mots de passe, prénoms et noms courants, dans
+  `resources/dictionaries` : mots de passe français
+  ([richelieu](https://github.com/tarraschk/richelieu), CC BY 4.0), mots de passe,
+  prénoms et noms internationaux ([zxcvbn](https://github.com/dropbox/zxcvbn), MIT),
+  prénoms donnés en France depuis 1900 ([INSEE](https://www.insee.fr/fr/statistiques/8595130),
+  Licence Ouverte 2.0). Il est remplaçable via `PasswordDictionaryInterface` ou
+  `FileDictionary` (#15).
 
 ### Modifié
 

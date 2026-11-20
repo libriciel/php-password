@@ -12,7 +12,8 @@ use Libriciel\Password\PasswordException;
  * Sans argument, il utilise les listes livrées avec la bibliothèque (voir
  * resources/dictionaries/NOTICE.md) :
  *  - les mots de passe les plus courants en France (projet richelieu, CC BY 4.0) ;
- *  - les 10 000 mots de passe les plus courants de zxcvbn (Dropbox, MIT).
+ *  - les mots de passe, prénoms et noms de famille courants de zxcvbn (Dropbox, MIT) ;
+ *  - les prénoms donnés en France depuis 1900 (INSEE, Licence Ouverte 2.0).
  *
  * Les fichiers ne sont lus qu'à la première recherche, puis gardés en mémoire.
  */
@@ -24,6 +25,8 @@ final class FileDictionary implements PasswordDictionaryInterface
     public const array DEFAULT_FILES = [
         __DIR__.'/../../resources/dictionaries/richelieu-fr.txt',
         __DIR__.'/../../resources/dictionaries/zxcvbn-en.txt',
+        __DIR__.'/../../resources/dictionaries/zxcvbn-names.txt',
+        __DIR__.'/../../resources/dictionaries/insee-prenoms.txt',
     ];
 
     /**

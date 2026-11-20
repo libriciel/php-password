@@ -19,12 +19,32 @@ ligne, en minuscules, sans doublon, encodé en UTF-8.
 - Source : [dropbox/zxcvbn](https://github.com/dropbox/zxcvbn), fichier
   `data/passwords.txt`
 - Licence : MIT, Copyright (c) 2012-2016 Dan Wheeler and Dropbox, Inc.
-- Contenu : les 10 000 premiers mots de passe, classés par fréquence, de la
-  liste construite par zxcvbn à partir du corpus de Mark Burnett
-- Modifications : conservation des 10 000 premières lignes, sans la colonne
-  de fréquence
+- Contenu : les mots de passe, classés par fréquence, de la liste construite
+  par zxcvbn à partir du corpus de Mark Burnett
+- Modifications : suppression de la colonne de fréquence (47 023 entrées)
 
-Texte de la licence MIT de zxcvbn :
+## zxcvbn-names.txt
+
+- Source : [dropbox/zxcvbn](https://github.com/dropbox/zxcvbn), fichiers
+  `data/male_names.txt`, `data/female_names.txt` et `data/surnames.txt`
+- Licence : MIT, Copyright (c) 2012-2016 Dan Wheeler and Dropbox, Inc. (texte
+  ci-dessous)
+- Contenu : prénoms et noms de famille courants aux États-Unis
+- Modifications : conservation des 10 000 premiers noms de famille, fusion,
+  suppression des doublons (14 280 entrées)
+
+## insee-prenoms.txt
+
+- Source : INSEE, [Fichier des prénoms](https://www.insee.fr/fr/statistiques/8595130),
+  fichier `prenoms-2025-nat_csv.zip` (naissances en France de 1900 à 2025),
+  également sur [data.gouv.fr](https://www.data.gouv.fr/datasets/fichier-des-prenoms-depuis-1900)
+- Licence : [Licence Ouverte / Open Licence 2.0](https://www.etalab.gouv.fr/licence-ouverte-open-licence/)
+- Contenu : les prénoms donnés au moins 100 fois depuis 1900
+- Modifications : passage en minuscules, ajout des variantes sans accents et
+  sans séparateurs (`andré` → `andre`, `jean-pierre` → `jeanpierre`),
+  suppression des doublons (14 430 entrées)
+
+Texte de la licence MIT de zxcvbn (zxcvbn-en.txt et zxcvbn-names.txt) :
 
 ```
 Copyright (c) 2012-2016 Dan Wheeler and Dropbox, Inc.

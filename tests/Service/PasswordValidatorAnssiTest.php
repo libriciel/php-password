@@ -165,6 +165,8 @@ class PasswordValidatorAnssiTest extends TestCase
         // 85,8 bits : l'entropie seule ne suffit pas à le rejeter
         $this->assertSame([PasswordValidatorAnssi::VIOLATION_DICTIONARY], $validator->violations('Marseille2024!', 80));
         $this->assertSame([PasswordValidatorAnssi::VIOLATION_DICTIONARY], $validator->violations('Motdepasse2024!#', 80));
+        // Prénom de l'INSEE, déguisé
+        $this->assertSame([PasswordValidatorAnssi::VIOLATION_DICTIONARY], $validator->violations('#1985M@thilde!!', 80));
         $this->assertTrue($validator->validPassword('kT9#vLp2!qWz8$mNx4', 100));
     }
 

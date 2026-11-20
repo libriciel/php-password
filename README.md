@@ -142,11 +142,16 @@ $validator = new PasswordValidatorAnssi(
 );
 ```
 
-Le dictionnaire par défaut réunit environ 25 000 mots de passe courants, français
-([richelieu](https://github.com/tarraschk/richelieu), CC BY 4.0) et internationaux
-([zxcvbn](https://github.com/dropbox/zxcvbn), MIT) ; voir
-[resources/dictionaries/NOTICE.md](resources/dictionaries/NOTICE.md). Il n'est lu
-qu'à la première vérification. Une application peut fournir sa propre liste avec
+Le dictionnaire par défaut réunit environ 78 000 entrées (voir
+[resources/dictionaries/NOTICE.md](resources/dictionaries/NOTICE.md)) :
+
+- mots de passe courants français ([richelieu](https://github.com/tarraschk/richelieu), CC BY 4.0) ;
+- mots de passe, prénoms et noms de famille courants internationaux
+  ([zxcvbn](https://github.com/dropbox/zxcvbn), MIT) ;
+- prénoms donnés en France depuis 1900 ([INSEE](https://www.insee.fr/fr/statistiques/8595130),
+  Licence Ouverte 2.0), avec et sans accents.
+
+Il n'est lu qu'à la première vérification (environ 15 ms et 8 Mo de mémoire). Une application peut fournir sa propre liste avec
 `FileDictionary`, ou implémenter `PasswordDictionaryInterface` (par exemple pour
 interroger [Have I Been Pwned](https://haveibeenpwned.com/API/v3#PwnedPasswords)).
 

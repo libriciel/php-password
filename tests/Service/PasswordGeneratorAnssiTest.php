@@ -481,6 +481,106 @@ class PasswordGeneratorAnssiTest extends TestCase
     }
 
     /**
+     * Test de la méthode PasswordGeneratorAnssi::characters() avec toutes les
+     * classes activées et un encodage explicite.
+     */
+    public function testCharactersAllClassesWithEncoding(): void
+    {
+        $pwdGeneratorAnsi = new PasswordGeneratorAnssi();
+
+        $all = array_fill_keys(array_keys($this->defaultConfig), true);
+        $this->assertSame($pwdGeneratorAnsi->characters($all), $pwdGeneratorAnsi->characters($all, 'UTF-8'));
+    }
+
+    public function testGenerateEmptyWithEncoding(): void
+    {
+        $pwdGeneratorAnsi = new PasswordGeneratorAnssi();
+
+        $this->assertSame('', $pwdGeneratorAnsi->generate(0, [], 'UTF-8'));
+    }
+
+    public function constrainedProvider(): array
+    {
+        return [
+            'sans obligatoire, longueur 0, encodage' => [0, [], 'UTF-8', '/^$/'],
+            'sans obligatoire, encodage' => [3, [], 'UTF-8', '/^[a-zA-Z0-9]{3}$/'],
+            'obligatoire à 0, longueur 0' => [0, ['numbers' => 0], null, '/^$/'],
+            'obligatoire à 0, longueur 0, encodage' => [0, ['numbers' => 0], 'UTF-8', '/^$/'],
+            'obligatoire à 0, encodage' => [3, ['numbers' => 0], 'UTF-8', '/^[a-zA-Z0-9]{3}$/'],
+            'obligatoires égaux à la longueur' => [2, ['numbers' => 2], null, '/^[0-9]{2}$/'],
+            'obligatoires et complément, encodage' => [3, ['numbers' => 1], 'UTF-8', '/^(?=.*[0-9])[a-zA-Z0-9]{3}$/'],
+        ];
+    }
+
+    /**
+     * Test de la méthode PasswordGeneratorAnssi::constrained() selon la
+     * longueur, les classes obligatoires et l'encodage.
+     *
+     * @dataProvider constrainedProvider
+     */
+    public function testConstrainedCombinations(int $length, array $mandatory, ?string $encoding, string $regexp): void
+    {
+        $pwdGeneratorAnsi = new PasswordGeneratorAnssi();
+
+        $password = $pwdGeneratorAnsi->constrained($length, [], $mandatory, $encoding);
+        $this->assertMatchesRegularExpression($regexp, $password);
+    }
+
+    public function constrainedExceptionProvider(): array
+    {
+        return [
+            'sans caractère disponible, encodage' => [
+                3,
+                $this->allDisabled(),
+                [],
+                'UTF-8',
+                'Impossible de générer un mot de passe de longueur 3 sans caractère disponible',
+            ],
+            'trop de caractères obligatoires, encodage' => [
+                1,
+                [],
+                ['numbers' => 1, 'lowercase_letters' => 1],
+                'UTF-8',
+                'Impossible de générer un mot de passe de longueur 1 avec 2 caractères obligatoires',
+            ],
+            'classe obligatoire inconnue seule' => [
+                3,
+                [],
+                ['not_existing' => 1],
+                null,
+                "La classe de caractère not_existing n'est pas défini",
+            ],
+            'classe obligatoire inconnue seule, encodage' => [
+                3,
+                [],
+                ['not_existing' => 1],
+                'UTF-8',
+                "La classe de caractère not_existing n'est pas défini",
+            ],
+        ];
+    }
+
+    /**
+     * Test des exceptions de PasswordGeneratorAnssi::constrained() avec et
+     * sans encodage explicite.
+     *
+     * @dataProvider constrainedExceptionProvider
+     */
+    public function testConstrainedExceptions(
+        int $length,
+        array $params,
+        array $mandatory,
+        ?string $encoding,
+        string $message,
+    ): void {
+        $pwdGeneratorAnsi = new PasswordGeneratorAnssi();
+
+        $this->expectException(PasswordException::class);
+        $this->expectExceptionMessage($message);
+        $pwdGeneratorAnsi->constrained($length, $params, $mandatory, $encoding);
+    }
+
+    /**
      * Test de la méthode PasswordGeneratorAnssi::constrained().
      */
     public function testConstrained()

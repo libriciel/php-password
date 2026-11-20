@@ -11,7 +11,7 @@ et le projet suit le [versionnage sémantique](https://semver.org/lang/fr/).
 
 - **Rupture de compatibilité** : `PasswordGeneratorAnssi::generate()` lève une
   `PasswordException` lorsque aucune classe de caractères n'est activée, au lieu de
-  renvoyer `false` (ce qui provoquait une `TypeError`).
+  renvoyer `false` (ce qui provoquait une `TypeError`) (#1).
 - Paramètres `$encoding` explicitement nullables (`?string`), ce qui supprime les
   dépréciations de PHP 8.4 sur les types implicitement nullables.
 - Code mis au standard `@Symfony` de PHP CS Fixer.
@@ -24,7 +24,7 @@ et le projet suit le [versionnage sémantique](https://semver.org/lang/fr/).
 ### Documentation
 
 - README : namespace `Libriciel\Password\Service` dans les exemples et commandes de
-  développement via `make` / `docker compose`.
+  développement via `make` / `docker compose` (#1).
 
 ## [3.0.2] - 2026-09-17
 

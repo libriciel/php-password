@@ -83,6 +83,64 @@ $pwdStrengthAnssi->strength('mot de passe');
 > page de l'ANSSI. Le guide de 2021 donne, à titre d'exemple, ≈ 65 bits (sensibilité
 > faible à moyenne), ≈ 85 bits (moyenne à forte) et ≥ 100 bits (forte à très forte).
 
+>
+> Pour un mot de passe choisi, utiliser `PasswordValidatorAnssi` (ci-dessous).
+
+##### Validation d'un mot de passe choisi (R21, R23 et R27)
+
+`PasswordValidatorAnssi` contrôle, à la création ou au renouvellement d'un mot
+de passe choisi par un utilisateur :
+
+| Code (`VIOLATION_*`) | Recommandation | Contrôle |
+|---|---|---|
+| `entropy` | R21 | entropie (voir `PasswordStrengthMeterAnssi`) inférieure à celle demandée |
+| `complexity` | R23 | moins de 3 classes parmi minuscules, majuscules, chiffres et autres caractères, sauf pour une phrase de passe de 20 caractères ou plus |
+| `pattern` | R27 | suite (`abcd`, `4321`), ligne de clavier AZERTY ou QWERTY (`azer`, `qwer`), caractère répété 4 fois (`!!!!`) ou bloc répété (`abcabc`) |
+| `dictionary` | R27 | mot de passe courant ou compromis, sans tenir compte de la casse, du leet speak (`P@ssw0rd`) ni des chiffres et symboles ajoutés au début ou à la fin (`Marseille2024!`) |
+| `personal_data` | R27 | nom, prénom, identifiant, parties de l'adresse e-mail ou de la date de naissance, sans tenir compte de la casse, des accents ni du leet speak |
+
+```php
+use Libriciel\Password\Service\PasswordValidatorAnssi;
+
+$validator = new PasswordValidatorAnssi();
+
+// false : 85,8 bits, mais « marseille » figure dans le dictionnaire
+$validator->validPassword('Marseille2024!', 80);
+
+// true
+$validator->validPassword('le chat dort sur le canapé vert', 80);
+
+// Informations personnelles de l'utilisateur (facultatives)
+$personalData = ['Jérôme', 'Dupont', 'jerome.dupont@exemple.fr', '12/03/1985'];
+
+// ['personal_data'] : la liste des règles non respectées, à traduire pour l'utilisateur
+$validator->violations('Dup0nt#Kw9!vLp2qZ', 80, $personalData);
+```
+
+Les règles se configurent dans le constructeur :
+
+```php
+use Libriciel\Password\Dictionary\FileDictionary;
+
+$validator = new PasswordValidatorAnssi(
+    dictionary: new FileDictionary(['/chemin/vers/ma-liste.txt']),
+    minClasses: 3,        // classes de caractères exigées (R23), de 0 à 4
+    passphraseLength: 20, // longueur à partir de laquelle les classes ne sont plus exigées
+    patternLength: 4,     // longueur minimale d'une suite ou d'une répétition
+);
+```
+
+Le dictionnaire par défaut réunit environ 25 000 mots de passe courants, français
+([richelieu](https://github.com/tarraschk/richelieu), CC BY 4.0) et internationaux
+([zxcvbn](https://github.com/dropbox/zxcvbn), MIT) ; voir
+[resources/dictionaries/NOTICE.md](resources/dictionaries/NOTICE.md). Il n'est lu
+qu'à la première vérification. Une application peut fournir sa propre liste avec
+`FileDictionary`, ou implémenter `PasswordDictionaryInterface` (par exemple pour
+interroger [Have I Been Pwned](https://haveibeenpwned.com/API/v3#PwnedPasswords)).
+
+La réutilisation des anciens mots de passe (R27) reste à contrôler par
+l'application, qui seule connaît leur historique.
+
 ##### Génération de mots de passes aléatoires
 
 Le cas d'usage est la création d'un mot de passe aléatoire à stocker hashé et

@@ -54,6 +54,35 @@ $pwdStrengthAnssi->entropy('mot de passe');
 $pwdStrengthAnssi->strength('mot de passe');
 ```
 
+> **Attention : l'entropie n'est exacte que pour un mot de passe aléatoire.**
+>
+> Le calcul (longueur × log2(nombre de symboles possibles)) suppose que chaque
+> caractère est tiré au hasard. Pour un mot de passe **choisi par un utilisateur**,
+> la force réelle est souvent bien plus faible : `Passw0rd!` obtient environ 55 bits
+> alors qu'il figure dans tous les dictionnaires d'attaque. Le guide de l'ANSSI le
+> précise :
+>
+> > « cette estimation ne vaut que si chaque caractère […] est choisi de manière
+> > uniformément aléatoire. Dans le cas contraire […] l'entropie de tels mots de
+> > passe se retrouve fortement réduite et son estimation réelle devient très
+> > difficile. »
+> > — [Guide ANSSI-PG-078](https://messervices.cyber.gouv.fr/documents-guides/anssi-guide-authentification_multifacteur_et_mots_de_passe.pdf), v2.0 du 08/10/2021, §4.1
+>
+> En pratique :
+>
+> - pour un mot de passe **généré** (par exemple avec `PasswordGeneratorAnssi`),
+>   `strength()` mesure bien sa robustesse ;
+> - pour un mot de passe **choisi**, `strength()` est une condition nécessaire mais
+>   pas suffisante. Le guide recommande de la compléter par des règles de
+>   complexité (R23) et par un contrôle de robustesse à la création (R27) :
+>   comparaison à une liste de mots de passe courants ou compromis, détection des
+>   motifs (`12345`, `azerty`), des informations personnelles (nom, date de
+>   naissance) et de la réutilisation des anciens mots de passe.
+>
+> Les seuils de la bibliothèque (64, 80, 100 et 128 bits) viennent d'une ancienne
+> page de l'ANSSI. Le guide de 2021 donne, à titre d'exemple, ≈ 65 bits (sensibilité
+> faible à moyenne), ≈ 85 bits (moyenne à forte) et ≥ 100 bits (forte à très forte).
+
 ##### Génération de mots de passes aléatoires
 
 Le cas d'usage est la création d'un mot de passe aléatoire à stocker hashé et
@@ -214,6 +243,7 @@ méthodes du générateur, si une classe de caractères n'existe pas (faute de f
 - https://www.cnil.fr/fr/authentification-par-mot-de-passe-les-mesures-de-securite-elementaires
 - https://www.cnil.fr/fr/generer-un-mot-de-passe-solide
 - https://en.wikipedia.org/wiki/Password_strength#Entropy_as_a_measure_of_password_strength
+- [Guide ANSSI-PG-078 : recommandations relatives à l'authentification multifacteur et aux mots de passe](https://messervices.cyber.gouv.fr/documents-guides/anssi-guide-authentification_multifacteur_et_mots_de_passe.pdf) (v2.0, 08/10/2021)
 - https://www.ssi.gouv.fr/guide/mot-de-passe/
 - https://www.ssi.gouv.fr/uploads/IMG/pdf/NP_MDP_NoteTech.pdf
 - https://www.ssi.gouv.fr/administration/precautions-elementaires/calculer-la-force-dun-mot-de-passe/

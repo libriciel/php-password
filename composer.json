@@ -5,13 +5,12 @@
     "license": "MIT",
     "authors": [
         {
-            "name": "Christian BUFFIN",
+            "name": "Théo GUILLON",
             "homepage": "https://www.libriciel.fr",
-            "email": "christian.buffin@libriciel.fr"
+            "email": "theo.guillon@libriciel.coop"
         }
     ],
     "autoload": {
-
         "psr-4": {
             "Libriciel\\Password\\": "src/",
             "LibricielTest\\Password\\": "tests/"

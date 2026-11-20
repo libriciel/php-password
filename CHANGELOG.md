@@ -14,6 +14,12 @@ et le projet suit le [versionnage sémantique](https://semver.org/lang/fr/).
   renvoyer `false` (ce qui provoquait une `TypeError`) (#1).
 - **Rupture de compatibilité** : PHP 8.3 minimum, PHP 8.1 n'étant plus maintenu
   et PHP 8.2 ne l'étant plus après le 31 décembre 2026 ; la CI teste PHP 8.3 à 8.5 (#4).
+- **Rupture de compatibilité** : une classe de caractères inconnue, même désactivée
+  (faute de frappe comme `'symbol_1' => false`), lève une `PasswordException` dans
+  `config()`, `characters()`, `generate()` et `constrained()` de
+  `PasswordGeneratorAnssi`, au lieu d'un warning et d'une dépréciation. Le message
+  liste les classes inconnues et les classes existantes ; il remplace « La classe de
+  caractère X n'est pas défini » pour les classes obligatoires de `constrained()` (#7).
 - Paramètres `$encoding` explicitement nullables (`?string`), ce qui supprime les
   dépréciations de PHP 8.4 sur les types implicitement nullables.
 - Types des tableaux précisés en PHPDoc (`array<string, bool>`, `list<string>`…)

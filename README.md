@@ -99,7 +99,8 @@ $pwdGeneratorAnssi->generate();
 ```
 
 Si aucune classe de caractères n'est activée, `generate()` lève une
-`Libriciel\Password\PasswordException`.
+`Libriciel\Password\PasswordException`. C'est aussi le cas, pour toutes les
+méthodes du générateur, si une classe de caractères n'existe pas (faute de frappe).
 
 ## Exemples de mots de passes
 

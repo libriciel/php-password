@@ -580,14 +580,14 @@ class PasswordGeneratorAnssiTest extends TestCase
                 [],
                 ['not_existing' => 1],
                 null,
-                "La classe de caractère not_existing n'est pas défini",
+                'Classe(s) de caractères inconnue(s) : not_existing (',
             ],
             'classe obligatoire inconnue seule, encodage' => [
                 3,
                 [],
                 ['not_existing' => 1],
                 'UTF-8',
-                "La classe de caractère not_existing n'est pas défini",
+                'Classe(s) de caractères inconnue(s) : not_existing (',
             ],
         ];
     }
@@ -684,10 +684,68 @@ class PasswordGeneratorAnssiTest extends TestCase
         ];
         $this->expectException(PasswordException::class);
         $this->expectExceptionCode(0);
-        $this->expectExceptionMessage(
-            "La classe de caractère not_existing n'est pas défini"
-        );
+        $this->expectExceptionMessage('Classe(s) de caractères inconnue(s) : not_existing (');
         $pwdGeneratorAnsi->constrained(3, [], $mandatory);
+    }
+
+    /**
+     * @return array<string, array{string, array<string, mixed>}>
+     */
+    public static function unknownClassProvider(): array
+    {
+        return [
+            'enabled' => ['foo', ['foo' => true]],
+            // Une faute de frappe est refusée même si la classe est désactivée
+            'disabled' => ['symbol_1', ['symbol_1' => false]],
+            'several' => ['foo, bar', ['numbers' => true, 'foo' => true, 'bar' => false]],
+        ];
+    }
+
+    /**
+     * Une classe de caractères inconnue lève une PasswordException, quelle que
+     * soit la méthode qui la reçoit (#7).
+     *
+     * @param array<string, bool> $params
+     */
+    #[DataProvider('unknownClassProvider')]
+    public function testUnknownClassThrowsException(string $expectedClasses, array $params): void
+    {
+        $calls = [
+            'config' => static fn (PasswordGeneratorAnssi $generator) => $generator->config($params),
+            'characters' => static fn (PasswordGeneratorAnssi $generator) => $generator->characters($params),
+            'generate' => static fn (PasswordGeneratorAnssi $generator) => $generator->generate(12, $params),
+            'constrained' => static fn (PasswordGeneratorAnssi $generator) => $generator->constrained(12, $params),
+        ];
+
+        foreach ($calls as $method => $call) {
+            $pwdGeneratorAnsi = new PasswordGeneratorAnssi();
+            try {
+                $call($pwdGeneratorAnsi);
+                $this->fail(sprintf('%s() aurait dû lever une PasswordException', $method));
+            } catch (PasswordException $exception) {
+                $this->assertStringStartsWith(
+                    sprintf('Classe(s) de caractères inconnue(s) : %s (classes existantes : binary, ', $expectedClasses),
+                    $exception->getMessage(),
+                    $method
+                );
+            }
+        }
+    }
+
+    /**
+     * Une classe inconnue refusée par config() n'est pas enregistrée (#7).
+     */
+    public function testConfigUnknownClassDoesNotAlterConfig(): void
+    {
+        $pwdGeneratorAnsi = new PasswordGeneratorAnssi();
+
+        try {
+            $pwdGeneratorAnsi->config(['foo' => true]);
+            $this->fail('Une PasswordException aurait dû être levée');
+        } catch (PasswordException) {
+        }
+
+        $this->assertSame($pwdGeneratorAnsi->defaults(), $pwdGeneratorAnsi->config());
     }
 
     public function testGenerateWithoutAvailableCharacter(): void

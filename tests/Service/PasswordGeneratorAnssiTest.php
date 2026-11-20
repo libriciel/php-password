@@ -197,7 +197,7 @@ class PasswordGeneratorAnssiTest extends TestCase
     {
         $pwdGeneratorAnsi = new PasswordGeneratorAnssi();
 
-        $expected = array_merge(range('0', '9'), range('a', 'z'), range('A', 'Z'));
+        $expected = array_merge(str_split('0123456789'), range('a', 'z'), range('A', 'Z'));
         $this->assertSame($expected, $pwdGeneratorAnsi->characters());
     }
 
@@ -235,7 +235,7 @@ class PasswordGeneratorAnssiTest extends TestCase
         $actual = $pwdGeneratorAnsi->characters(
             $this->only('numbers', 'lowercase_hexadecimal', 'uppercase_hexadecimal')
         );
-        $expected = array_merge(range('0', '9'), range('a', 'f'), range('A', 'F'));
+        $expected = array_merge(str_split('0123456789'), range('a', 'f'), range('A', 'F'));
         $this->assertSame($expected, $actual);
 
         // 157 caractères au total, dont 34 en double
@@ -260,7 +260,7 @@ class PasswordGeneratorAnssiTest extends TestCase
         $pwdGeneratorAnsi = new PasswordGeneratorAnssi();
 
         $params = ['binary' => 1, 'symbols_1' => 'yes', 'numbers' => true] + $this->allDisabled();
-        $this->assertSame(range('0', '9'), $pwdGeneratorAnsi->characters($params));
+        $this->assertSame(str_split('0123456789'), $pwdGeneratorAnsi->characters($params));
     }
 
     /**
@@ -272,7 +272,7 @@ class PasswordGeneratorAnssiTest extends TestCase
         $pwdGeneratorAnsi = new PasswordGeneratorAnssi();
         $pwdGeneratorAnsi->config($this->only('numbers'));
 
-        $this->assertSame(range('0', '9'), $pwdGeneratorAnsi->characters());
+        $this->assertSame(str_split('0123456789'), $pwdGeneratorAnsi->characters());
         $this->assertSame(
             range('a', 'z'),
             $pwdGeneratorAnsi->characters(['numbers' => false, 'lowercase_letters' => true])

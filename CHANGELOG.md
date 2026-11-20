@@ -39,6 +39,13 @@ et le projet suit le [versionnage sémantique](https://semver.org/lang/fr/).
 - Constantes `STRENGTH_*` de `PasswordStrengthMeterInterface` typées `int`
   (PHP 8.3) : une implémentation qui les redéfinit doit garder des entiers (#9).
 
+### Corrigé
+
+- `PasswordStrengthMeterAnssi::strength()` compare aux seuils l'entropie non arrondie :
+  un mot de passe juste sous un seuil n'est plus classé au niveau supérieur (par
+  exemple 17 majuscules, 79,9 bits, passent de « moyenne » à « faible »). La force
+  renvoyée baisse d'un niveau pour ces mots de passe (#10).
+
 ### Supprimé
 
 - Dépendance de développement `sebastian/phpcpd`, abandonnée depuis 2020 (#3).

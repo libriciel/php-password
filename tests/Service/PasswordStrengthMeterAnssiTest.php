@@ -151,9 +151,9 @@ class PasswordStrengthMeterAnssiTest extends TestCase
         return [
             'very weak' => [PasswordStrengthMeterInterface::STRENGTH_VERY_WEAK, str_repeat('Abz', 3)],
             'weak' => [PasswordStrengthMeterInterface::STRENGTH_WEAK, str_repeat('ABCZ', 4)],
-            'medium 1' => [PasswordStrengthMeterInterface::STRENGTH_MEDIUM, 'AbCzaBcZAbCzaB'],
+            'medium 1' => [PasswordStrengthMeterInterface::STRENGTH_MEDIUM, 'AbCzaBcZAbCzaBc'],
             'medium 2' => [PasswordStrengthMeterInterface::STRENGTH_MEDIUM, 'AbCzaBcZAbCzaBcZ'],
-            'strong 1' => [PasswordStrengthMeterInterface::STRENGTH_STRONG, str_repeat('0123456789', 3)],
+            'strong 1' => [PasswordStrengthMeterInterface::STRENGTH_STRONG, str_repeat('0123456789', 3).'01234'],
             'strong 2' => [PasswordStrengthMeterInterface::STRENGTH_STRONG, 'AbCzaBcZAbCzaBcZaBcZ'],
             'very strong 1' => [
                 PasswordStrengthMeterInterface::STRENGTH_VERY_STRONG,
@@ -310,16 +310,23 @@ class PasswordStrengthMeterAnssiTest extends TestCase
             '127 bits' => [PasswordStrengthMeterInterface::STRENGTH_STRONG, str_repeat('0', 127)],
             '128 bits' => [PasswordStrengthMeterInterface::STRENGTH_VERY_STRONG, str_repeat('0', 128)],
             '1024 bits' => [PasswordStrengthMeterInterface::STRENGTH_VERY_STRONG, str_repeat('0', 1024)],
-            // 24 × log2(10) = 79,73, arrondi à 80
-            'rounded entropy decimal' => [PasswordStrengthMeterInterface::STRENGTH_MEDIUM, str_repeat('3', 24)],
-            // 17 × log2(26) = 79,91, arrondi à 80
-            'rounded entropy alphabet' => [PasswordStrengthMeterInterface::STRENGTH_MEDIUM, str_repeat('g', 17)],
+            // L'entropie n'est pas arrondie avant d'être comparée aux seuils (#10)
+            // 13 × log2(30) = 63,79
+            'just below 64 bits' => [PasswordStrengthMeterInterface::STRENGTH_VERY_WEAK, str_repeat('3', 12).'&'],
+            // 24 × log2(10) = 79,73
+            'just below 80 bits, decimal' => [PasswordStrengthMeterInterface::STRENGTH_WEAK, str_repeat('3', 24)],
+            // 17 × log2(26) = 79,91
+            'just below 80 bits, alphabet' => [PasswordStrengthMeterInterface::STRENGTH_WEAK, str_repeat('g', 17)],
+            // 30 × log2(10) = 99,66
+            'just below 100 bits' => [PasswordStrengthMeterInterface::STRENGTH_MEDIUM, str_repeat('3', 30)],
+            // 19 × log2(106) = 127,83
+            'just below 128 bits' => [PasswordStrengthMeterInterface::STRENGTH_STRONG, 'aA0&?à'.str_repeat('a', 13)],
         ];
     }
 
     /**
      * Test de la méthode PasswordStrengthMeterAnssi::strength() aux bornes des
-     * seuils : l'entropie arrondie est comparée aux seuils, bornes incluses.
+     * seuils : l'entropie, non arrondie, est comparée aux seuils, bornes incluses.
      */
     #[DataProvider('strengthThresholdsProvider')]
     public function testStrengthThresholds(int $expectedStrength, string $input): void

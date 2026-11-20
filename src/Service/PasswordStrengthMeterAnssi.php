@@ -75,11 +75,17 @@ class PasswordStrengthMeterAnssi implements PasswordStrengthMeterInterface
      */
     public function entropy(string $string, int $precision = 0): float
     {
-        $length = mb_strlen($string);
-        $symbols = $this->symbols($string);
-        $value = $length * log($symbols, 2);
+        return round($this->exactEntropy($string), $precision);
+    }
 
-        return round($value, $precision);
+    /**
+     * Retourne le nombre de bits d'entropie, sans arrondi.
+     *
+     * @param string $string La chaîne de caractères
+     */
+    private function exactEntropy(string $string): float
+    {
+        return mb_strlen($string) * log($this->symbols($string), 2);
     }
 
     /**
@@ -105,15 +111,16 @@ class PasswordStrengthMeterAnssi implements PasswordStrengthMeterInterface
      * Il s'agit d'un chiffre entre 1 (très faible) et 5 (très fort) qui
      * correspond aux constantes de classe STRENGTH_VERY_WEAK (1), STRENGTH_WEAK (2),
      * STRENGTH_MEDIUM (3), STRENGTH_STRONG (4) et STRENGTH_VERY_STRONG (5)
-     * à partir de l'entropie calculée par la méthode entropy().
+     * à partir de l'entropie calculée par la méthode entropy(), sans arrondi :
+     * une entropie de 79,9 bits reste sous le seuil de 80 bits.
      *
-     * @see PasswordAnssi::entropy()
+     * @see PasswordStrengthMeterAnssi::entropy()
      *
      * @param string $string Le mot de passe
      */
     public function strength(string $string): int
     {
-        $entropy = $this->entropy($string);
+        $entropy = $this->exactEntropy($string);
         $thresholds = $this->thresholds();
         $result = self::STRENGTH_VERY_WEAK;
 

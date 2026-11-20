@@ -1,7 +1,0 @@
-parameters:
-	ignoreErrors:
-		-
-			message: '#^Method Libriciel\\Password\\Service\\PasswordStrengthMeterAnssi\:\:thresholds\(\) should return array\<int, int\> but returns array\<int, mixed\>\.$#'
-			identifier: return.type
-			count: 1
-			path: src/Service/PasswordStrengthMeterAnssi.php

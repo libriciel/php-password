@@ -64,9 +64,12 @@ class PasswordGeneratorAnssi
      * @param array<string, bool> $config la configuration à modifier
      *
      * @return array<string, bool>
+     *
+     * @throws PasswordException si une classe de caractères n'existe pas
      */
     public function config(array $config = []): array
     {
+        self::assertKnownClasses($config);
         $this->config = $config + $this->config + static::$defaults;
 
         return $this->config;
@@ -92,9 +95,12 @@ class PasswordGeneratorAnssi
      *                                      sera utilisé.
      *
      * @return list<string>
+     *
+     * @throws PasswordException si une classe de caractères n'existe pas
      */
     public function characters(array $params = [], ?string $encoding = null): array
     {
+        self::assertKnownClasses($params);
         $myConfig = $params + $this->config();
         $encoding ??= mb_internal_encoding();
         $accumulator = [];
@@ -118,7 +124,8 @@ class PasswordGeneratorAnssi
      *                                      S'il est omis, l'encodage de caractères interne (mb_internal_encoding)
      *                                      sera utilisé.
      *
-     * @throws PasswordException si aucune classe de caractères n'est activée
+     * @throws PasswordException si aucune classe de caractères n'est activée ou si
+     *                           une classe de caractères n'existe pas
      * @throws \Exception
      */
     public function generate(int $length = 40, array $params = [], ?string $encoding = null): string
@@ -152,7 +159,7 @@ class PasswordGeneratorAnssi
      *                                       sera utilisé.
      *
      * @throws PasswordException si aucun caractère n'est disponible, si les caractères obligatoires
-     *                           dépassent la longueur ou si une classe obligatoire n'existe pas
+     *                           dépassent la longueur ou si une classe de caractères n'existe pas
      * @throws \Exception
      */
     public function constrained(
@@ -161,6 +168,7 @@ class PasswordGeneratorAnssi
         array $mandatory = [],
         ?string $encoding = null,
     ): string {
+        self::assertKnownClasses($mandatory);
         $encoding ??= mb_internal_encoding();
         $characters = $this->characters($params, $encoding);
         $count = count($characters);
@@ -182,9 +190,6 @@ class PasswordGeneratorAnssi
         $max = 0;
 
         foreach ($mandatory as $class => $number) {
-            if (!isset(static::$classes[$class])) {
-                throw new PasswordException("La classe de caractère $class n'est pas défini");
-            }
             $stringLength = mb_strlen(static::$classes[$class], $encoding);
             for ($idx = 0; $idx < $number; ++$idx) {
                 $char = mb_substr(static::$classes[$class], random_int(0, $stringLength - 1), 1, $encoding);
@@ -200,6 +205,28 @@ class PasswordGeneratorAnssi
         }
 
         return implode('', $this->randomArray($result));
+    }
+
+    /**
+     * Vérifie que chaque clé du tableau est une classe de caractères existante.
+     *
+     * @param array<string, mixed> $classes un tableau indexé par nom de classe
+     *
+     * @throws PasswordException si une classe de caractères n'existe pas
+     */
+    private static function assertKnownClasses(array $classes): void
+    {
+        $unknown = array_diff_key($classes, static::$classes);
+
+        if ([] !== $unknown) {
+            $format = 'Classe(s) de caractères inconnue(s) : %s (classes existantes : %s)';
+            $message = sprintf(
+                $format,
+                implode(', ', array_keys($unknown)),
+                implode(', ', array_keys(static::$classes))
+            );
+            throw new PasswordException($message);
+        }
     }
 
     /**

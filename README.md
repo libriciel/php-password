@@ -343,6 +343,7 @@ make bash
 Contrôles lancés par la CI (`make help` pour la liste complète) :
 ```bash
 make test      # PHPUnit
+make coverage  # couverture des lignes, branches et chemins (Xdebug)
 make phpstan   # analyse statique (niveau max)
 make rector    # Rector en dry-run
 make ecs       # standard de code (règles @Symfony, via ECS)

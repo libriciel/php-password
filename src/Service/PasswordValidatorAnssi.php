@@ -56,19 +56,32 @@ final readonly class PasswordValidatorAnssi
     public const string VIOLATION_PERSONAL_DATA = 'personal_data';
 
     /**
-     * Suites et lignes de clavier (AZERTY et QWERTY), recherchées dans les
-     * deux sens.
+     * Suites et lignes de clavier (AZERTY et QWERTY), dans les deux sens.
      */
     private const array SEQUENCES = [
         'abcdefghijklmnopqrstuvwxyz',
+        'zyxwvutsrqponmlkjihgfedcba',
         '01234567890',
+        '09876543210',
         'azertyuiop',
+        'poiuytreza',
         'qsdfghjklm',
+        'mlkjhgfdsq',
         'wxcvbn',
+        'nbvcxw',
         'qwertyuiop',
+        'poiuytrewq',
         'asdfghjkl',
+        'lkjhgfdsa',
         'zxcvbnm',
+        'mnbvcxz',
     ];
+
+    /**
+     * Classes de caractères de la règle de complexité (R23) : minuscules,
+     * majuscules, chiffres et autres caractères.
+     */
+    private const array CLASSES = ['/\p{Ll}/u', '/\p{Lu}/u', '/\p{Nd}/u', '/[^\p{Ll}\p{Lu}\p{Nd}]/u'];
 
     /**
      * Substitutions courantes (leet speak), hors « 1 » qui peut valoir « i » ou « l ».
@@ -129,14 +142,17 @@ final readonly class PasswordValidatorAnssi
         private int $maxLength = 1024,
         ?PasswordStrengthMeterAnssi $meter = null,
     ) {
-        if ($minClasses < 0 || $minClasses > 4) {
-            throw new PasswordException(sprintf('Le nombre de classes exigées doit être compris entre 0 et 4 (%d)', $minClasses));
+        if (!\in_array($minClasses, \range(0, 4), true)) {
+            throw new PasswordException(\sprintf('Le nombre de classes exigées doit être compris entre 0 et 4 (%d)', $minClasses));
         }
-        if ($passphraseLength < 1 || $patternLength < 2) {
-            throw new PasswordException(sprintf('Longueurs invalides : phrase de passe %d (minimum 1), motif %d (minimum 2)', $passphraseLength, $patternLength));
+        if ($passphraseLength < 1) {
+            throw new PasswordException(\sprintf('La longueur d\'une phrase de passe doit être au moins de 1 (%d)', $passphraseLength));
+        }
+        if ($patternLength < 2) {
+            throw new PasswordException(\sprintf('La longueur d\'un motif doit être au moins de 2 (%d)', $patternLength));
         }
         if ($maxLength < 1) {
-            throw new PasswordException(sprintf('La longueur maximale doit être au moins de 1 (%d)', $maxLength));
+            throw new PasswordException(\sprintf('La longueur maximale doit être au moins de 1 (%d)', $maxLength));
         }
 
         $this->dictionary = $dictionary ?? new FileDictionary();
@@ -179,7 +195,6 @@ final readonly class PasswordValidatorAnssi
         }
 
         $violations = [];
-        $lower = mb_strtolower($password);
 
         if ($this->meter->entropy($password, 10) < $entropy) {
             $violations[] = self::VIOLATION_ENTROPY;
@@ -193,7 +208,7 @@ final readonly class PasswordValidatorAnssi
         if (!$this->validDictionary($password)) {
             $violations[] = self::VIOLATION_DICTIONARY;
         }
-        if ($this->containsPersonalData($lower, $personalData)) {
+        if ($this->containsPersonalData(\mb_strtolower($password), $personalData)) {
             $violations[] = self::VIOLATION_PERSONAL_DATA;
         }
 
@@ -211,7 +226,7 @@ final readonly class PasswordValidatorAnssi
      */
     public function validLength(string $password): bool
     {
-        return mb_strlen($password) <= $this->maxLength;
+        return \mb_strlen($password) <= $this->maxLength;
     }
 
     /**
@@ -226,13 +241,13 @@ final readonly class PasswordValidatorAnssi
      */
     public function validComplexity(string $password): bool
     {
-        if (mb_strlen($password) >= $this->passphraseLength) {
+        if (\mb_strlen($password) >= $this->passphraseLength) {
             return true;
         }
 
         $classes = 0;
-        foreach (['/\p{Ll}/u', '/\p{Lu}/u', '/\p{Nd}/u', '/[^\p{Ll}\p{Lu}\p{Nd}]/u'] as $pattern) {
-            $classes += preg_match($pattern, $password);
+        foreach (self::CLASSES as $pattern) {
+            $classes += \preg_match($pattern, $password);
         }
 
         return $classes >= $this->minClasses;
@@ -250,24 +265,28 @@ final readonly class PasswordValidatorAnssi
      */
     public function validPattern(string $password): bool
     {
-        return !$this->hasPattern(mb_strtolower($password));
+        return !$this->hasPattern(\mb_strtolower($password));
     }
 
     private function hasPattern(string $lower): bool
     {
         $length = $this->patternLength;
 
-        if (1 === preg_match('/(.)\1{'.($length - 1).',}/us', $lower)
-            || 1 === preg_match('/^(.+)\1+$/us', $lower)
-        ) {
+        // Même caractère répété (aaaa)
+        if (1 === \preg_match('/(.)\1{'.($length - 1).',}/us', $lower)) {
             return true;
         }
 
-        $chars = mb_str_split($lower);
-        for ($i = 0, $max = count($chars) - $length; $i <= $max; ++$i) {
-            $chunk = implode('', array_slice($chars, $i, $length));
+        // Mot de passe formé d'un bloc répété (abcabc)
+        if (1 === \preg_match('/^(.+)\1+$/us', $lower)) {
+            return true;
+        }
+
+        $chars = \mb_str_split($lower);
+        for ($i = 0, $max = \count($chars) - $length; $i <= $max; ++$i) {
+            $chunk = \implode('', \array_slice($chars, $i, $length));
             foreach (self::SEQUENCES as $sequence) {
-                if (str_contains($sequence, $chunk) || str_contains(strrev($sequence), $chunk)) {
+                if (\str_contains($sequence, $chunk)) {
                     return true;
                 }
             }
@@ -288,19 +307,19 @@ final readonly class PasswordValidatorAnssi
      */
     public function validDictionary(string $password): bool
     {
-        return !$this->isInDictionary(mb_strtolower($password));
+        return !$this->isInDictionary(\mb_strtolower($password));
     }
 
     private function isInDictionary(string $lower): bool
     {
         $candidates = $this->withLeetVariants($lower);
 
-        $core = (string) preg_replace('/^[^\p{L}]+|[^\p{L}]+$/u', '', $lower);
-        if (mb_strlen($core) >= self::MIN_CORE_LENGTH) {
+        $core = (string) \preg_replace('/^[^\p{L}]+|[^\p{L}]+$/u', '', $lower);
+        if (\mb_strlen($core) >= self::MIN_CORE_LENGTH) {
             $candidates = [...$candidates, ...$this->withLeetVariants($core)];
         }
 
-        foreach (array_unique($candidates) as $candidate) {
+        foreach (\array_unique($candidates) as $candidate) {
             if ($this->dictionary->contains($candidate)) {
                 return true;
             }
@@ -317,14 +336,13 @@ final readonly class PasswordValidatorAnssi
      */
     private function containsPersonalData(string $lower, array $personalData): bool
     {
-        $haystacks = $this->withLeetVariants($this->removeAccents($lower));
-
+        // Les mots ne contiennent que des lettres et des chiffres : ils ne
+        // peuvent pas chevaucher deux variantes séparées par une espace.
+        $haystack = \implode(' ', $this->withLeetVariants($this->removeAccents($lower)));
         foreach ($personalData as $data) {
             foreach ($this->personalTokens($data) as $token) {
-                foreach ($haystacks as $haystack) {
-                    if (str_contains($haystack, $token)) {
-                        return true;
-                    }
+                if (\str_contains($haystack, $token)) {
+                    return true;
                 }
             }
         }
@@ -341,14 +359,18 @@ final readonly class PasswordValidatorAnssi
      */
     private function personalTokens(string $data): array
     {
-        $data = $this->removeAccents(mb_strtolower($data));
-        $parts = preg_split('/[^\p{L}\p{Nd}]+/u', $data) ?: [];
-        $parts[] = implode('', $parts);
+        $data = $this->removeAccents(\mb_strtolower($data));
+        $parts = \preg_split('/[^\p{L}\p{Nd}]+/u', $data) ?: [];
+        $parts[] = \implode('', $parts);
 
-        return array_values(array_filter(
-            array_unique($parts),
-            static fn (string $part): bool => mb_strlen($part) >= self::MIN_PERSONAL_DATA_LENGTH
-        ));
+        $tokens = [];
+        foreach (\array_unique($parts) as $part) {
+            if (\mb_strlen($part) >= self::MIN_PERSONAL_DATA_LENGTH) {
+                $tokens[] = $part;
+            }
+        }
+
+        return $tokens;
     }
 
     /**
@@ -356,13 +378,13 @@ final readonly class PasswordValidatorAnssi
      */
     private function withLeetVariants(string $string): array
     {
-        $leet = strtr($string, self::LEET);
+        $leet = \strtr($string, self::LEET);
 
-        return [$string, strtr($leet, ['1' => 'i']), strtr($leet, ['1' => 'l'])];
+        return [$string, \strtr($leet, ['1' => 'i']), \strtr($leet, ['1' => 'l'])];
     }
 
     private function removeAccents(string $string): string
     {
-        return strtr($string, self::ACCENTS);
+        return \strtr($string, self::ACCENTS);
     }
 }

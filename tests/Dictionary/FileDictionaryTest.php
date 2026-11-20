@@ -48,15 +48,15 @@ class FileDictionaryTest extends TestCase
     public function testDefaultFilesAreLowercase(): void
     {
         foreach (FileDictionary::DEFAULT_FILES as $file) {
-            $content = (string) file_get_contents($file);
-            $this->assertSame(mb_strtolower($content), $content, $file);
+            $content = (string) \file_get_contents($file);
+            $this->assertSame(\mb_strtolower($content), $content, $file);
         }
     }
 
     public function testCustomFileIsNormalized(): void
     {
-        $file = (string) tempnam(sys_get_temp_dir(), 'dico');
-        file_put_contents($file, "  Libriciel \n\nSoleil\n");
+        $file = (string) \tempnam(\sys_get_temp_dir(), 'dico');
+        \file_put_contents($file, "  Libriciel \n\nSoleil\n");
 
         try {
             $dictionary = new FileDictionary([$file]);
@@ -65,7 +65,7 @@ class FileDictionaryTest extends TestCase
             $this->assertFalse($dictionary->contains(''));
             $this->assertFalse($dictionary->contains('azerty'));
         } finally {
-            unlink($file);
+            \unlink($file);
         }
     }
 
@@ -75,17 +75,17 @@ class FileDictionaryTest extends TestCase
      */
     public function testFilesAreMergedAndLoadedOnce(): void
     {
-        $first = (string) tempnam(sys_get_temp_dir(), 'dico');
-        $second = (string) tempnam(sys_get_temp_dir(), 'dico');
-        file_put_contents($first, "soleil\n");
-        file_put_contents($second, "Libriciel\n");
+        $first = (string) \tempnam(\sys_get_temp_dir(), 'dico');
+        $second = (string) \tempnam(\sys_get_temp_dir(), 'dico');
+        \file_put_contents($first, "soleil\n");
+        \file_put_contents($second, "Libriciel\n");
 
         $dictionary = new FileDictionary([$first, $second]);
         try {
             $this->assertTrue($dictionary->contains('soleil'));
         } finally {
-            unlink($first);
-            unlink($second);
+            \unlink($first);
+            \unlink($second);
         }
 
         // Les fichiers n'existent plus : les entrées viennent de la mémoire

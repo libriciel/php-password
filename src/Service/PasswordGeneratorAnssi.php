@@ -105,18 +105,16 @@ class PasswordGeneratorAnssi
     public function characters(array $params = [], ?string $encoding = null): array
     {
         self::assertKnownClasses($params);
-        $myConfig = $params + $this->config();
-        $encoding ??= mb_internal_encoding();
+        $encoding ??= \mb_internal_encoding();
         $accumulator = [];
 
-        foreach ($myConfig as $key => $enabled) {
+        foreach ($params + $this->config() as $class => $enabled) {
             if (true === $enabled) {
-                $tokens = mb_str_split(static::$classes[$key], 1, $encoding);
-                $accumulator = array_merge($accumulator, $tokens);
+                $accumulator = \array_merge($accumulator, \mb_str_split(static::$classes[$class], 1, $encoding));
             }
         }
 
-        return array_values(array_unique($accumulator));
+        return \array_values(\array_unique($accumulator));
     }
 
     /**
@@ -134,18 +132,18 @@ class PasswordGeneratorAnssi
      */
     public function generate(int $length = 40, array $params = [], ?string $encoding = null): string
     {
-        $encoding ??= mb_internal_encoding();
+        $encoding ??= \mb_internal_encoding();
         $characters = $this->characters($params, $encoding);
-        $count = count($characters);
+        $count = \count($characters);
 
         if (0 === $count) {
             $format = 'Impossible de générer un mot de passe de longueur %d sans caractère disponible';
-            throw new PasswordException(sprintf($format, $length));
+            throw new PasswordException(\sprintf($format, $length));
         }
 
         $result = '';
         for ($max = 0; $max < $length; ++$max) {
-            $result .= $characters[random_int(0, $count - 1)];
+            $result .= $characters[\random_int(0, $count - 1)];
         }
 
         return $result;
@@ -173,42 +171,31 @@ class PasswordGeneratorAnssi
         ?string $encoding = null,
     ): string {
         self::assertKnownClasses($mandatory);
-        $encoding ??= mb_internal_encoding();
+        $encoding ??= \mb_internal_encoding();
         $characters = $this->characters($params, $encoding);
-        $count = count($characters);
+        $count = \count($characters);
 
         if (0 === $count) {
             $format = 'Impossible de générer un mot de passe de longueur %d sans caractère disponible';
-            throw new PasswordException(sprintf($format, $length));
+            throw new PasswordException(\sprintf($format, $length));
         }
 
-        if (array_sum($mandatory) > $length) {
+        if (\array_sum($mandatory) > $length) {
             $format =
                 'Impossible de générer un mot de passe de longueur %d '.
                 'avec %d caractères obligatoires (obligatoires: %s)';
-            $message = sprintf($format, $length, array_sum($mandatory), json_encode($mandatory, JSON_THROW_ON_ERROR));
+            $message = \sprintf($format, $length, \array_sum($mandatory), \json_encode($mandatory, JSON_THROW_ON_ERROR));
             throw new PasswordException($message);
         }
 
         $result = [];
-        $max = 0;
-
         foreach ($mandatory as $class => $number) {
-            $stringLength = mb_strlen(static::$classes[$class], $encoding);
-            for ($idx = 0; $idx < $number; ++$idx) {
-                $char = mb_substr(static::$classes[$class], random_int(0, $stringLength - 1), 1, $encoding);
-                $result[] = $char;
-                ++$max;
-            }
+            $classCharacters = \mb_str_split(static::$classes[$class], 1, $encoding);
+            $result = \array_merge($result, $this->pick($classCharacters, $number));
         }
+        $result = \array_merge($result, $this->pick($characters, $length - \count($result)));
 
-        while ($max < $length) {
-            $random = random_int(0, $count - 1);
-            $result[] = $characters[$random];
-            ++$max;
-        }
-
-        return implode('', $this->randomArray($result));
+        return \implode('', $this->randomArray($result));
     }
 
     /**
@@ -220,17 +207,38 @@ class PasswordGeneratorAnssi
      */
     private static function assertKnownClasses(array $classes): void
     {
-        $unknown = array_diff_key($classes, static::$classes);
+        $unknown = \array_diff_key($classes, static::$classes);
 
         if ([] !== $unknown) {
             $format = 'Classe(s) de caractères inconnue(s) : %s (classes existantes : %s)';
-            $message = sprintf(
+            $message = \sprintf(
                 $format,
-                implode(', ', array_keys($unknown)),
-                implode(', ', array_keys(static::$classes))
+                \implode(', ', \array_keys($unknown)),
+                \implode(', ', \array_keys(static::$classes))
             );
             throw new PasswordException($message);
         }
+    }
+
+    /**
+     * Tire au hasard $number caractères, avec remise.
+     *
+     * @param list<string> $characters
+     *
+     * @return list<string>
+     *
+     * @throws \Exception
+     */
+    private function pick(array $characters, int $number): array
+    {
+        $result = [];
+        $max = \count($characters) - 1;
+
+        for ($idx = 0; $idx < $number; ++$idx) {
+            $result[] = $characters[\random_int(0, $max)];
+        }
+
+        return $result;
     }
 
     /**
@@ -243,13 +251,13 @@ class PasswordGeneratorAnssi
     private function randomArray(array $array): array
     {
         $result = [];
-        $keys = array_keys($array);
+        $keys = \array_keys($array);
 
         while (!empty($keys)) {
-            $idx = random_int(0, count($keys) - 1);
+            $idx = \random_int(0, \count($keys) - 1);
             $key = $keys[$idx];
             $result[] = $array[$key];
-            array_splice($keys, $idx, 1);
+            \array_splice($keys, $idx, 1);
         }
 
         return $result;

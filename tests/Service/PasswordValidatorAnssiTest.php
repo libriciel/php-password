@@ -27,7 +27,7 @@ class PasswordValidatorAnssiTest extends TestCase
         $dictionary = new class implements PasswordDictionaryInterface {
             public function contains(string $password): bool
             {
-                return in_array($password, ['motdepasse', 'password', 'soleil', 'marseille', 'liberté', 'dupont'], true);
+                return \in_array($password, ['motdepasse', 'password', 'soleil', 'marseille', 'liberté', 'dupont'], true);
             }
         };
 
@@ -96,9 +96,9 @@ class PasswordValidatorAnssiTest extends TestCase
     public function testSingleChecksMatchViolations(array $expected, string $password): void
     {
         $validator = $this->validator();
-        $this->assertSame(!in_array(PasswordValidatorAnssi::VIOLATION_COMPLEXITY, $expected, true), $validator->validComplexity($password));
-        $this->assertSame(!in_array(PasswordValidatorAnssi::VIOLATION_PATTERN, $expected, true), $validator->validPattern($password));
-        $this->assertSame(!in_array(PasswordValidatorAnssi::VIOLATION_DICTIONARY, $expected, true), $validator->validDictionary($password));
+        $this->assertSame(!\in_array(PasswordValidatorAnssi::VIOLATION_COMPLEXITY, $expected, true), $validator->validComplexity($password));
+        $this->assertSame(!\in_array(PasswordValidatorAnssi::VIOLATION_PATTERN, $expected, true), $validator->validPattern($password));
+        $this->assertSame(!\in_array(PasswordValidatorAnssi::VIOLATION_DICTIONARY, $expected, true), $validator->validDictionary($password));
     }
 
     /**
@@ -126,7 +126,7 @@ class PasswordValidatorAnssiTest extends TestCase
         $dictionary = new class implements PasswordDictionaryInterface {
             public function contains(string $password): bool
             {
-                return in_array($password, ['sol', 'sole'], true);
+                return \in_array($password, ['sol', 'sole'], true);
             }
         };
         $validator = new PasswordValidatorAnssi($dictionary);
@@ -190,8 +190,8 @@ class PasswordValidatorAnssiTest extends TestCase
         $meter->expects($this->never())->method('entropy');
         $validator = new PasswordValidatorAnssi(maxLength: 20, meter: $meter);
 
-        $this->assertTrue($validator->validLength(str_repeat('é', 20)));
-        $this->assertFalse($validator->validLength(str_repeat('é', 21)));
+        $this->assertTrue($validator->validLength(\str_repeat('é', 20)));
+        $this->assertFalse($validator->validLength(\str_repeat('é', 21)));
         $this->assertSame([PasswordValidatorAnssi::VIOLATION_LENGTH], $validator->violations('azerty123456789012345', 80, ['azerty']));
         $this->assertFalse($validator->validPassword('azerty123456789012345', 80));
     }
@@ -199,9 +199,9 @@ class PasswordValidatorAnssiTest extends TestCase
     public function testDefaultMaxLength(): void
     {
         $validator = $this->validator();
-        $password = str_repeat('kT9#vLp2!qWz8$mNx4', 57); // 1 026 caractères
+        $password = \str_repeat('kT9#vLp2!qWz8$mNx4', 57); // 1 026 caractères
 
-        $this->assertTrue($validator->validLength(mb_substr($password, 0, 1024)));
+        $this->assertTrue($validator->validLength(\mb_substr($password, 0, 1024)));
         $this->assertSame([PasswordValidatorAnssi::VIOLATION_LENGTH], $validator->violations($password, 80));
     }
 
@@ -268,8 +268,8 @@ class PasswordValidatorAnssiTest extends TestCase
         return [
             'classes négatives' => [-1, 20, 4, 'Le nombre de classes exigées doit être compris entre 0 et 4 (-1)'],
             'trop de classes' => [5, 20, 4, 'Le nombre de classes exigées doit être compris entre 0 et 4 (5)'],
-            'phrase de passe' => [3, 0, 4, 'Longueurs invalides : phrase de passe 0 (minimum 1), motif 4 (minimum 2)'],
-            'motif' => [3, 20, 1, 'Longueurs invalides : phrase de passe 20 (minimum 1), motif 1 (minimum 2)'],
+            'phrase de passe' => [3, 0, 4, 'La longueur d\'une phrase de passe doit être au moins de 1 (0)'],
+            'motif' => [3, 20, 1, 'La longueur d\'un motif doit être au moins de 2 (1)'],
             'longueur maximale' => [3, 20, 4, 'La longueur maximale doit être au moins de 1 (0)', 0],
         ];
     }

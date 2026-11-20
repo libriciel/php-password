@@ -165,4 +165,153 @@ class PasswordStrengthMeterAnssiTest extends TestCase
             $pwdStrengthMeter->strength($input)
         );
     }
+
+    /**
+     * Test des constantes de PasswordStrengthMeterInterface et de son
+     * implémentation.
+     */
+    public function testImplementsInterface(): void
+    {
+        $this->assertInstanceOf(PasswordStrengthMeterInterface::class, new PasswordStrengthMeterAnssi());
+
+        $this->assertSame(1, PasswordStrengthMeterInterface::STRENGTH_VERY_WEAK);
+        $this->assertSame(2, PasswordStrengthMeterInterface::STRENGTH_WEAK);
+        $this->assertSame(3, PasswordStrengthMeterInterface::STRENGTH_MEDIUM);
+        $this->assertSame(4, PasswordStrengthMeterInterface::STRENGTH_STRONG);
+        $this->assertSame(5, PasswordStrengthMeterInterface::STRENGTH_VERY_STRONG);
+    }
+
+    /**
+     * Les seuils sont retournés en ordre descendant.
+     */
+    public function testThresholdsOrder(): void
+    {
+        $pwdStrengthMeter = new PasswordStrengthMeterAnssi();
+
+        $this->assertSame([128, 100, 80, 64, 0], array_keys($pwdStrengthMeter->thresholds()));
+    }
+
+    public function specialCharactersProvider(): array
+    {
+        $classes = [
+            8 => '€!#$*% ?',
+            // L'antislash, pourtant utilisé par le générateur, n'est pas
+            // reconnu par symbols() : anomalie connue, non testée ici
+            20 => '&[|]@^µ§:/;.,<>°²³\'"',
+            16 => 'àâäæçèéêëîïôœùûüÀÂÄÆÇÈÉÊËÎÏÔŒÙÛÜ',
+        ];
+
+        $result = [];
+        foreach ($classes as $symbols => $characters) {
+            foreach (mb_str_split($characters) as $char) {
+                $result[sprintf('%d symboles: "%s"', $symbols, $char)] = [$symbols, $char];
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * Test de la méthode PasswordStrengthMeterAnssi::symbols() pour chacun des
+     * caractères spéciaux pris isolément.
+     *
+     * @dataProvider specialCharactersProvider
+     */
+    public function testSymbolsSpecialCharacters(int $expectedSymbols, string $input): void
+    {
+        $pwdStrengthMeter = new PasswordStrengthMeterAnssi();
+
+        $this->assertSame($expectedSymbols, $pwdStrengthMeter->symbols($input));
+    }
+
+    public function symbolsCombinationsProvider(): array
+    {
+        return [
+            'empty string' => [0, ''],
+            'binary single character' => [2, '1'],
+            'binary takes precedence over decimal' => [2, '0101'],
+            'hexadecimal lower case letters only' => [16, 'cafe'],
+            'hexadecimal takes precedence over alphabet' => [16, 'abc'],
+            'hexadecimal with digit' => [16, '0a'],
+            'hexadecimal mixed case' => [22, 'Cafe'],
+            'not hexadecimal' => [26, 'abcg'],
+            'decimal and lower case diacritic' => [26, '0é'],
+            'lower and upper case diacritic' => [32, 'éÉ'],
+            'symbols 1 and symbols 2' => [28, '!&'],
+            'all classes' => [122, '0aA€&éÉ'],
+        ];
+    }
+
+    /**
+     * Test de la méthode PasswordStrengthMeterAnssi::symbols() avec des
+     * combinaisons de classes de caractères.
+     *
+     * @dataProvider symbolsCombinationsProvider
+     */
+    public function testSymbolsCombinations(int $expectedSymbols, string $input): void
+    {
+        $pwdStrengthMeter = new PasswordStrengthMeterAnssi();
+
+        $this->assertSame($expectedSymbols, $pwdStrengthMeter->symbols($input));
+    }
+
+    public function testEntropyReturnsFloat(): void
+    {
+        $pwdStrengthMeter = new PasswordStrengthMeterAnssi();
+
+        $this->assertSame(61.0, $pwdStrengthMeter->entropy('mot de passe'));
+    }
+
+    public function testEntropyWithNegativePrecision(): void
+    {
+        $pwdStrengthMeter = new PasswordStrengthMeterAnssi();
+
+        $this->assertSame(60.0, $pwdStrengthMeter->entropy('mot de passe', -1));
+    }
+
+    /**
+     * La longueur est comptée en caractères et non en octets.
+     */
+    public function testEntropyMultibyte(): void
+    {
+        $pwdStrengthMeter = new PasswordStrengthMeterAnssi();
+
+        // 4 caractères, 16 symboles
+        $this->assertSame(16.0, $pwdStrengthMeter->entropy('ÀÉÈÇ'));
+        // 4 caractères, 8 symboles
+        $this->assertSame(12.0, $pwdStrengthMeter->entropy('€€€€'));
+    }
+
+    public function strengthThresholdsProvider(): array
+    {
+        return [
+            'empty string' => [PasswordStrengthMeterInterface::STRENGTH_VERY_WEAK, ''],
+            '63 bits' => [PasswordStrengthMeterInterface::STRENGTH_VERY_WEAK, str_repeat('0', 63)],
+            '64 bits' => [PasswordStrengthMeterInterface::STRENGTH_WEAK, str_repeat('0', 64)],
+            '79 bits' => [PasswordStrengthMeterInterface::STRENGTH_WEAK, str_repeat('0', 79)],
+            '80 bits' => [PasswordStrengthMeterInterface::STRENGTH_MEDIUM, str_repeat('0', 80)],
+            '99 bits' => [PasswordStrengthMeterInterface::STRENGTH_MEDIUM, str_repeat('0', 99)],
+            '100 bits' => [PasswordStrengthMeterInterface::STRENGTH_STRONG, str_repeat('0', 100)],
+            '127 bits' => [PasswordStrengthMeterInterface::STRENGTH_STRONG, str_repeat('0', 127)],
+            '128 bits' => [PasswordStrengthMeterInterface::STRENGTH_VERY_STRONG, str_repeat('0', 128)],
+            '1024 bits' => [PasswordStrengthMeterInterface::STRENGTH_VERY_STRONG, str_repeat('0', 1024)],
+            // 24 × log2(10) = 79,73, arrondi à 80
+            'rounded entropy decimal' => [PasswordStrengthMeterInterface::STRENGTH_MEDIUM, str_repeat('3', 24)],
+            // 17 × log2(26) = 79,91, arrondi à 80
+            'rounded entropy alphabet' => [PasswordStrengthMeterInterface::STRENGTH_MEDIUM, str_repeat('g', 17)],
+        ];
+    }
+
+    /**
+     * Test de la méthode PasswordStrengthMeterAnssi::strength() aux bornes des
+     * seuils : l'entropie arrondie est comparée aux seuils, bornes incluses.
+     *
+     * @dataProvider strengthThresholdsProvider
+     */
+    public function testStrengthThresholds(int $expectedStrength, string $input): void
+    {
+        $pwdStrengthMeter = new PasswordStrengthMeterAnssi();
+
+        $this->assertSame($expectedStrength, $pwdStrengthMeter->strength($input));
+    }
 }

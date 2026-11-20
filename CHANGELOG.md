@@ -5,11 +5,11 @@ Toutes les modifications notables de ce projet sont documentées dans ce fichier
 Le format s'inspire de [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/)
 et le projet suit le [versionnage sémantique](https://semver.org/lang/fr/).
 
-## [Non publié]
+## [4.0.0] - non publiée
 
 ### Modifié
 
-- `PasswordGeneratorAnssi::generate()` lève une `PasswordException` lorsque aucune
+- **Rupture de compatibilité** : `PasswordGeneratorAnssi::generate()` lève une `PasswordException` lorsque aucune
   classe de caractères n'est activée, au lieu de renvoyer `false` (ce qui provoquait
   une `TypeError`).
 - Paramètres `$encoding` explicitement nullables (`?string`), ce qui supprime les
@@ -81,7 +81,7 @@ Tag posé sur le même commit que la 3.0.1 : aucune modification de code.
 
 Version initiale.
 
-[Non publié]: https://gitlab.libriciel.fr/libriciel/direction-du-developpement/bibliotheque/php-password/-/compare/3.0.2...master
+[4.0.0]: https://gitlab.libriciel.fr/libriciel/direction-du-developpement/bibliotheque/php-password/-/compare/3.0.2...master
 [3.0.2]: https://gitlab.libriciel.fr/libriciel/direction-du-developpement/bibliotheque/php-password/-/compare/3.0.1...3.0.2
 [3.0.1]: https://gitlab.libriciel.fr/libriciel/direction-du-developpement/bibliotheque/php-password/-/compare/3.0.0...3.0.1
 [3.0.0]: https://gitlab.libriciel.fr/libriciel/direction-du-developpement/bibliotheque/php-password/-/compare/2.0.1...3.0.0

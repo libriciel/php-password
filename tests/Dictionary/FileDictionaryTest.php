@@ -69,6 +69,34 @@ class FileDictionaryTest extends TestCase
         }
     }
 
+    /**
+     * Plusieurs fichiers sont réunis, lus une seule fois puis gardés en
+     * mémoire.
+     */
+    public function testFilesAreMergedAndLoadedOnce(): void
+    {
+        $first = (string) tempnam(sys_get_temp_dir(), 'dico');
+        $second = (string) tempnam(sys_get_temp_dir(), 'dico');
+        file_put_contents($first, "soleil\n");
+        file_put_contents($second, "Libriciel\n");
+
+        $dictionary = new FileDictionary([$first, $second]);
+        try {
+            $this->assertTrue($dictionary->contains('soleil'));
+        } finally {
+            unlink($first);
+            unlink($second);
+        }
+
+        // Les fichiers n'existent plus : les entrées viennent de la mémoire
+        $this->assertTrue($dictionary->contains('libriciel'));
+        $this->assertFalse($dictionary->contains('azerty'));
+    }
+
+    /**
+     * L'erreur n'est levée qu'à la première recherche : le constructeur ne lit
+     * pas les fichiers.
+     */
     public function testUnreadableFileThrowsException(): void
     {
         $dictionary = new FileDictionary(['/nonexistent/dictionary.txt']);

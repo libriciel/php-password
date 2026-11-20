@@ -6,6 +6,7 @@ namespace LibricielTest\Password\Service;
 
 use Libriciel\Password\Dictionary\PasswordDictionaryInterface;
 use Libriciel\Password\PasswordException;
+use Libriciel\Password\Service\PasswordStrengthMeterAnssi;
 use Libriciel\Password\Service\PasswordValidatorAnssi;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
@@ -113,6 +114,70 @@ class PasswordValidatorAnssiTest extends TestCase
         $this->assertFalse($validator->validPattern('Azerty'));
         $this->assertTrue($validator->validDictionary('kdjT9mzpqr'));
         $this->assertFalse($validator->validDictionary('Soleil2024!'));
+    }
+
+    /**
+     * Une partie centrale de moins de 4 lettres n'est pas comparée au
+     * dictionnaire : un mot de passe aléatoire ne doit pas être refusé parce
+     * qu'il n'en reste que quelques lettres.
+     */
+    public function testShortCoreIsNotComparedToDictionary(): void
+    {
+        $dictionary = new class implements PasswordDictionaryInterface {
+            public function contains(string $password): bool
+            {
+                return in_array($password, ['sol', 'sole'], true);
+            }
+        };
+        $validator = new PasswordValidatorAnssi($dictionary);
+
+        $this->assertTrue($validator->validDictionary('48!Sol#92'));
+        $this->assertFalse($validator->validDictionary('48!Sole#92'));
+        $this->assertFalse($validator->validDictionary('Sol'));
+    }
+
+    /**
+     * @return array<string, array{string}>
+     */
+    public static function shorterThanPatternProvider(): array
+    {
+        return [
+            'vide' => [''],
+            'un caractère' => ['a'],
+            'trois caractères' => ['abc'],
+        ];
+    }
+
+    /**
+     * Un mot de passe plus court que la longueur des motifs ne contient pas de
+     * suite, sauf s'il est formé d'un bloc répété.
+     */
+    #[DataProvider('shorterThanPatternProvider')]
+    public function testPasswordShorterThanPattern(string $password): void
+    {
+        $this->assertTrue($this->validator()->validPattern($password));
+        $this->assertFalse($this->validator()->validPattern('aa'));
+    }
+
+    public function testEmptyPassword(): void
+    {
+        $this->assertSame(
+            [PasswordValidatorAnssi::VIOLATION_ENTROPY, PasswordValidatorAnssi::VIOLATION_COMPLEXITY],
+            $this->validator()->violations('', 1, self::PERSONAL_DATA)
+        );
+        $this->assertFalse($this->validator()->validPassword('', 0, []));
+    }
+
+    /**
+     * Le calcul d'entropie peut être fourni par l'application.
+     */
+    public function testInjectedStrengthMeter(): void
+    {
+        $meter = $this->createMock(PasswordStrengthMeterAnssi::class);
+        $meter->expects($this->once())->method('entropy')->with('kT9#vLp2!q', 10)->willReturn(200.0);
+
+        $validator = new PasswordValidatorAnssi(meter: $meter);
+        $this->assertSame([], $validator->violations('kT9#vLp2!q', 128));
     }
 
     public function testEntropyThreshold(): void

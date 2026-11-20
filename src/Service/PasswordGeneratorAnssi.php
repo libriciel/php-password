@@ -104,6 +104,7 @@ class PasswordGeneratorAnssi
      *                          S'il est omis, l'encodage de caractères interne (mb_internal_encoding)
      *                          sera utilisé.
      *
+     * @throws PasswordException si aucune classe de caractères n'est activée
      * @throws \Exception
      */
     public function generate(int $length = 40, array $params = [], ?string $encoding = null): string
@@ -111,16 +112,15 @@ class PasswordGeneratorAnssi
         $encoding = null === $encoding ? mb_internal_encoding() : $encoding;
         $characters = $this->characters($params, $encoding);
         $count = count($characters);
-        $result = false;
 
-        if ($count > 0) {
-            $result = '';
-            $max = 0;
-            while ($max < $length) {
-                $random = random_int(0, $count - 1);
-                $result .= $characters[$random];
-                ++$max;
-            }
+        if (0 === $count) {
+            $format = 'Impossible de générer un mot de passe de longueur %d sans caractère disponible';
+            throw new PasswordException(sprintf($format, $length));
+        }
+
+        $result = '';
+        for ($max = 0; $max < $length; ++$max) {
+            $result .= $characters[random_int(0, $count - 1)];
         }
 
         return $result;

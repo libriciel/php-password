@@ -9,7 +9,7 @@ use Libriciel\Password\Service\PasswordStrengthMeterInterface;
 use PHPUnit\Framework\TestCase;
 
 /**
- * Tests unitaires de la classe Libriciel\Utility\Password\PasswordStrengthMeterAnssi.
+ * Tests unitaires de la classe Libriciel\Password\Service\PasswordStrengthMeterAnssi.
  */
 class PasswordStrengthMeterAnssiTest extends TestCase
 {

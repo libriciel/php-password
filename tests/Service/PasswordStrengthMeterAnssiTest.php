@@ -195,7 +195,7 @@ class PasswordStrengthMeterAnssiTest extends TestCase
     /**
      * @return array<string, array{int, string}>
      */
-    public function specialCharactersProvider(): array
+    public static function specialCharactersProvider(): array
     {
         $classes = [
             8 => '€!#$*% ?',
@@ -218,9 +218,8 @@ class PasswordStrengthMeterAnssiTest extends TestCase
     /**
      * Test de la méthode PasswordStrengthMeterAnssi::symbols() pour chacun des
      * caractères spéciaux pris isolément.
-     *
-     * @dataProvider specialCharactersProvider
      */
+    #[DataProvider('specialCharactersProvider')]
     public function testSymbolsSpecialCharacters(int $expectedSymbols, string $input): void
     {
         $pwdStrengthMeter = new PasswordStrengthMeterAnssi();
@@ -231,7 +230,7 @@ class PasswordStrengthMeterAnssiTest extends TestCase
     /**
      * @return array<string, array{int, string}>
      */
-    public function symbolsCombinationsProvider(): array
+    public static function symbolsCombinationsProvider(): array
     {
         return [
             'empty string' => [0, ''],
@@ -252,9 +251,8 @@ class PasswordStrengthMeterAnssiTest extends TestCase
     /**
      * Test de la méthode PasswordStrengthMeterAnssi::symbols() avec des
      * combinaisons de classes de caractères.
-     *
-     * @dataProvider symbolsCombinationsProvider
      */
+    #[DataProvider('symbolsCombinationsProvider')]
     public function testSymbolsCombinations(int $expectedSymbols, string $input): void
     {
         $pwdStrengthMeter = new PasswordStrengthMeterAnssi();
@@ -292,7 +290,7 @@ class PasswordStrengthMeterAnssiTest extends TestCase
     /**
      * @return array<string, array{int, string}>
      */
-    public function strengthThresholdsProvider(): array
+    public static function strengthThresholdsProvider(): array
     {
         return [
             'empty string' => [PasswordStrengthMeterInterface::STRENGTH_VERY_WEAK, ''],
@@ -315,9 +313,8 @@ class PasswordStrengthMeterAnssiTest extends TestCase
     /**
      * Test de la méthode PasswordStrengthMeterAnssi::strength() aux bornes des
      * seuils : l'entropie arrondie est comparée aux seuils, bornes incluses.
-     *
-     * @dataProvider strengthThresholdsProvider
      */
+    #[DataProvider('strengthThresholdsProvider')]
     public function testStrengthThresholds(int $expectedStrength, string $input): void
     {
         $pwdStrengthMeter = new PasswordStrengthMeterAnssi();

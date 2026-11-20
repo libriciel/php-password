@@ -96,7 +96,7 @@ build:
     - rm -rf "/tmp/docker-$CI_JOB_ID"
 
 # Dépendances installées une fois, pour les tests sur chaque version de PHP. Le
-# composer.lock est résolu pour PHP 8.1 (config.platform.php) : il s'installe sur
+# composer.lock est résolu pour PHP 8.2 (config.platform.php) : il s'installe sur
 # toutes les versions supportées.
 vendor:
   extends: .hors_planification
@@ -174,8 +174,8 @@ unit_test:
       - coverage
     expire_in: 1h
 
-# La bibliothèque déclare php ^8.1 : les tests tournent sur chaque version supportée.
-# PHPUnit reste en 10.5, la dernière version qui accepte PHP 8.1.
+# La bibliothèque déclare php ^8.2 : les tests tournent sur chaque version supportée.
+# PHPUnit reste en 11.5, la dernière version qui accepte PHP 8.2.
 .test_php:
   extends: .hors_planification
   stage: test
@@ -185,10 +185,6 @@ unit_test:
   script:
     - php -v
     - vendor/bin/phpunit --colors=never
-
-test-php-8.1:
-  extends: .test_php
-  image: hubdocker.libriciel.fr/php:8.1.34-cli-alpine3.21@sha256:7949370448b0b4d9787776dc5968e0fd8d48763292344b5fbf21539441228a98
 
 test-php-8.2:
   extends: .test_php

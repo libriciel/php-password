@@ -2,7 +2,7 @@
     "name": "libriciel/php-password",
     "description": "Bibliothèque PHP permettant de calculer la force et l'entropie d'un mot de passe et de générer des mots de passes aléatoires.",
     "type": "library",
-    "license": "MIT",
+    "license": "AGPL-3.0-or-later",
     "authors": [
         {
             "name": "Théo GUILLON",

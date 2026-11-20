@@ -9,6 +9,9 @@ et le projet suit le [versionnage sémantique](https://semver.org/lang/fr/).
 
 ### Modifié
 
+- **Changement de licence** : la bibliothèque passe de la licence MIT à la
+  GNU AGPL v3 ou ultérieure (`AGPL-3.0-or-later`), comme les autres produits
+  Libriciel. Les versions 3.x et antérieures restent sous licence MIT (#12).
 - **Rupture de compatibilité** : `PasswordGeneratorAnssi::generate()` lève une
   `PasswordException` lorsque aucune classe de caractères n'est activée, au lieu de
   renvoyer `false` (ce qui provoquait une `TypeError`) (#1).

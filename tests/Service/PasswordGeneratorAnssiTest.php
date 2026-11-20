@@ -13,6 +13,8 @@ class PasswordGeneratorAnssiTest extends TestCase
 {
     /**
      * Configuration par défaut.
+     *
+     * @var array<string, bool>
      */
     protected array $defaultConfig = [
         'binary' => false,
@@ -29,6 +31,8 @@ class PasswordGeneratorAnssiTest extends TestCase
 
     /**
      * Les caractères de chacune des classes, dans l'ordre de leur définition.
+     *
+     * @var array<string, string>
      */
     protected array $classes = [
         'binary' => '01',
@@ -128,6 +132,8 @@ class PasswordGeneratorAnssiTest extends TestCase
 
     /**
      * Retourne une configuration où toutes les classes sont désactivées.
+     *
+     * @return array<string, bool>
      */
     protected function allDisabled(): array
     {
@@ -137,6 +143,8 @@ class PasswordGeneratorAnssiTest extends TestCase
     /**
      * Retourne une configuration où seules les classes passées en paramètre
      * sont activées.
+     *
+     * @return array<string, bool>
      */
     protected function only(string ...$classes): array
     {
@@ -201,6 +209,9 @@ class PasswordGeneratorAnssiTest extends TestCase
         $this->assertSame($expected, $pwdGeneratorAnsi->characters());
     }
 
+    /**
+     * @return array<string, array{string}>
+     */
     public function classesProvider(): array
     {
         $result = [];
@@ -240,6 +251,7 @@ class PasswordGeneratorAnssiTest extends TestCase
 
         // 157 caractères au total, dont 34 en double
         $all = array_fill_keys(array_keys($this->defaultConfig), true);
+        /** @var list<string> $actual */
         $actual = $pwdGeneratorAnsi->characters($all);
         $this->assertCount(123, $actual);
         $this->assertSame(array_values(array_unique($actual)), $actual);
@@ -289,6 +301,9 @@ class PasswordGeneratorAnssiTest extends TestCase
         $this->assertSame($expected, $pwdGeneratorAnsi->characters($params, 'UTF-8'));
     }
 
+    /**
+     * @return array<string, array{int}>
+     */
     public function lengthProvider(): array
     {
         return [
@@ -510,6 +525,9 @@ class PasswordGeneratorAnssiTest extends TestCase
         $pwdGeneratorAnsi->generate(5, $this->allDisabled(), 'UTF-8');
     }
 
+    /**
+     * @return array<string, array{int, array<string, int>, ?string, string}>
+     */
     public function constrainedProvider(): array
     {
         return [
@@ -528,6 +546,8 @@ class PasswordGeneratorAnssiTest extends TestCase
      * longueur, les classes obligatoires et l'encodage.
      *
      * @dataProvider constrainedProvider
+     *
+     * @param array<string, int> $mandatory
      */
     public function testConstrainedCombinations(int $length, array $mandatory, ?string $encoding, string $regexp): void
     {
@@ -537,6 +557,9 @@ class PasswordGeneratorAnssiTest extends TestCase
         $this->assertMatchesRegularExpression($regexp, $password);
     }
 
+    /**
+     * @return array<string, array{int, array<string, bool>, array<string, int>, ?string, string}>
+     */
     public function constrainedExceptionProvider(): array
     {
         return [
@@ -576,6 +599,9 @@ class PasswordGeneratorAnssiTest extends TestCase
      * sans encodage explicite.
      *
      * @dataProvider constrainedExceptionProvider
+     *
+     * @param array<string, bool> $params
+     * @param array<string, int>  $mandatory
      */
     public function testConstrainedExceptions(
         int $length,

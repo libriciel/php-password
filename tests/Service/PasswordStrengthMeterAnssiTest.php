@@ -172,13 +172,14 @@ class PasswordStrengthMeterAnssiTest extends TestCase
      */
     public function testImplementsInterface(): void
     {
-        $this->assertInstanceOf(PasswordStrengthMeterInterface::class, new PasswordStrengthMeterAnssi());
+        // Contrat d'API vérifié à l'exécution, garanti statiquement
+        $this->assertInstanceOf(PasswordStrengthMeterInterface::class, new PasswordStrengthMeterAnssi()); // @phpstan-ignore method.alreadyNarrowedType
 
-        $this->assertSame(1, PasswordStrengthMeterInterface::STRENGTH_VERY_WEAK);
-        $this->assertSame(2, PasswordStrengthMeterInterface::STRENGTH_WEAK);
-        $this->assertSame(3, PasswordStrengthMeterInterface::STRENGTH_MEDIUM);
-        $this->assertSame(4, PasswordStrengthMeterInterface::STRENGTH_STRONG);
-        $this->assertSame(5, PasswordStrengthMeterInterface::STRENGTH_VERY_STRONG);
+        $this->assertSame(1, PasswordStrengthMeterInterface::STRENGTH_VERY_WEAK); // @phpstan-ignore method.alreadyNarrowedType
+        $this->assertSame(2, PasswordStrengthMeterInterface::STRENGTH_WEAK); // @phpstan-ignore method.alreadyNarrowedType
+        $this->assertSame(3, PasswordStrengthMeterInterface::STRENGTH_MEDIUM); // @phpstan-ignore method.alreadyNarrowedType
+        $this->assertSame(4, PasswordStrengthMeterInterface::STRENGTH_STRONG); // @phpstan-ignore method.alreadyNarrowedType
+        $this->assertSame(5, PasswordStrengthMeterInterface::STRENGTH_VERY_STRONG); // @phpstan-ignore method.alreadyNarrowedType
     }
 
     /**
@@ -191,6 +192,9 @@ class PasswordStrengthMeterAnssiTest extends TestCase
         $this->assertSame([128, 100, 80, 64, 0], array_keys($pwdStrengthMeter->thresholds()));
     }
 
+    /**
+     * @return array<string, array{int, string}>
+     */
     public function specialCharactersProvider(): array
     {
         $classes = [
@@ -224,6 +228,9 @@ class PasswordStrengthMeterAnssiTest extends TestCase
         $this->assertSame($expectedSymbols, $pwdStrengthMeter->symbols($input));
     }
 
+    /**
+     * @return array<string, array{int, string}>
+     */
     public function symbolsCombinationsProvider(): array
     {
         return [
@@ -282,6 +289,9 @@ class PasswordStrengthMeterAnssiTest extends TestCase
         $this->assertSame(12.0, $pwdStrengthMeter->entropy('€€€€'));
     }
 
+    /**
+     * @return array<string, array{int, string}>
+     */
     public function strengthThresholdsProvider(): array
     {
         return [

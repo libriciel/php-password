@@ -17,7 +17,8 @@ class PasswordExceptionTest extends TestCase
         $previous = new \LogicException('précédente');
         $exception = new PasswordException('message', 42, $previous);
 
-        $this->assertInstanceOf(\RuntimeException::class, $exception);
+        // Contrat d'API vérifié à l'exécution, garanti statiquement
+        $this->assertInstanceOf(\RuntimeException::class, $exception); // @phpstan-ignore method.alreadyNarrowedType
         $this->assertSame('message', $exception->getMessage());
         $this->assertSame(42, $exception->getCode());
         $this->assertSame($previous, $exception->getPrevious());

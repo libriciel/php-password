@@ -185,12 +185,6 @@ parameters:
 			path: tests/Service/PasswordGeneratorAnssiTest.php
 
 		-
-			message: '#^Property LibricielTest\\Password\\Service\\PasswordGeneratorAnssiTest\:\:\$defaultConfig type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: tests/Service/PasswordGeneratorAnssiTest.php
-
-		-
 			message: '#^Method LibricielTest\\Password\\Service\\PasswordStrengthMeterAnssiTest\:\:entropyProvider\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1

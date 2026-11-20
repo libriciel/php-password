@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace LibricielTest\Password\Service;
 
+use Libriciel\Password\Service\PasswordGeneratorAnssi;
 use Libriciel\Password\Service\PasswordStrengthMeterAnssi;
 use Libriciel\Password\Service\PasswordStrengthMeterInterface;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -206,9 +207,7 @@ class PasswordStrengthMeterAnssiTest extends TestCase
     {
         $classes = [
             8 => '€!#$*% ?',
-            // L'antislash, pourtant utilisé par le générateur, n'est pas
-            // reconnu par symbols() : anomalie connue, non testée ici
-            20 => '&[|]@^µ§:/;.,<>°²³\'"',
+            20 => '&[|]@^µ§\\:/;.,<>°²³\'"',
             16 => 'àâäæçèéêëîïôœùûüÀÂÄÆÇÈÉÊËÎÏÔŒÙÛÜ',
         ];
 
@@ -232,6 +231,26 @@ class PasswordStrengthMeterAnssiTest extends TestCase
         $pwdStrengthMeter = new PasswordStrengthMeterAnssi();
 
         $this->assertSame($expectedSymbols, $pwdStrengthMeter->symbols($input));
+    }
+
+    /**
+     * Chaque caractère que le générateur peut produire est reconnu par
+     * symbols() (#5).
+     */
+    public function testSymbolsRecognizesEveryGeneratedCharacter(): void
+    {
+        $pwdStrengthMeter = new PasswordStrengthMeterAnssi();
+        $pwdGenerator = new PasswordGeneratorAnssi();
+        $allClasses = array_fill_keys(array_keys($pwdGenerator->defaults()), true);
+        $characters = $pwdGenerator->characters($allClasses);
+
+        foreach ($characters as $char) {
+            $this->assertGreaterThan(
+                0,
+                $pwdStrengthMeter->symbols($char),
+                sprintf('Le caractère "%s" n\'est pas reconnu', $char)
+            );
+        }
     }
 
     /**

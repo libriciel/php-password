@@ -44,6 +44,9 @@ et le projet suit le [versionnage sémantique](https://semver.org/lang/fr/).
   un mot de passe juste sous un seuil n'est plus classé au niveau supérieur (par
   exemple 17 majuscules, 79,9 bits, passent de « moyenne » à « faible »). La force
   renvoyée baisse d'un niveau pour ces mots de passe (#10).
+- `PasswordStrengthMeterAnssi::symbols()` reconnaît l'antislash (`\`), que le
+  générateur peut produire (classe `symbols_2`) : il était ignoré, ce qui
+  sous-estimait l'entropie et la force des mots de passe qui en contiennent (#5).
 
 ### Supprimé
 

@@ -1,0 +1,293 @@
+# Erreurs présentes à l'introduction de PHPStan (niveau max), à résorber puis retirer d'ici.
+# Dont un vrai bug : sprintf() avec trop d'arguments dans PasswordGeneratorAnssi::constrained().
+# Le reste : types de tableaux non précisés, valeurs mixed, méthodes de test sans type de retour.
+# Régénérer avec : vendor/bin/phpstan analyse --generate-baseline phpstan-baseline.neon
+parameters:
+	ignoreErrors:
+		-
+			message: '#^Binary operation "\.\=" between string and mixed results in an error\.$#'
+			identifier: assignOp.invalid
+			count: 1
+			path: src/Service/PasswordGeneratorAnssi.php
+
+		-
+			message: '#^Call to sprintf contains 1 placeholder, 3 values given\.$#'
+			identifier: argument.sprintf
+			count: 1
+			path: src/Service/PasswordGeneratorAnssi.php
+
+		-
+			message: '#^Method Libriciel\\Password\\Service\\PasswordGeneratorAnssi\:\:characters\(\) has parameter \$params with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Service/PasswordGeneratorAnssi.php
+
+		-
+			message: '#^Method Libriciel\\Password\\Service\\PasswordGeneratorAnssi\:\:characters\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Service/PasswordGeneratorAnssi.php
+
+		-
+			message: '#^Method Libriciel\\Password\\Service\\PasswordGeneratorAnssi\:\:config\(\) has parameter \$config with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Service/PasswordGeneratorAnssi.php
+
+		-
+			message: '#^Method Libriciel\\Password\\Service\\PasswordGeneratorAnssi\:\:config\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Service/PasswordGeneratorAnssi.php
+
+		-
+			message: '#^Method Libriciel\\Password\\Service\\PasswordGeneratorAnssi\:\:constrained\(\) has parameter \$mandatory with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Service/PasswordGeneratorAnssi.php
+
+		-
+			message: '#^Method Libriciel\\Password\\Service\\PasswordGeneratorAnssi\:\:constrained\(\) has parameter \$params with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Service/PasswordGeneratorAnssi.php
+
+		-
+			message: '#^Method Libriciel\\Password\\Service\\PasswordGeneratorAnssi\:\:defaults\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Service/PasswordGeneratorAnssi.php
+
+		-
+			message: '#^Method Libriciel\\Password\\Service\\PasswordGeneratorAnssi\:\:generate\(\) has parameter \$params with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Service/PasswordGeneratorAnssi.php
+
+		-
+			message: '#^Method Libriciel\\Password\\Service\\PasswordGeneratorAnssi\:\:randomArray\(\) has parameter \$array with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Service/PasswordGeneratorAnssi.php
+
+		-
+			message: '#^Method Libriciel\\Password\\Service\\PasswordGeneratorAnssi\:\:randomArray\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Service/PasswordGeneratorAnssi.php
+
+		-
+			message: '#^Parameter \#1 \$string of function mb_str_split expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Service/PasswordGeneratorAnssi.php
+
+		-
+			message: '#^Parameter \#1 \$string of function mb_strlen expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Service/PasswordGeneratorAnssi.php
+
+		-
+			message: '#^Parameter \#1 \$string of function mb_substr expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Service/PasswordGeneratorAnssi.php
+
+		-
+			message: '#^Parameter \#2 \$array of function implode expects array\<string\>, array given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Service/PasswordGeneratorAnssi.php
+
+		-
+			message: '#^Property Libriciel\\Password\\Service\\PasswordGeneratorAnssi\:\:\$classes type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Service/PasswordGeneratorAnssi.php
+
+		-
+			message: '#^Property Libriciel\\Password\\Service\\PasswordGeneratorAnssi\:\:\$config type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Service/PasswordGeneratorAnssi.php
+
+		-
+			message: '#^Property Libriciel\\Password\\Service\\PasswordGeneratorAnssi\:\:\$defaults type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Service/PasswordGeneratorAnssi.php
+
+		-
+			message: '#^Method Libriciel\\Password\\Service\\PasswordStrengthMeterAnssi\:\:strength\(\) should return int but returns mixed\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Service/PasswordStrengthMeterAnssi.php
+
+		-
+			message: '#^Method Libriciel\\Password\\Service\\PasswordStrengthMeterAnssi\:\:thresholds\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Service/PasswordStrengthMeterAnssi.php
+
+		-
+			message: '#^Method LibricielTest\\Password\\Service\\PasswordGeneratorAnssiTest\:\:testConfig\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: tests/Service/PasswordGeneratorAnssiTest.php
+
+		-
+			message: '#^Method LibricielTest\\Password\\Service\\PasswordGeneratorAnssiTest\:\:testConstrained\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: tests/Service/PasswordGeneratorAnssiTest.php
+
+		-
+			message: '#^Method LibricielTest\\Password\\Service\\PasswordGeneratorAnssiTest\:\:testConstrainedException1\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: tests/Service/PasswordGeneratorAnssiTest.php
+
+		-
+			message: '#^Method LibricielTest\\Password\\Service\\PasswordGeneratorAnssiTest\:\:testConstrainedException2\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: tests/Service/PasswordGeneratorAnssiTest.php
+
+		-
+			message: '#^Method LibricielTest\\Password\\Service\\PasswordGeneratorAnssiTest\:\:testDefaults\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: tests/Service/PasswordGeneratorAnssiTest.php
+
+		-
+			message: '#^Method LibricielTest\\Password\\Service\\PasswordGeneratorAnssiTest\:\:testGenerate\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: tests/Service/PasswordGeneratorAnssiTest.php
+
+		-
+			message: '#^Method LibricielTest\\Password\\Service\\PasswordGeneratorAnssiTest\:\:testGenerateDefaultConfig\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: tests/Service/PasswordGeneratorAnssiTest.php
+
+		-
+			message: '#^Method LibricielTest\\Password\\Service\\PasswordGeneratorAnssiTest\:\:testGenerateWithoutAvailableCharacter\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: tests/Service/PasswordGeneratorAnssiTest.php
+
+		-
+			message: '#^Method LibricielTest\\Password\\Service\\PasswordGeneratorAnssiTest\:\:testWithUnexpectedClass\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: tests/Service/PasswordGeneratorAnssiTest.php
+
+		-
+			message: '#^Property LibricielTest\\Password\\Service\\PasswordGeneratorAnssiTest\:\:\$defaultConfig type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: tests/Service/PasswordGeneratorAnssiTest.php
+
+		-
+			message: '#^Method LibricielTest\\Password\\Service\\PasswordStrengthMeterAnssiTest\:\:entropyProvider\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: tests/Service/PasswordStrengthMeterAnssiTest.php
+
+		-
+			message: '#^Method LibricielTest\\Password\\Service\\PasswordStrengthMeterAnssiTest\:\:strengthProvider\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: tests/Service/PasswordStrengthMeterAnssiTest.php
+
+		-
+			message: '#^Method LibricielTest\\Password\\Service\\PasswordStrengthMeterAnssiTest\:\:symbolsProvider\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: tests/Service/PasswordStrengthMeterAnssiTest.php
+
+		-
+			message: '#^Method LibricielTest\\Password\\Service\\PasswordStrengthMeterAnssiTest\:\:testEntropy\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: tests/Service/PasswordStrengthMeterAnssiTest.php
+
+		-
+			message: '#^Method LibricielTest\\Password\\Service\\PasswordStrengthMeterAnssiTest\:\:testSymbols\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: tests/Service/PasswordStrengthMeterAnssiTest.php
+
+		-
+			message: '#^Method LibricielTest\\Password\\Service\\PasswordStrengthMeterAnssiTest\:\:testThresholds\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: tests/Service/PasswordStrengthMeterAnssiTest.php
+
+		-
+			message: '#^Method LibricielTest\\Password\\Service\\PasswordStrengthMeterAnssiWebpageTest\:\:assertEqualEntropiesByLength\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: tests/Service/PasswordStrengthMeterAnssiWebpageTest.php
+
+		-
+			message: '#^Method LibricielTest\\Password\\Service\\PasswordStrengthMeterAnssiWebpageTest\:\:assertEqualEntropiesByLength\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: tests/Service/PasswordStrengthMeterAnssiWebpageTest.php
+
+		-
+			message: '#^Method LibricielTest\\Password\\Service\\PasswordStrengthMeterAnssiWebpageTest\:\:testEntropy10Symbols\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: tests/Service/PasswordStrengthMeterAnssiWebpageTest.php
+
+		-
+			message: '#^Method LibricielTest\\Password\\Service\\PasswordStrengthMeterAnssiWebpageTest\:\:testEntropy16Symbols\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: tests/Service/PasswordStrengthMeterAnssiWebpageTest.php
+
+		-
+			message: '#^Method LibricielTest\\Password\\Service\\PasswordStrengthMeterAnssiWebpageTest\:\:testEntropy26Symbols\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: tests/Service/PasswordStrengthMeterAnssiWebpageTest.php
+
+		-
+			message: '#^Method LibricielTest\\Password\\Service\\PasswordStrengthMeterAnssiWebpageTest\:\:testEntropy2Symbols\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: tests/Service/PasswordStrengthMeterAnssiWebpageTest.php
+
+		-
+			message: '#^Method LibricielTest\\Password\\Service\\PasswordStrengthMeterAnssiWebpageTest\:\:testEntropy36Symbols\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: tests/Service/PasswordStrengthMeterAnssiWebpageTest.php
+
+		-
+			message: '#^Method LibricielTest\\Password\\Service\\PasswordStrengthMeterAnssiWebpageTest\:\:testEntropy52Symbols\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: tests/Service/PasswordStrengthMeterAnssiWebpageTest.php
+
+		-
+			message: '#^Method LibricielTest\\Password\\Service\\PasswordStrengthMeterAnssiWebpageTest\:\:testEntropy62Symbols\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: tests/Service/PasswordStrengthMeterAnssiWebpageTest.php
+
+		-
+			message: '#^Method LibricielTest\\Password\\Service\\PasswordStrengthMeterAnssiWebpageTest\:\:testEntropy70Symbols\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: tests/Service/PasswordStrengthMeterAnssiWebpageTest.php
+
+		-
+			message: '#^Method LibricielTest\\Password\\Service\\PasswordStrengthMeterAnssiWebpageTest\:\:testEntropy90Symbols\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: tests/Service/PasswordStrengthMeterAnssiWebpageTest.php

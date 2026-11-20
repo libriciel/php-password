@@ -20,6 +20,16 @@ et le projet suit le [versionnage sémantique](https://semver.org/lang/fr/).
 - Dépendances de développement à leur dernière version majeure : PHPUnit 13,
   PHP_CodeSniffer 4, PHPMD 3, PHP CS Fixer 3.95 (#3).
 - Images Docker épinglées par digest (`tag@sha256:…`) dans le Dockerfile et la CI (#3).
+- CI alignée sur le socle Libriciel : SAST, détection de secrets, analyse des
+  dépendances, `composer audit`, scan de l'image (composant `vulnerability-scan`),
+  `check-libriciel-standards`, Renovate, PHPStan (niveau max), Rector et tests sur
+  PHP 8.1 à 8.5 (#2).
+- PHPUnit ramené en 10.5, dernière version compatible avec PHP 8.1, pour tester
+  toutes les versions de PHP supportées (#2).
+- ECS remplace PHP CS Fixer, avec les mêmes règles `@Symfony` ; PHPMD et
+  PHP_CodeSniffer, jamais lancés, sont retirés (#2).
+- Environnement de développement dans `compose.dev.yaml`, cibles `make test`,
+  `phpstan`, `rector`, `ecs`, `audit` et `qa` (#2).
 
 ### Supprimé
 
@@ -28,6 +38,8 @@ et le projet suit le [versionnage sémantique](https://semver.org/lang/fr/).
 ### Sécurité
 
 - Mise à jour des dépendances de développement.
+- Le jeton GitHub est passé au build Docker en secret BuildKit plutôt qu'en
+  `--build-arg`, qui l'aurait exposé dans l'historique de l'image (#2).
 
 ### Documentation
 

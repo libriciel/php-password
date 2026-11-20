@@ -53,6 +53,11 @@ et le projet suit le [versionnage sémantique](https://semver.org/lang/fr/).
 - `PasswordStrengthMeterAnssi::symbols()` reconnaît l'antislash (`\`), que le
   générateur peut produire (classe `symbols_2`) : il était ignoré, ce qui
   sous-estimait l'entropie et la force des mots de passe qui en contiennent (#5).
+- `PasswordStrengthMeterAnssi::entropy()` renvoie `0` pour une chaîne vide ou
+  composée uniquement de caractères hors classes (`~`, `-`, `_`, `ñ`…), au lieu
+  de `NAN` ou `-INF`, qui faisaient par exemple échouer `json_encode()`. La force
+  reste « très faible ». Les caractères hors classes mêlés à d'autres comptent
+  toujours dans la longueur, mais pas dans le nombre de symboles (#6).
 
 ### Supprimé
 

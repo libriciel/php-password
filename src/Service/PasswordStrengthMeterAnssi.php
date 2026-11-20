@@ -70,6 +70,9 @@ class PasswordStrengthMeterAnssi implements PasswordStrengthMeterInterface
     /**
      * Retourne le nombre de bits d'entropie pour une chaîne de caractères.
      *
+     * Renvoie 0 pour une chaîne vide ou sans aucun caractère reconnu par
+     * symbols() : le résultat est toujours un nombre fini.
+     *
      * @param string $string    La chaîne de caractères
      * @param int    $precision Le nombre de décimales souhaitées
      */
@@ -85,7 +88,14 @@ class PasswordStrengthMeterAnssi implements PasswordStrengthMeterInterface
      */
     private function exactEntropy(string $string): float
     {
-        return mb_strlen($string) * log($this->symbols($string), 2);
+        $symbols = $this->symbols($string);
+
+        // log(0) vaut -INF, et 0 × -INF vaut NAN pour la chaîne vide
+        if (0 === $symbols) {
+            return 0.0;
+        }
+
+        return mb_strlen($string) * log($symbols, 2);
     }
 
     /**

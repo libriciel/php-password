@@ -286,6 +286,40 @@ class PasswordStrengthMeterAnssiTest extends TestCase
         $this->assertSame($expectedSymbols, $pwdStrengthMeter->symbols($input));
     }
 
+    /**
+     * @return array<string, array{float, string}>
+     */
+    public static function entropyWithoutSymbolsProvider(): array
+    {
+        return [
+            'empty string' => [0.0, ''],
+            'unknown characters only' => [0.0, '~~~~'],
+            'unknown multibyte characters only' => [0.0, 'ñ’ñ’'],
+            // Les caractères hors classes comptent dans la longueur, pas dans
+            // le nombre de symboles : 2 × log2(26) = 9,40
+            'unknown character mixed with known ones' => [9.4, 'a~'],
+        ];
+    }
+
+    /**
+     * PasswordStrengthMeterAnssi::entropy() renvoie toujours un nombre fini,
+     * même sans aucun caractère reconnu (#6).
+     */
+    #[DataProvider('entropyWithoutSymbolsProvider')]
+    public function testEntropyWithoutSymbols(float $expectedEntropy, string $input): void
+    {
+        $pwdStrengthMeter = new PasswordStrengthMeterAnssi();
+        $entropy = $pwdStrengthMeter->entropy($input, 2);
+
+        $this->assertTrue(is_finite($entropy));
+        $this->assertSame($expectedEntropy, $entropy);
+        $this->assertNotFalse(json_encode($entropy));
+        $this->assertSame(
+            PasswordStrengthMeterInterface::STRENGTH_VERY_WEAK,
+            $pwdStrengthMeter->strength($input)
+        );
+    }
+
     public function testEntropyReturnsFloat(): void
     {
         $pwdStrengthMeter = new PasswordStrengthMeterAnssi();

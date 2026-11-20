@@ -10,7 +10,9 @@ use Libriciel\Password\PasswordException;
  * Cette classe permet de générer des mots de passes aléatoires suivant les
  * recommandations de l'ANSSI.
  *
- * @see {@url https://www.ssi.gouv.fr/administration/precautions-elementaires/calculer-la-force-dun-mot-de-passe/}
+ * @see {@url https://messervices.cyber.gouv.fr/documents-guides/anssi-guide-authentification_multifacteur_et_mots_de_passe.pdf}
+ * @see {@url https://www.ssi.gouv.fr/administration/precautions-elementaires/calculer-la-force-dun-mot-de-passe/} page d'origine des classes de caractères, qui n'est plus
+ *      en ligne
  */
 class PasswordGeneratorAnssi
 {

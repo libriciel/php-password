@@ -84,6 +84,11 @@ et le projet suit le [versionnage sémantique](https://semver.org/lang/fr/).
 
 ### Documentation
 
+- README : avertissement sur la portée de l'entropie, exacte pour les mots de passe
+  aléatoires mais seulement condition nécessaire pour ceux choisis par
+  l'utilisateur, avec les recommandations R23 et R27 et l'écart entre les seuils de
+  la bibliothèque et ceux du guide de 2021. Le guide ANSSI-PG-078 remplace, comme
+  référence des docblocks, l'ancienne page de l'ANSSI qui n'est plus en ligne (#14).
 - README : namespace `Libriciel\Password\Service` dans les exemples et commandes de
   développement via `make` / `docker compose` (#1).
 

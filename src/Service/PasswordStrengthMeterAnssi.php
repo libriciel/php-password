@@ -8,7 +8,14 @@ namespace Libriciel\Password\Service;
  * Cette classe calcule la force et l'entropie d'un mot de passe comme définis
  * sur le site de l'ANSSI.
  *
- * @see {@url https://www.ssi.gouv.fr/administration/precautions-elementaires/calculer-la-force-dun-mot-de-passe/}
+ * L'entropie (longueur × log2(nombre de symboles)) n'est exacte que pour un mot
+ * de passe tiré au hasard. Pour un mot de passe choisi par un utilisateur, c'est
+ * un majorant : une condition nécessaire, mais pas suffisante (guide
+ * ANSSI-PG-078, §4.1 et recommandation R27).
+ *
+ * @see {@url https://messervices.cyber.gouv.fr/documents-guides/anssi-guide-authentification_multifacteur_et_mots_de_passe.pdf}
+ * @see {@url https://www.ssi.gouv.fr/administration/precautions-elementaires/calculer-la-force-dun-mot-de-passe/} page d'origine des classes de caractères et des seuils, qui
+ *      n'est plus en ligne
  */
 class PasswordStrengthMeterAnssi implements PasswordStrengthMeterInterface
 {

@@ -17,7 +17,7 @@ class PasswordStrengthMeterAnssiTest extends TestCase
     /**
      * Test de la méthode PasswordStrengthMeterAnssi::thresholds().
      */
-    public function testThresholds()
+    public function testThresholds(): void
     {
         $pwdStrengthMeter = new PasswordStrengthMeterAnssi();
         $actual = $pwdStrengthMeter->thresholds();
@@ -33,6 +33,8 @@ class PasswordStrengthMeterAnssiTest extends TestCase
 
     /**
      * Pour les tests Wikipédia :
+     *
+     * @return array<string, array{int, string}>
      *
      * @see {@url https://en.wikipedia.org/wiki/Password_strength#Random_passwords}
      */
@@ -64,7 +66,7 @@ class PasswordStrengthMeterAnssiTest extends TestCase
      * Test de la méthode PasswordStrengthMeterAnssi::symbols().
      */
     #[DataProvider('symbolsProvider')]
-    public function testSymbols(int $expectedSymbols, string $input)
+    public function testSymbols(int $expectedSymbols, string $input): void
     {
         $pwdStrengthMeter = new PasswordStrengthMeterAnssi();
         $this->assertEquals(
@@ -75,6 +77,8 @@ class PasswordStrengthMeterAnssiTest extends TestCase
 
     /**
      * Pour Wikipédia :
+     *
+     * @return array<string, array{0: float|int, 1: string, 2?: int}>
      *
      * @see {@url https://en.wikipedia.org/wiki/Password_strength#Random_passwords}
      */
@@ -133,12 +137,15 @@ class PasswordStrengthMeterAnssiTest extends TestCase
      * par symboles définie dans le tableau sur wikipedia.
      */
     #[DataProvider('entropyProvider')]
-    public function testEntropy(float $expectedEntropy, string $input, int $precision = 0)
+    public function testEntropy(float $expectedEntropy, string $input, int $precision = 0): void
     {
         $pwdStrengthMeter = new PasswordStrengthMeterAnssi();
         $this->assertEquals($expectedEntropy, $pwdStrengthMeter->entropy($input, $precision));
     }
 
+    /**
+     * @return array<string, array{int, string}>
+     */
     public static function strengthProvider(): array
     {
         return [

@@ -85,6 +85,8 @@ class PasswordStrengthMeterAnssi implements PasswordStrengthMeterInterface
     /**
      * Retourne les valeurs minimales (seuils) d'entropie, en ordre
      * descendant, pour les différentes forces de mots de passe.
+     *
+     * @return array<int, int>
      */
     public function thresholds(): array
     {

@@ -9,9 +9,9 @@ et le projet suit le [versionnage sémantique](https://semver.org/lang/fr/).
 
 ### Modifié
 
-- **Rupture de compatibilité** : `PasswordGeneratorAnssi::generate()` lève une `PasswordException` lorsque aucune
-  classe de caractères n'est activée, au lieu de renvoyer `false` (ce qui provoquait
-  une `TypeError`).
+- **Rupture de compatibilité** : `PasswordGeneratorAnssi::generate()` lève une
+  `PasswordException` lorsque aucune classe de caractères n'est activée, au lieu de
+  renvoyer `false` (ce qui provoquait une `TypeError`).
 - Paramètres `$encoding` explicitement nullables (`?string`), ce qui supprime les
   dépréciations de PHP 8.4 sur les types implicitement nullables.
 - Code mis au standard `@Symfony` de PHP CS Fixer.

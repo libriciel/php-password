@@ -23,7 +23,9 @@ et le projet suit le [versionnage sémantique](https://semver.org/lang/fr/).
 - CI alignée sur le socle Libriciel : SAST, détection de secrets, analyse des
   dépendances, `composer audit`, scan de l'image (composant `vulnerability-scan`),
   `check-libriciel-standards`, Renovate, PHPStan (niveau max), Rector et tests sur
-  PHP 8.4 et 8.5 (#2).
+  PHP 8.1 à 8.5 (#2).
+- PHPUnit ramené en 10.5, dernière version compatible avec PHP 8.1, pour tester
+  toutes les versions de PHP supportées (#2).
 - ECS remplace PHP CS Fixer, avec les mêmes règles `@Symfony` ; PHPMD et
   PHP_CodeSniffer, jamais lancés, sont retirés (#2).
 - Environnement de développement dans `compose.dev.yaml`, cibles `make test`,

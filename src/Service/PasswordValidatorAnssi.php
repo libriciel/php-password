@@ -11,6 +11,7 @@ use Libriciel\Password\PasswordException;
 /**
  * Vérifie un mot de passe choisi par un utilisateur, au moment de sa création
  * ou de son renouvellement, selon le guide ANSSI-PG-078 v2.0 :
+ *  - longueur maximale, contre le déni de service (R22) ;
  *  - entropie minimale (R21, voir PasswordStrengthMeterAnssi) ;
  *  - règles de complexité (R23), assouplies pour les phrases de passe ;
  *  - contrôle de robustesse (R27) : motifs, dictionnaire de mots de passe
@@ -23,6 +24,12 @@ use Libriciel\Password\PasswordException;
  */
 final readonly class PasswordValidatorAnssi
 {
+    /**
+     * Le mot de passe dépasse la longueur maximale (R22) : les autres
+     * contrôles ne sont pas effectués.
+     */
+    public const string VIOLATION_LENGTH = 'length';
+
     /**
      * L'entropie est inférieure à l'entropie demandée (R21).
      */
@@ -111,12 +118,15 @@ final readonly class PasswordValidatorAnssi
      * @param int                              $minClasses       Nombre de classes de caractères exigées parmi minuscules, majuscules, chiffres et autres caractères (R23)
      * @param int                              $passphraseLength Longueur à partir de laquelle les classes ne sont plus exigées (phrase de passe, R23)
      * @param int                              $patternLength    Longueur minimale d'une suite, d'une ligne de clavier ou d'une répétition d'un même caractère (R27)
+     * @param int                              $maxLength        Longueur maximale, contre le déni de service (R22 : plusieurs centaines de caractères)
+     * @param PasswordStrengthMeterAnssi|null  $meter            Le calcul d'entropie (par défaut, PasswordStrengthMeterAnssi)
      */
     public function __construct(
         ?PasswordDictionaryInterface $dictionary = null,
         private int $minClasses = 3,
         private int $passphraseLength = 20,
         private int $patternLength = 4,
+        private int $maxLength = 1024,
         ?PasswordStrengthMeterAnssi $meter = null,
     ) {
         if ($minClasses < 0 || $minClasses > 4) {
@@ -125,6 +135,9 @@ final readonly class PasswordValidatorAnssi
         if ($passphraseLength < 1 || $patternLength < 2) {
             throw new PasswordException(sprintf('Longueurs invalides : phrase de passe %d (minimum 1), motif %d (minimum 2)', $passphraseLength, $patternLength));
         }
+        if ($maxLength < 1) {
+            throw new PasswordException(sprintf('La longueur maximale doit être au moins de 1 (%d)', $maxLength));
+        }
 
         $this->dictionary = $dictionary ?? new FileDictionary();
         $this->meter = $meter ?? new PasswordStrengthMeterAnssi();
@@ -132,9 +145,9 @@ final readonly class PasswordValidatorAnssi
 
     /**
      * Indique si le mot de passe respecte l'entropie demandée et les
-     * recommandations R23 et R27 : regroupe validComplexity(),
-     * validPattern(), validDictionary() et les contrôles d'entropie et
-     * d'informations personnelles.
+     * recommandations R22, R23 et R27 : regroupe validLength(),
+     * validComplexity(), validPattern(), validDictionary() et les contrôles
+     * d'entropie et d'informations personnelles.
      *
      * @param string       $password     Le mot de passe
      * @param float        $entropy      L'entropie minimale, en bits (par exemple 80)
@@ -150,6 +163,9 @@ final readonly class PasswordValidatorAnssi
      * vide si le mot de passe est valide, pour que l'application affiche un
      * message adapté.
      *
+     * Un mot de passe trop long renvoie seulement VIOLATION_LENGTH : les autres
+     * contrôles, plus coûteux, ne sont pas effectués.
+     *
      * @param string       $password     Le mot de passe
      * @param float        $entropy      L'entropie minimale, en bits (par exemple 80)
      * @param list<string> $personalData Les informations personnelles de l'utilisateur (nom, prénom, identifiant, e-mail, date de naissance…)
@@ -158,6 +174,10 @@ final readonly class PasswordValidatorAnssi
      */
     public function violations(string $password, float $entropy, array $personalData = []): array
     {
+        if (!$this->validLength($password)) {
+            return [self::VIOLATION_LENGTH];
+        }
+
         $violations = [];
         $lower = mb_strtolower($password);
 
@@ -178,6 +198,20 @@ final readonly class PasswordValidatorAnssi
         }
 
         return $violations;
+    }
+
+    /**
+     * Indique si le mot de passe ne dépasse pas $maxLength caractères (R22).
+     *
+     * validComplexity(), validPattern() et validDictionary() n'appliquent pas
+     * cette limite : appeler validLength() avant elles pour une saisie
+     * utilisateur.
+     *
+     * @param string $password Le mot de passe
+     */
+    public function validLength(string $password): bool
+    {
+        return mb_strlen($password) <= $this->maxLength;
     }
 
     /**

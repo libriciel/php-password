@@ -180,6 +180,31 @@ class PasswordValidatorAnssiTest extends TestCase
         $this->assertSame([], $validator->violations('kT9#vLp2!q', 128));
     }
 
+    /**
+     * Au-delà de la longueur maximale, seul VIOLATION_LENGTH est renvoyé, sans
+     * effectuer les autres contrôles.
+     */
+    public function testMaxLength(): void
+    {
+        $meter = $this->createMock(PasswordStrengthMeterAnssi::class);
+        $meter->expects($this->never())->method('entropy');
+        $validator = new PasswordValidatorAnssi(maxLength: 20, meter: $meter);
+
+        $this->assertTrue($validator->validLength(str_repeat('é', 20)));
+        $this->assertFalse($validator->validLength(str_repeat('é', 21)));
+        $this->assertSame([PasswordValidatorAnssi::VIOLATION_LENGTH], $validator->violations('azerty123456789012345', 80, ['azerty']));
+        $this->assertFalse($validator->validPassword('azerty123456789012345', 80));
+    }
+
+    public function testDefaultMaxLength(): void
+    {
+        $validator = $this->validator();
+        $password = str_repeat('kT9#vLp2!qWz8$mNx4', 57); // 1 026 caractères
+
+        $this->assertTrue($validator->validLength(mb_substr($password, 0, 1024)));
+        $this->assertSame([PasswordValidatorAnssi::VIOLATION_LENGTH], $validator->violations($password, 80));
+    }
+
     public function testEntropyThreshold(): void
     {
         $validator = $this->validator();
@@ -236,7 +261,7 @@ class PasswordValidatorAnssiTest extends TestCase
     }
 
     /**
-     * @return array<string, array{int, int, int, string}>
+     * @return array<string, array{0: int, 1: int, 2: int, 3: string, 4?: int}>
      */
     public static function invalidOptionsProvider(): array
     {
@@ -245,14 +270,15 @@ class PasswordValidatorAnssiTest extends TestCase
             'trop de classes' => [5, 20, 4, 'Le nombre de classes exigées doit être compris entre 0 et 4 (5)'],
             'phrase de passe' => [3, 0, 4, 'Longueurs invalides : phrase de passe 0 (minimum 1), motif 4 (minimum 2)'],
             'motif' => [3, 20, 1, 'Longueurs invalides : phrase de passe 20 (minimum 1), motif 1 (minimum 2)'],
+            'longueur maximale' => [3, 20, 4, 'La longueur maximale doit être au moins de 1 (0)', 0],
         ];
     }
 
     #[DataProvider('invalidOptionsProvider')]
-    public function testInvalidOptionsThrowException(int $minClasses, int $passphraseLength, int $patternLength, string $message): void
+    public function testInvalidOptionsThrowException(int $minClasses, int $passphraseLength, int $patternLength, string $message, int $maxLength = 1024): void
     {
         $this->expectException(PasswordException::class);
         $this->expectExceptionMessage($message);
-        new PasswordValidatorAnssi(null, $minClasses, $passphraseLength, $patternLength);
+        new PasswordValidatorAnssi(null, $minClasses, $passphraseLength, $patternLength, $maxLength);
     }
 }

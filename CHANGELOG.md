@@ -23,7 +23,9 @@ et le projet suit le [versionnage sémantique](https://semver.org/lang/fr/).
   d'un dictionnaire de mots de passe courants et des informations personnelles
   (R27). `violations()` renvoie les codes des règles non respectées ;
   `validComplexity()`, `validPattern()` et `validDictionary()` contrôlent chaque
-  règle séparément (#15).
+  règle séparément. Une longueur maximale (`maxLength`, 1 024 caractères par
+  défaut, R22) protège du déni de service : au-delà, seul le code `length` est
+  renvoyé et `validLength()` permet de la contrôler seule (#15).
 - Dictionnaire d'environ 78 000 mots de passe, prénoms et noms courants, dans
   `resources/dictionaries` : mots de passe français
   ([richelieu](https://github.com/tarraschk/richelieu), CC BY 4.0), mots de passe,

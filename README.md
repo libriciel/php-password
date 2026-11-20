@@ -93,6 +93,7 @@ de passe choisi par un utilisateur :
 
 | Code (`VIOLATION_*`) | Recommandation | Contrôle |
 |---|---|---|
+| `length` | R22 | plus de 1 024 caractères, contre le déni de service ; les autres contrôles ne sont alors pas effectués |
 | `entropy` | R21 | entropie (voir `PasswordStrengthMeterAnssi`) inférieure à celle demandée |
 | `complexity` | R23 | moins de 3 classes parmi minuscules, majuscules, chiffres et autres caractères, sauf pour une phrase de passe de 20 caractères ou plus |
 | `pattern` | R27 | suite (`abcd`, `4321`), ligne de clavier AZERTY ou QWERTY (`azer`, `qwer`), caractère répété 4 fois (`!!!!`) ou bloc répété (`abcabc`) |
@@ -124,7 +125,11 @@ indépendamment de l'entropie :
 $validator->validComplexity('kdjtmzpqrw');  // false : une seule classe (R23)
 $validator->validPattern('Azerty!95kq');    // false : ligne de clavier « azer » (R27)
 $validator->validDictionary('Soleil2024!'); // false : « soleil » est dans le dictionnaire (R27)
+$validator->validLength($password);         // false au-delà de maxLength (R22)
 ```
+
+Ces contrôles unitaires n'appliquent pas la longueur maximale : pour une saisie
+utilisateur, appeler `validLength()` avant eux.
 
 `validPassword()` regroupe tous les contrôles ; `violations()` renvoie les codes
 de ceux qui échouent, toujours dans l'ordre du tableau ci-dessus.
@@ -139,6 +144,7 @@ $validator = new PasswordValidatorAnssi(
     minClasses: 3,        // classes de caractères exigées (R23), de 0 à 4
     passphraseLength: 20, // longueur à partir de laquelle les classes ne sont plus exigées
     patternLength: 4,     // longueur minimale d'une suite ou d'une répétition
+    maxLength: 1024,      // longueur maximale (R22)
 );
 ```
 

@@ -132,7 +132,9 @@ final readonly class PasswordValidatorAnssi
 
     /**
      * Indique si le mot de passe respecte l'entropie demandée et les
-     * recommandations R23 et R27.
+     * recommandations R23 et R27 : regroupe validComplexity(),
+     * validPattern(), validDictionary() et les contrôles d'entropie et
+     * d'informations personnelles.
      *
      * @param string       $password     Le mot de passe
      * @param float        $entropy      L'entropie minimale, en bits (par exemple 80)
@@ -162,13 +164,13 @@ final readonly class PasswordValidatorAnssi
         if ($this->meter->entropy($password, 10) < $entropy) {
             $violations[] = self::VIOLATION_ENTROPY;
         }
-        if (!$this->isComplexEnough($password)) {
+        if (!$this->validComplexity($password)) {
             $violations[] = self::VIOLATION_COMPLEXITY;
         }
-        if ($this->hasPattern($lower)) {
+        if (!$this->validPattern($password)) {
             $violations[] = self::VIOLATION_PATTERN;
         }
-        if ($this->isInDictionary($lower)) {
+        if (!$this->validDictionary($password)) {
             $violations[] = self::VIOLATION_DICTIONARY;
         }
         if ($this->containsPersonalData($lower, $personalData)) {
@@ -179,10 +181,16 @@ final readonly class PasswordValidatorAnssi
     }
 
     /**
-     * R23 : au moins $minClasses classes parmi minuscules, majuscules, chiffres
-     * et autres caractères, sauf pour une phrase de passe.
+     * Indique si le mot de passe respecte les règles de complexité (R23) : au
+     * moins $minClasses classes parmi minuscules, majuscules, chiffres et
+     * autres caractères, sauf pour une phrase de passe d'au moins
+     * $passphraseLength caractères.
+     *
+     * Échec signalé par violations() avec le code VIOLATION_COMPLEXITY.
+     *
+     * @param string $password Le mot de passe
      */
-    private function isComplexEnough(string $password): bool
+    public function validComplexity(string $password): bool
     {
         if (mb_strlen($password) >= $this->passphraseLength) {
             return true;
@@ -197,9 +205,20 @@ final readonly class PasswordValidatorAnssi
     }
 
     /**
-     * R27 : suite (abcd, 1234), ligne de clavier (azer, qwer), répétition d'un
-     * même caractère (aaaa), ou mot de passe formé d'un bloc répété (abcabc).
+     * Indique si le mot de passe ne contient aucun motif (R27) : suite (abcd,
+     * 1234), ligne de clavier (azer, qwer) d'au moins $patternLength
+     * caractères, répétition d'un même caractère (aaaa), ou mot de passe formé
+     * d'un bloc répété (abcabc).
+     *
+     * Échec signalé par violations() avec le code VIOLATION_PATTERN.
+     *
+     * @param string $password Le mot de passe
      */
+    public function validPattern(string $password): bool
+    {
+        return !$this->hasPattern(mb_strtolower($password));
+    }
+
     private function hasPattern(string $lower): bool
     {
         $length = $this->patternLength;
@@ -224,10 +243,20 @@ final readonly class PasswordValidatorAnssi
     }
 
     /**
-     * R27 : le mot de passe, ses variantes sans leet speak et sa partie
-     * centrale sans les chiffres et symboles ajoutés au début ou à la fin
-     * (Marseille2024!, P@ssw0rd).
+     * Indique si le mot de passe est absent du dictionnaire (R27), y compris
+     * ses variantes sans leet speak (P@ssw0rd) et sa partie centrale sans les
+     * chiffres et symboles ajoutés au début ou à la fin (Marseille2024!), sans
+     * tenir compte de la casse.
+     *
+     * Échec signalé par violations() avec le code VIOLATION_DICTIONARY.
+     *
+     * @param string $password Le mot de passe
      */
+    public function validDictionary(string $password): bool
+    {
+        return !$this->isInDictionary(mb_strtolower($password));
+    }
+
     private function isInDictionary(string $lower): bool
     {
         $candidates = $this->withLeetVariants($lower);

@@ -21,7 +21,9 @@ et le projet suit le [versionnage sémantique](https://semver.org/lang/fr/).
   l'entropie minimale souhaitée (R21), des règles de complexité assouplies pour les
   phrases de passe (R23), la détection des suites, lignes de clavier et répétitions,
   d'un dictionnaire de mots de passe courants et des informations personnelles
-  (R27). `violations()` renvoie les codes des règles non respectées (#15).
+  (R27). `violations()` renvoie les codes des règles non respectées ;
+  `validComplexity()`, `validPattern()` et `validDictionary()` contrôlent chaque
+  règle séparément (#15).
 - Dictionnaire de mots de passe courants, français
   ([richelieu](https://github.com/tarraschk/richelieu), CC BY 4.0) et internationaux
   ([zxcvbn](https://github.com/dropbox/zxcvbn), MIT), dans `resources/dictionaries`,

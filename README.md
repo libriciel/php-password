@@ -117,6 +117,18 @@ $personalData = ['Jérôme', 'Dupont', 'jerome.dupont@exemple.fr', '12/03/1985']
 $validator->violations('Dup0nt#Kw9!vLp2qZ', 80, $personalData);
 ```
 
+Chaque règle peut aussi être contrôlée seule (`true` si elle est respectée),
+indépendamment de l'entropie :
+
+```php
+$validator->validComplexity('kdjtmzpqrw');  // false : une seule classe (R23)
+$validator->validPattern('Azerty!95kq');    // false : ligne de clavier « azer » (R27)
+$validator->validDictionary('Soleil2024!'); // false : « soleil » est dans le dictionnaire (R27)
+```
+
+`validPassword()` regroupe tous les contrôles ; `violations()` renvoie les codes
+de ceux qui échouent, toujours dans l'ordre du tableau ci-dessus.
+
 Les règles se configurent dans le constructeur :
 
 ```php

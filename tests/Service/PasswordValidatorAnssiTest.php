@@ -86,6 +86,35 @@ class PasswordValidatorAnssiTest extends TestCase
         $this->assertSame([] === $expected, $validator->validPassword($password, 80, self::PERSONAL_DATA));
     }
 
+    /**
+     * Chaque contrôle unitaire donne le même résultat que violations().
+     *
+     * @param list<string> $expected
+     */
+    #[DataProvider('violationsProvider')]
+    public function testSingleChecksMatchViolations(array $expected, string $password): void
+    {
+        $validator = $this->validator();
+        $this->assertSame(!in_array(PasswordValidatorAnssi::VIOLATION_COMPLEXITY, $expected, true), $validator->validComplexity($password));
+        $this->assertSame(!in_array(PasswordValidatorAnssi::VIOLATION_PATTERN, $expected, true), $validator->validPattern($password));
+        $this->assertSame(!in_array(PasswordValidatorAnssi::VIOLATION_DICTIONARY, $expected, true), $validator->validDictionary($password));
+    }
+
+    /**
+     * Les contrôles unitaires ne dépendent pas de l'entropie : un mot de
+     * passe court peut les réussir.
+     */
+    public function testSingleChecksIgnoreEntropy(): void
+    {
+        $validator = $this->validator();
+        $this->assertFalse($validator->validComplexity('kdjtmzpqrw'));
+        $this->assertTrue($validator->validComplexity('kdjT9mzpqr'));
+        $this->assertTrue($validator->validPattern('kdjT9mzpqr'));
+        $this->assertFalse($validator->validPattern('Azerty'));
+        $this->assertTrue($validator->validDictionary('kdjT9mzpqr'));
+        $this->assertFalse($validator->validDictionary('Soleil2024!'));
+    }
+
     public function testEntropyThreshold(): void
     {
         $validator = $this->validator();

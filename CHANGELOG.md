@@ -7,6 +7,16 @@ et le projet suit le [versionnage sémantique](https://semver.org/lang/fr/).
 
 ## [4.0.0] - non publiée
 
+### Ajouté
+
+- Classe de caractères `symbols_3` (`()+-=_\`{}~`, 10 symboles), désactivée par
+  défaut dans `PasswordGeneratorAnssi` et reconnue par
+  `PasswordStrengthMeterAnssi::symbols()`. Ces caractères ASCII, dont `-` et `_`, ne
+  faisaient partie d'aucune classe : ils ne comptaient que dans la longueur. Tout
+  l'ASCII imprimable est désormais couvert, conformément à la recommandation R23 du
+  guide ANSSI-PG-078 (« un jeu de caractères le plus large possible »). L'entropie et
+  la force augmentent pour les mots de passe qui en contiennent (#13).
+
 ### Modifié
 
 - **Rupture de compatibilité** : `PasswordGeneratorAnssi::generate()` lève une
@@ -53,6 +63,11 @@ et le projet suit le [versionnage sémantique](https://semver.org/lang/fr/).
 - `PasswordStrengthMeterAnssi::symbols()` reconnaît l'antislash (`\`), que le
   générateur peut produire (classe `symbols_2`) : il était ignoré, ce qui
   sous-estimait l'entropie et la force des mots de passe qui en contiennent (#5).
+- `PasswordStrengthMeterAnssi::entropy()` renvoie `0` pour une chaîne vide ou
+  composée uniquement de caractères hors classes (`ñ`, `’`…), au lieu
+  de `NAN` ou `-INF`, qui faisaient par exemple échouer `json_encode()`. La force
+  reste « très faible ». Les caractères hors classes mêlés à d'autres comptent
+  toujours dans la longueur, mais pas dans le nombre de symboles (#6).
 
 ### Supprimé
 

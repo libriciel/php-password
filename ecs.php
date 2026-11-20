@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use PhpCsFixer\Fixer\Strict\DeclareStrictTypesFixer;
 use PhpCsFixer\FixerFactory;
 use PhpCsFixer\RuleSet\RuleSet;
 use Symplify\EasyCodingStandard\Config\ECSConfig;
@@ -29,5 +30,8 @@ foreach ($fixers as $fixer) {
         $config->withConfiguredRule($fixer::class, $configuration);
     }
 }
+
+// En plus de @Symfony : declare(strict_types=1) dans chaque fichier.
+$rules[] = DeclareStrictTypesFixer::class;
 
 return $config->withRules($rules);

@@ -32,6 +32,10 @@ et le projet suit le [versionnage sémantique](https://semver.org/lang/fr/).
   PHP_CodeSniffer, jamais lancés, sont retirés (#2).
 - Environnement de développement dans `compose.dev.yaml`, cibles `make test`,
   `phpstan`, `rector`, `ecs`, `audit` et `qa` (#2).
+- Types des tableaux précisés en PHPDoc (`array<string, bool>`, `list<string>`…)
+  dans `PasswordGeneratorAnssi` et `PasswordStrengthMeterAnssi`, pour les projets
+  qui les analysent avec PHPStan ou Psalm ; la baseline PHPStan passe de 48 erreurs
+  à 1 (#9).
 
 ### Supprimé
 

@@ -12,32 +12,31 @@ et le projet suit le [versionnage sémantique](https://semver.org/lang/fr/).
 - **Rupture de compatibilité** : `PasswordGeneratorAnssi::generate()` lève une
   `PasswordException` lorsque aucune classe de caractères n'est activée, au lieu de
   renvoyer `false` (ce qui provoquait une `TypeError`) (#1).
-- Paramètres `$encoding` explicitement nullables (`?string`), ce qui supprime les
-  dépréciations de PHP 8.4 sur les types implicitement nullables.
-- Code mis au standard `@Symfony` de PHP CS Fixer.
-- Image Docker de développement et de CI en PHP 8.5 ; PHP 8.6 n'est pas encore
-  supporté par pcov ni par Xdebug (#3).
-- Dépendances de développement à leur dernière version majeure : PHPUnit 13,
-  PHP_CodeSniffer 4, PHPMD 3, PHP CS Fixer 3.95 (#3).
-- Images Docker épinglées par digest (`tag@sha256:…`) dans le Dockerfile et la CI (#3).
-- CI alignée sur le socle Libriciel : SAST, détection de secrets, analyse des
-  dépendances, `composer audit`, scan de l'image (composant `vulnerability-scan`),
-  `check-libriciel-standards`, Renovate, PHPStan (niveau max), Rector et tests sur
-  chaque version de PHP supportée (#2).
 - **Rupture de compatibilité** : PHP 8.3 minimum, PHP 8.1 n'étant plus maintenu
   et PHP 8.2 ne l'étant plus après le 31 décembre 2026 ; la CI teste PHP 8.3 à 8.5 (#4).
-- PHPUnit 12.5, dernière version compatible avec PHP 8.3, pour tester toutes les
-  versions de PHP supportées ; data providers statiques déclarés par attributs (#4).
-- ECS remplace PHP CS Fixer, avec les mêmes règles `@Symfony` ; PHPMD et
-  PHP_CodeSniffer, jamais lancés, sont retirés (#2).
-- Environnement de développement dans `compose.dev.yaml`, cibles `make test`,
-  `phpstan`, `rector`, `ecs`, `audit` et `qa` (#2).
+- Paramètres `$encoding` explicitement nullables (`?string`), ce qui supprime les
+  dépréciations de PHP 8.4 sur les types implicitement nullables.
 - Types des tableaux précisés en PHPDoc (`array<string, bool>`, `list<string>`…)
   dans `PasswordGeneratorAnssi` et `PasswordStrengthMeterAnssi`, pour les projets
   qui les analysent avec PHPStan ou Psalm ; la baseline PHPStan (47 erreurs) est
   supprimée (#9).
 - Constantes `STRENGTH_*` de `PasswordStrengthMeterInterface` typées `int`
   (PHP 8.3) : une implémentation qui les redéfinit doit garder des entiers (#9).
+- `declare(strict_types=1)` dans tous les fichiers, imposé par ECS (#11).
+- Le namespace des tests `LibricielTest\Password` passe dans `autoload-dev` : il
+  n'est plus chargé par les projets qui utilisent la bibliothèque (#11).
+- Code au standard `@Symfony`, vérifié par ECS, qui remplace PHP CS Fixer (#2).
+- Dépendances de développement à jour, dont PHPUnit 12.5, dernière version
+  compatible avec PHP 8.3 ; data providers statiques déclarés par attributs (#3, #4).
+- Image Docker de développement et de CI en PHP 8.5 ; PHP 8.6 n'est pas encore
+  supporté par pcov ni par Xdebug (#3).
+- Images Docker épinglées par digest (`tag@sha256:…`) dans le Dockerfile et la CI (#3).
+- CI alignée sur le socle Libriciel : SAST, détection de secrets, analyse des
+  dépendances, `composer audit`, scan de l'image (composant `vulnerability-scan`),
+  `check-libriciel-standards`, Renovate, PHPStan (niveau max), Rector et tests sur
+  chaque version de PHP supportée (#2).
+- Environnement de développement dans `compose.dev.yaml`, cibles `make test`,
+  `phpstan`, `rector`, `ecs`, `audit` et `qa` (#2).
 
 ### Corrigé
 
@@ -48,6 +47,9 @@ et le projet suit le [versionnage sémantique](https://semver.org/lang/fr/).
 
 ### Supprimé
 
+- `bin/console`, qui ne fonctionnait plus depuis la suppression de la commande de
+  génération et de `symfony/console` en 3.0.0 (#11).
+- PHPMD et PHP_CodeSniffer, jamais lancés (#2).
 - Dépendance de développement `sebastian/phpcpd`, abandonnée depuis 2020 (#3).
 
 ### Sécurité

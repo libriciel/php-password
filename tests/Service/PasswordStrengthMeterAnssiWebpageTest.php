@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace LibricielTest\Password\Service;
 
 use Libriciel\Password\Service\PasswordStrengthMeterAnssi;

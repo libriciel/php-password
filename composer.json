@@ -12,7 +12,11 @@
     ],
     "autoload": {
         "psr-4": {
-            "Libriciel\\Password\\": "src/",
+            "Libriciel\\Password\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
             "LibricielTest\\Password\\": "tests/"
         }
     },

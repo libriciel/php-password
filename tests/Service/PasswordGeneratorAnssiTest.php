@@ -499,6 +499,17 @@ class PasswordGeneratorAnssiTest extends TestCase
         $this->assertSame('', $pwdGeneratorAnsi->generate(0, [], 'UTF-8'));
     }
 
+    public function testGenerateWithoutAvailableCharacterWithEncoding(): void
+    {
+        $pwdGeneratorAnsi = new PasswordGeneratorAnssi();
+
+        $this->expectException(PasswordException::class);
+        $this->expectExceptionMessage(
+            'Impossible de générer un mot de passe de longueur 5 sans caractère disponible'
+        );
+        $pwdGeneratorAnsi->generate(5, $this->allDisabled(), 'UTF-8');
+    }
+
     public function constrainedProvider(): array
     {
         return [

@@ -1,0 +1,17 @@
+# Environnement de développement uniquement : la bibliothèque est distribuée par
+# Composer, cette image ne sert qu'à lancer les tests et les outils d'analyse.
+services:
+  app:
+    image: php-password:dev
+    build:
+      context: .
+      secrets:
+        - composer_auth
+    restart: "no"
+    volumes:
+      - .:/app:cached
+
+secrets:
+  # Jeton GitHub facultatif pour Composer : chemin d'un auth.json dans COMPOSER_AUTH_FILE.
+  composer_auth:
+    file: ${COMPOSER_AUTH_FILE:-/dev/null}

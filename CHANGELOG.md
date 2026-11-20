@@ -16,10 +16,21 @@ et le projet suit le [versionnage sémantique](https://semver.org/lang/fr/).
   dépréciations de PHP 8.4 sur les types implicitement nullables.
 - Code mis au standard `@Symfony` de PHP CS Fixer.
 - Image Docker de développement basée sur PHP 8.3.
+- CI alignée sur le socle Libriciel : SAST, détection de secrets, analyse des
+  dépendances, `composer audit`, scan de l'image (composant `vulnerability-scan`),
+  `check-libriciel-standards`, Renovate, PHPStan (niveau max), Rector et tests sur
+  PHP 8.1 à 8.4 (#2).
+- ECS remplace PHP CS Fixer, avec les mêmes règles `@Symfony` ; phpmd, phpcpd et
+  phpcs, jamais lancés, sont retirés (#2).
+- Environnement de développement dans `compose.dev.yaml`, cibles `make test`,
+  `phpstan`, `rector`, `ecs`, `audit` et `qa` (#2).
 
 ### Sécurité
 
 - Mise à jour des dépendances de développement.
+- `phpunit/phpunit` 9.6.39 (CVE-2026-24765, dépendance de développement) (#2).
+- Le jeton GitHub est passé au build Docker en secret BuildKit plutôt qu'en
+  `--build-arg`, qui l'aurait exposé dans l'historique de l'image (#2).
 
 ### Documentation
 

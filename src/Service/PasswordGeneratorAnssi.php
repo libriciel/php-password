@@ -28,6 +28,7 @@ class PasswordGeneratorAnssi
         'uppercase_letters' => 'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
         'symbols_1' => '€!#$*% ?',
         'symbols_2' => '&[|]@^µ§\:/;.,<>°²³\'"',
+        'symbols_3' => '()+-=_`{}~',
         'lowercase_accents_fr' => 'àâäæçèéêëîïôœùûü',
         'uppercase_accents_fr' => 'ÀÂÄÆÇÈÉÊËÎÏÔŒÙÛÜ',
     ];
@@ -46,6 +47,7 @@ class PasswordGeneratorAnssi
         'uppercase_letters' => true,
         'symbols_1' => false,
         'symbols_2' => false,
+        'symbols_3' => false,
         'lowercase_accents_fr' => false,
         'uppercase_accents_fr' => false,
     ];

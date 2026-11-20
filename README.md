@@ -89,6 +89,8 @@ $config = [
     'uppercase_letters' => true,
     'symbols_1' => false,
     'symbols_2' => false,
+    // ()+-=_`{}~
+    'symbols_3' => false,
     'lowercase_accents_fr' => false,
     'uppercase_accents_fr' => false
 ];

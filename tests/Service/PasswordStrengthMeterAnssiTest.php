@@ -208,6 +208,7 @@ class PasswordStrengthMeterAnssiTest extends TestCase
         $classes = [
             8 => '€!#$*% ?',
             20 => '&[|]@^µ§\\:/;.,<>°²³\'"',
+            10 => '()+-=_`{}~',
             16 => 'àâäæçèéêëîïôœùûüÀÂÄÆÇÈÉÊËÎÏÔŒÙÛÜ',
         ];
 
@@ -270,7 +271,8 @@ class PasswordStrengthMeterAnssiTest extends TestCase
             'decimal and lower case diacritic' => [26, '0é'],
             'lower and upper case diacritic' => [32, 'éÉ'],
             'symbols 1 and symbols 2' => [28, '!&'],
-            'all classes' => [122, '0aA€&éÉ'],
+            'symbols 3 with lower case' => [36, 'chien~'],
+            'all classes' => [132, '0aA€&~éÉ'],
         ];
     }
 
@@ -293,11 +295,11 @@ class PasswordStrengthMeterAnssiTest extends TestCase
     {
         return [
             'empty string' => [0.0, ''],
-            'unknown characters only' => [0.0, '~~~~'],
+            'unknown characters only' => [0.0, 'ññññ'],
             'unknown multibyte characters only' => [0.0, 'ñ’ñ’'],
             // Les caractères hors classes comptent dans la longueur, pas dans
             // le nombre de symboles : 2 × log2(26) = 9,40
-            'unknown character mixed with known ones' => [9.4, 'a~'],
+            'unknown character mixed with known ones' => [9.4, 'añ'],
         ];
     }
 

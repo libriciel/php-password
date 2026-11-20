@@ -28,6 +28,7 @@ class PasswordGeneratorAnssiTest extends TestCase
         'uppercase_letters' => true,
         'symbols_1' => false,
         'symbols_2' => false,
+        'symbols_3' => false,
         'lowercase_accents_fr' => false,
         'uppercase_accents_fr' => false,
     ];
@@ -44,6 +45,7 @@ class PasswordGeneratorAnssiTest extends TestCase
         'uppercase_letters' => 'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
         'symbols_1' => '€!#$*% ?',
         'symbols_2' => '&[|]@^µ§\:/;.,<>°²³\'"',
+        'symbols_3' => '()+-=_`{}~',
         'lowercase_accents_fr' => 'àâäæçèéêëîïôœùûü',
         'uppercase_accents_fr' => 'ÀÂÄÆÇÈÉÊËÎÏÔŒÙÛÜ',
     ];
@@ -119,6 +121,7 @@ class PasswordGeneratorAnssiTest extends TestCase
             'uppercase_letters' => false,
             'symbols_1' => false,
             'symbols_2' => false,
+            'symbols_3' => false,
             'lowercase_accents_fr' => false,
             'uppercase_accents_fr' => false,
         ];
@@ -249,11 +252,11 @@ class PasswordGeneratorAnssiTest extends TestCase
         $expected = array_merge(str_split('0123456789'), range('a', 'f'), range('A', 'F'));
         $this->assertSame($expected, $actual);
 
-        // 157 caractères au total, dont 34 en double
+        // 167 caractères au total, dont 34 en double
         $all = array_fill_keys(array_keys(self::DEFAULT_CONFIG), true);
         /** @var list<string> $actual */
         $actual = $pwdGeneratorAnsi->characters($all);
-        $this->assertCount(123, $actual);
+        $this->assertCount(133, $actual);
         $this->assertSame(array_values(array_unique($actual)), $actual);
     }
 

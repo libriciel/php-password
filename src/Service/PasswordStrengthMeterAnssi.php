@@ -27,6 +27,7 @@ class PasswordStrengthMeterAnssi implements PasswordStrengthMeterInterface
      *  - caractères spéciaux
      *      - €!#$*% ?: 8
      *      - &[|]@^µ§\:/;.,<>°²³'": 20
+     *      - ()+-=_`{}~: 10
      *      - àâäæçèéêëîïôœùûü: 16
      *      - ÀÂÄÆÇÈÉÊËÎÏÔŒÙÛÜ: 16
      *
@@ -54,6 +55,7 @@ class PasswordStrengthMeterAnssi implements PasswordStrengthMeterInterface
             '[A-Z]' => 26,
             '[€\\!#\\$\\*%\\? ]' => 8,
             '[&\\[\\|\\]@\\^µ§\\\\:/;\\.,\\<\\>°²³\'"]' => 20,
+            '[\\(\\)\\+\\-=_`\\{\\}~]' => 10,
             '[àâäæçèéêëîïôœùûü]' => 16,
             '[ÀÂÄÆÇÈÉÊËÎÏÔŒÙÛÜ]' => 16,
         ];

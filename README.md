@@ -83,6 +83,87 @@ $pwdStrengthAnssi->strength('mot de passe');
 > page de l'ANSSI. Le guide de 2021 donne, à titre d'exemple, ≈ 65 bits (sensibilité
 > faible à moyenne), ≈ 85 bits (moyenne à forte) et ≥ 100 bits (forte à très forte).
 
+>
+> Pour un mot de passe choisi, utiliser `PasswordValidatorAnssi` (ci-dessous).
+
+##### Validation d'un mot de passe choisi (R21, R23 et R27)
+
+`PasswordValidatorAnssi` contrôle, à la création ou au renouvellement d'un mot
+de passe choisi par un utilisateur :
+
+| Code (`VIOLATION_*`) | Recommandation | Contrôle |
+|---|---|---|
+| `length` | R22 | plus de 1 024 caractères, contre le déni de service ; les autres contrôles ne sont alors pas effectués |
+| `entropy` | R21 | entropie (voir `PasswordStrengthMeterAnssi`) inférieure à celle demandée |
+| `complexity` | R23 | moins de 3 classes parmi minuscules, majuscules, chiffres et autres caractères, sauf pour une phrase de passe de 20 caractères ou plus |
+| `pattern` | R27 | suite (`abcd`, `4321`), ligne de clavier AZERTY ou QWERTY (`azer`, `qwer`), caractère répété 4 fois (`!!!!`) ou bloc répété (`abcabc`) |
+| `dictionary` | R27 | mot de passe courant ou compromis, sans tenir compte de la casse, du leet speak (`P@ssw0rd`) ni des chiffres et symboles ajoutés au début ou à la fin (`Marseille2024!`) |
+| `personal_data` | R27 | nom, prénom, identifiant, parties de l'adresse e-mail ou de la date de naissance, sans tenir compte de la casse, des accents ni du leet speak |
+
+```php
+use Libriciel\Password\Service\PasswordValidatorAnssi;
+
+$validator = new PasswordValidatorAnssi();
+
+// false : 85,8 bits, mais « marseille » figure dans le dictionnaire
+$validator->validPassword('Marseille2024!', 80);
+
+// true
+$validator->validPassword('le chat dort sur le canapé vert', 80);
+
+// Informations personnelles de l'utilisateur (facultatives)
+$personalData = ['Jérôme', 'Dupont', 'jerome.dupont@exemple.fr', '12/03/1985'];
+
+// ['personal_data'] : la liste des règles non respectées, à traduire pour l'utilisateur
+$validator->violations('Dup0nt#Kw9!vLp2qZ', 80, $personalData);
+```
+
+Chaque règle peut aussi être contrôlée seule (`true` si elle est respectée),
+indépendamment de l'entropie :
+
+```php
+$validator->validComplexity('kdjtmzpqrw');  // false : une seule classe (R23)
+$validator->validPattern('Azerty!95kq');    // false : ligne de clavier « azer » (R27)
+$validator->validDictionary('Soleil2024!'); // false : « soleil » est dans le dictionnaire (R27)
+$validator->validLength($password);         // false au-delà de maxLength (R22)
+```
+
+Ces contrôles unitaires n'appliquent pas la longueur maximale : pour une saisie
+utilisateur, appeler `validLength()` avant eux.
+
+`validPassword()` regroupe tous les contrôles ; `violations()` renvoie les codes
+de ceux qui échouent, toujours dans l'ordre du tableau ci-dessus.
+
+Les règles se configurent dans le constructeur :
+
+```php
+use Libriciel\Password\Dictionary\FileDictionary;
+
+$validator = new PasswordValidatorAnssi(
+    dictionary: new FileDictionary(['/chemin/vers/ma-liste.txt']),
+    minClasses: 3,        // classes de caractères exigées (R23), de 0 à 4
+    passphraseLength: 20, // longueur à partir de laquelle les classes ne sont plus exigées
+    patternLength: 4,     // longueur minimale d'une suite ou d'une répétition
+    maxLength: 1024,      // longueur maximale (R22)
+);
+```
+
+Le dictionnaire par défaut réunit environ 78 000 entrées (voir
+[resources/dictionaries/NOTICE.md](resources/dictionaries/NOTICE.md)) :
+
+- mots de passe courants français ([richelieu](https://github.com/tarraschk/richelieu), CC BY 4.0) ;
+- mots de passe, prénoms et noms de famille courants internationaux
+  ([zxcvbn](https://github.com/dropbox/zxcvbn), MIT) ;
+- prénoms donnés en France depuis 1900 ([INSEE](https://www.insee.fr/fr/statistiques/8595130),
+  Licence Ouverte 2.0), avec et sans accents.
+
+Il n'est lu qu'à la première vérification (environ 15 ms et 8 Mo de mémoire). Une application peut fournir sa propre liste avec
+`FileDictionary`, ou implémenter `PasswordDictionaryInterface` (par exemple pour
+interroger [Have I Been Pwned](https://haveibeenpwned.com/API/v3#PwnedPasswords)).
+
+La réutilisation des anciens mots de passe (R27) reste à contrôler par
+l'application, qui seule connaît leur historique.
+
 ##### Génération de mots de passes aléatoires
 
 Le cas d'usage est la création d'un mot de passe aléatoire à stocker hashé et

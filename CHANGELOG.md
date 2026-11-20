@@ -16,6 +16,23 @@ et le projet suit le [versionnage sémantique](https://semver.org/lang/fr/).
   l'ASCII imprimable est désormais couvert, conformément à la recommandation R23 du
   guide ANSSI-PG-078 (« un jeu de caractères le plus large possible »). L'entropie et
   la force augmentent pour les mots de passe qui en contiennent (#13).
+- `PasswordValidatorAnssi::validPassword()` et `violations()` : validation d'un
+  mot de passe choisi par un utilisateur selon le guide ANSSI-PG-078, avec
+  l'entropie minimale souhaitée (R21), des règles de complexité assouplies pour les
+  phrases de passe (R23), la détection des suites, lignes de clavier et répétitions,
+  d'un dictionnaire de mots de passe courants et des informations personnelles
+  (R27). `violations()` renvoie les codes des règles non respectées ;
+  `validComplexity()`, `validPattern()` et `validDictionary()` contrôlent chaque
+  règle séparément. Une longueur maximale (`maxLength`, 1 024 caractères par
+  défaut, R22) protège du déni de service : au-delà, seul le code `length` est
+  renvoyé et `validLength()` permet de la contrôler seule (#15).
+- Dictionnaire d'environ 78 000 mots de passe, prénoms et noms courants, dans
+  `resources/dictionaries` : mots de passe français
+  ([richelieu](https://github.com/tarraschk/richelieu), CC BY 4.0), mots de passe,
+  prénoms et noms internationaux ([zxcvbn](https://github.com/dropbox/zxcvbn), MIT),
+  prénoms donnés en France depuis 1900 ([INSEE](https://www.insee.fr/fr/statistiques/8595130),
+  Licence Ouverte 2.0). Il est remplaçable via `PasswordDictionaryInterface` ou
+  `FileDictionary` (#15).
 
 ### Modifié
 

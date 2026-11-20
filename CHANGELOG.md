@@ -19,8 +19,7 @@ et le projet suit le [versionnage sémantique](https://semver.org/lang/fr/).
 
 ### Sécurité
 
-- Mise à jour des dépendances de développement et ajout du scan de vulnérabilités
-  de l'image dans la CI.
+- Mise à jour des dépendances de développement.
 
 ### Documentation
 
@@ -60,7 +59,6 @@ Tag posé sur le même commit que la 3.0.1 : aucune modification de code.
 ### Ajouté
 
 - Fork du projet `cbuffin/php-password`.
-- CI GitLab et analyse SonarQube.
 
 ### Modifié
 

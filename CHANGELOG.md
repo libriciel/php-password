@@ -1,37 +1,93 @@
-# CHANGELOG
+# Changelog
 
-## 3.0.2
-- mise à jour de sécurité
-## 3.0.1 - 2023-02-15
+Toutes les modifications notables de ce projet sont documentées dans ce fichier.
 
+Le format s'inspire de [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/)
+et le projet suit le [versionnage sémantique](https://semver.org/lang/fr/).
 
-- Fix PasswordStrengthMeterAnssi::entropy() qui renvoyait un string à la place d'un float
+## [Non publié]
 
-## 3.0.0 - 2022-02-17
+### Modifié
 
-### Evolution
-- 
-- La version 3 est basée sur PHP 8.1
+- `PasswordGeneratorAnssi::generate()` lève une `PasswordException` lorsque aucune
+  classe de caractères n'est activée, au lieu de renvoyer `false` (ce qui provoquait
+  une `TypeError`).
+- Paramètres `$encoding` explicitement nullables (`?string`), ce qui supprime les
+  dépréciations de PHP 8.4 sur les types implicitement nullables.
+- Code mis au standard `@Symfony` de PHP CS Fixer.
+- Image Docker de développement basée sur PHP 8.3.
 
-### Suppression
+### Sécurité
 
-- Retrait de la commande symfony de génération de mot de passe (non utilisable dans le programme qui importe la lib)
+- Mise à jour des dépendances de développement et ajout du scan de vulnérabilités
+  de l'image dans la CI.
 
-## 2.0.1 - 2021-12-29
+### Documentation
 
-### Supression
+- README : namespace `Libriciel\Password\Service` dans les exemples et commandes de
+  développement via `make` / `docker compose`.
 
-- supression de la dépendance paragonie/random_compat (pas de support de PHP 5)
+## [3.0.2] - 2026-09-17
 
-## 2.0.0 - 2021-12-29
+Tag posé sur le même commit que la 3.0.1 : aucune modification de code.
 
-### Ajout
-- Fork du projet à partir de cbuffin-php-password
+## [3.0.1] - 2023-02-23
 
-### Evolution
+### Corrigé
 
-- La commande de génération de mot de passe utilise la console Symfony
+- `PasswordStrengthMeterAnssi::entropy()` renvoyait une chaîne au lieu d'un `float`.
+- Correction du `composer.json` et mise à jour des dépendances.
 
-### Suppression
+## [3.0.0] - 2022-02-22
 
-- Le calcul de hash de mot de passe doit être basé sur la fonction password_hash
+### Modifié
+
+- PHP 8.1 minimum.
+
+### Supprimé
+
+- Commande Symfony de génération de mot de passe (inutilisable depuis le programme
+  qui importe la bibliothèque).
+
+## [2.0.1] - 2021-12-29
+
+### Supprimé
+
+- Dépendance `paragonie/random_compat` (PHP 5 n'est plus supporté).
+
+## [2.0.0] - 2021-12-29
+
+### Ajouté
+
+- Fork du projet `cbuffin/php-password`.
+- CI GitLab et analyse SonarQube.
+
+### Modifié
+
+- La commande de génération de mot de passe utilise la console Symfony.
+- Classes déplacées dans le namespace `Libriciel\Password\Service`.
+
+### Supprimé
+
+- Calcul de l'empreinte du mot de passe : utiliser la fonction native `password_hash()`.
+
+## [1.1.0] - 2018-10-26
+
+### Ajouté
+
+- Script `generate_password.php` pour générer des mots de passe aléatoires en ligne
+  de commande avec `PasswordGeneratorAnssi`.
+- Liens de référence dans le README.
+
+## [1.0.0] - 2018-03-19
+
+Version initiale.
+
+[Non publié]: https://gitlab.libriciel.fr/libriciel/direction-du-developpement/bibliotheque/php-password/-/compare/3.0.2...master
+[3.0.2]: https://gitlab.libriciel.fr/libriciel/direction-du-developpement/bibliotheque/php-password/-/compare/3.0.1...3.0.2
+[3.0.1]: https://gitlab.libriciel.fr/libriciel/direction-du-developpement/bibliotheque/php-password/-/compare/3.0.0...3.0.1
+[3.0.0]: https://gitlab.libriciel.fr/libriciel/direction-du-developpement/bibliotheque/php-password/-/compare/2.0.1...3.0.0
+[2.0.1]: https://gitlab.libriciel.fr/libriciel/direction-du-developpement/bibliotheque/php-password/-/compare/2.0.0...2.0.1
+[2.0.0]: https://gitlab.libriciel.fr/libriciel/direction-du-developpement/bibliotheque/php-password/-/compare/1.1.0...2.0.0
+[1.1.0]: https://gitlab.libriciel.fr/libriciel/direction-du-developpement/bibliotheque/php-password/-/compare/1.0.0...1.1.0
+[1.0.0]: https://gitlab.libriciel.fr/libriciel/direction-du-developpement/bibliotheque/php-password/-/tags/1.0.0

@@ -6,7 +6,7 @@ use Libriciel\Password\Service\PasswordStrengthMeterAnssi;
 use PHPUnit\Framework\TestCase;
 
 /**
- * Tests unitaires de la classe Libriciel\Utility\Password\PasswordStrengthMeterAnssi
+ * Tests unitaires de la classe Libriciel\Password\Service\PasswordStrengthMeterAnssi
  * avec les exemples donnés sur le site de l'ANSSI.
  *
  * @see {@url https://www.ssi.gouv.fr/administration/precautions-elementaires/calculer-la-force-dun-mot-de-passe/}

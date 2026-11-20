@@ -7,7 +7,7 @@ use Libriciel\Password\Service\PasswordGeneratorAnssi;
 use PHPUnit\Framework\TestCase;
 
 /**
- * Tests unitaires de la classe Libriciel\Utility\Password\PasswordGeneratorAnssi.
+ * Tests unitaires de la classe Libriciel\Password\Service\PasswordGeneratorAnssi.
  */
 class PasswordGeneratorAnssiTest extends TestCase
 {
@@ -184,5 +184,18 @@ class PasswordGeneratorAnssiTest extends TestCase
             "La classe de caractère not_existing n'est pas défini"
         );
         $pwdGeneratorAnsi->constrained(3, $mandatory, $mandatory);
+    }
+
+    public function testGenerateWithoutAvailableCharacter()
+    {
+        $pwdGeneratorAnsi = new PasswordGeneratorAnssi();
+
+        $defaults = $pwdGeneratorAnsi->defaults();
+        $false = array_combine(array_keys($defaults), array_fill(0, count($defaults), false));
+        $this->expectException(PasswordException::class);
+        $this->expectExceptionMessage(
+            'Impossible de générer un mot de passe de longueur 12 sans caractère disponible'
+        );
+        $pwdGeneratorAnsi->generate(12, $false);
     }
 }

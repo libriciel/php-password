@@ -44,7 +44,7 @@ application.
 ##### Force du mot de passe (selon l'ANSSI)
 
 ```php
-use Libriciel\Utility\Password\PasswordStrengthMeterAnssi;
+use Libriciel\Password\Service\PasswordStrengthMeterAnssi;
 
 $pwdStrengthAnssi = new  PasswordStrengthMeterAnssi();
 // L'entropie, ici 61
@@ -74,7 +74,7 @@ Dans le pire des cas, si `0000000000000000000000000000000000000000` est génér�
 on a une force de 1 pour une entropie de 40.
 
 ```php
-use Libriciel\Utility\Password\PasswordGeneratorAnssi;
+use Libriciel\Password\Service\PasswordGeneratorAnssi;
 
 // Configuration complète par défaut
 $config = [
@@ -97,6 +97,9 @@ $pwdGeneratorAnssi = new PasswordGeneratorAnssi();
 // Exemple de sortie: MUAVGHF4O5VPDboTwSJebjwNcryqYmRSS2izJHyJ
 $pwdGeneratorAnssi->generate();
 ```
+
+Si aucune classe de caractères n'est activée, `generate()` lève une
+`Libriciel\Password\PasswordException`.
 
 ## Exemples de mots de passes
 
@@ -219,8 +222,14 @@ $pwdGeneratorAnssi->generate();
 
 Construire un environnement docker tout prêt : 
 ```bash
-docker-compose build
-docker-compose run app bash
+make build
+make bash
+```
+
+Lancer les tests et vérifier le style :
+```bash
+docker compose run --rm app vendor/bin/phpunit
+docker compose run --rm app vendor/bin/php-cs-fixer fix --dry-run --diff
 ```
 
 
